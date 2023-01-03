@@ -9,14 +9,12 @@ const app = express();
 
 const accountApp = express();
 const publicApp = express();
-// const publicApp = express();
 
 publicApp.use(express.static(path.join(process.cwd(), "web/dist/public")));
 accountApp.use(express.static(path.join(process.cwd(), "web/dist/account")));
 
 app.use(vhost('account.*', accountApp));
 app.use(publicApp);
-// app.use(vhost('www.*', publicApp));
 
 
 
