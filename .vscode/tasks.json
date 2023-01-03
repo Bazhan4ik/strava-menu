@@ -1,0 +1,94 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        //
+        //      \\\\SERVER////
+        //
+
+
+        {
+            "label": "server:dev:build",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "server:dev:build",
+            ],
+        },
+        {
+            "label": "server:dev:start",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "server:dev:start"
+            ],
+        },
+
+        { // ALL
+            "label": "server:dev",
+            "dependsOrder": "parallel",
+            "type": "shell",
+            "dependsOn": [
+                "server:dev:build",
+                "server:dev:start",
+            ]
+        },
+
+
+        //
+        //      ////SERVER\\\\
+        //
+        //      \\\\WEB////
+        //
+
+        {
+            "label": "web:dev:build:account",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "web:dev:build:account",
+            ],
+        },
+        {
+            "label": "web:dev:build:public",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "web:dev:build:public",
+            ],
+        },
+
+        { // ALL
+            "label": "web:dev",
+            "type": "shell",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "web:dev:build:account",
+                "web:dev:build:public",
+            ]
+        },
+
+
+        //
+        //      ///WEB\\\
+        //
+
+
+        {
+            "label": "START DEVELOPMENT",
+            "dependsOrder": "parallel",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "web:dev",
+                "server:dev",
+            ]
+        }
+    ]
+}

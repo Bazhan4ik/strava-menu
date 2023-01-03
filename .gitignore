@@ -1,0 +1,37 @@
+node_modules
+dist
+
+
+
+web/.angular/cache
+# Specifies intentionally untracked files to ignore when using Git
+# http://git-scm.com/docs/gitignore
+
+web/*~
+web/*.sw[mnpcod]
+web/.tmp
+web/*.tmp
+web/*.tmp.*
+web/*.sublime-project
+web/*.sublime-workspace
+web/.DS_Store
+web/Thumbs.db
+web/UserInterfaceState.xcuserstate
+web/$RECYCLE.BIN/
+
+web/*.log
+web/log.txt
+web/npm-debug.log*
+
+web/.idea
+web/.ionic
+web/.sass-cache
+web/.sourcemaps
+web/.versions
+web/.vscode
+web/coverage
+web/dist
+web/node_modules
+web/platforms
+web/plugins
+web/www

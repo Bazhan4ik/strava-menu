@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "files": [
+        "server/index.ts"
+    ],
+    "compilerOptions": {
+        "outDir": "./dist",
+        "sourceMap": true,
+    }
+}
