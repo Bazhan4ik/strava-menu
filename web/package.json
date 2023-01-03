@@ -8,7 +8,9 @@
     "build:dev:account": "ng build --project=account --watch",
 
     "build:prod:public": "ng build --project=public",
-    "build:prod:account": "ng build --project=account"
+    "build:prod:account": "ng build --project=account",
+
+    "build:prod": "npm install && npm run build:prod:public && npm run build:prod:account"
   },
   "private": true,
   "dependencies": {
