@@ -17,9 +17,7 @@
         "web:dev:build:public": "cd web && npm run build:dev:public",
         "web:dev:build": "npm run web:dev:build:account && npm run web:dev:build:public",
 
-        "web:prod:build:account": "cd web && npm run build:prod:account",
-        "web:prod:build:public": "cd web && npm run build:prod:public",
-        "web:prod:build": "npm run web:prod:build:public && npm run web:prod:build:account",
+        "web:prod:build": "cd web && npm install && npm run build:prod:account && npm run build:prod:public",
 
         "start": "npm run server:prod:start",
         "build": "npm run web:prod:build && npm run server:prod:build"
