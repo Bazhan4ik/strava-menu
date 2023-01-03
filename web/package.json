@@ -7,8 +7,8 @@
     "build:dev:public": "ng build --project=public --watch",
     "build:dev:account": "ng build --project=account --watch",
 
-    "build:prod:public": "npx ng build --project=public",
-    "build:prod:account": "npx ng build --project=account"
+    "build:prod:public": "ng build --project=public",
+    "build:prod:account": "ng build --project=account"
   },
   "private": true,
   "dependencies": {
