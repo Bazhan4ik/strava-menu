@@ -11,7 +11,7 @@
         "build:prod:public": "ng build --project=public",
         "build:prod:account": "ng build --project=account",
         "build:prod:restaurant": "ng build --project=restaurant",
-        
+
         "build:prod": "npm install && npm run build:prod:public && npm run build:prod:account && npm run build:prod:restaurant"
     },
     "private": true,
@@ -33,8 +33,6 @@
         "@ionic/angular": "latest"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "^15.0.4",
-        "@angular/compiler-cli": "^15.0.0",
         "@types/jasmine": "~4.3.0",
         "jasmine-core": "~4.5.0",
         "karma": "~6.4.0",
