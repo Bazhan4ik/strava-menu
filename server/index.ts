@@ -15,9 +15,9 @@ publicApp.use(express.static(path.join(process.cwd(), "web/dist/public")));
 accountApp.use(express.static(path.join(process.cwd(), "web/dist/account")));
 restaurantApp.use(express.static(path.join(process.cwd(), "web/dist/restaurant")));
 
-app.use(vhost("*.*.*", restaurantApp))
 app.use(vhost("account.*.*", accountApp));
 app.use(vhost("www.*.*", publicApp));
+app.use(vhost("*.*.*", restaurantApp))
 
 
 
