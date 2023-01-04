@@ -15,7 +15,7 @@
 
         "web:dev:build:account": "cd ./web && npm run build:dev:account",
         "web:dev:build:public": "cd ./web && npm run build:dev:public",
-        "web:dev:build": "npm run web:dev:build:account && npm run web:dev:build:public",
+        "web:dev:build:restaurant": "cd ./web && npm run build:dev:restaurant",
 
         "web:prod:build": "cd ./web && npm run build:prod",
 

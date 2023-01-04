@@ -60,6 +60,15 @@
                 "web:dev:build:public",
             ],
         },
+        {
+            "label": "web:dev:build:restaurant",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "web:dev:build:restaurant",
+            ],
+        },
 
         { // ALL
             "label": "web:dev",
@@ -68,6 +77,7 @@
             "dependsOn": [
                 "web:dev:build:account",
                 "web:dev:build:public",
+                "web:dev:build:restaurant",
             ]
         },
 
