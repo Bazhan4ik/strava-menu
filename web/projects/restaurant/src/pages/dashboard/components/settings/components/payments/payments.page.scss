@@ -1,0 +1,28 @@
+.app {
+    .requirements {
+        .body {
+            border-bottom: 1px solid var(--default-border-color);
+
+            &:last-of-type {
+                border: none;
+            }
+        }
+    }
+    .bank-account {
+        .body {
+            .currency {
+                .upper {
+                    text-transform: uppercase;
+                }
+            }
+            .status {
+                width: auto;
+                margin-top: 12px;
+                .global-badge {
+                    width: auto;
+                    width: 48px;
+                }
+            }
+        }
+    }
+}

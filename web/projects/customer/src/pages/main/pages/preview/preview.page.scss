@@ -1,0 +1,185 @@
+.app {
+    padding: 0 24px;
+    height: 100%;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .title {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .info {
+        padding: 24px 12px;
+        border-top: 1px solid var(--default-border-color);
+        border-bottom: 1px solid var(--default-border-color);
+        display: flex;
+        gap: 24px;
+
+
+        &.red {
+            background-color: rgba(255, 0, 0, 0.158)
+        }
+
+        .left {
+            .buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        .right {
+            display: flex;
+            align-items: center;
+
+            .table,
+            .takeout {
+                padding: 8px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                border-radius: var(--default-border-radius);
+            }
+        }
+    }
+
+    .comment {
+        padding: 24px 12px;
+        border-bottom: 1px solid var(--default-border-color);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            button.orange-button {
+
+            }
+        }
+
+        .right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .text {
+                width: 224px;
+                padding: 8px;
+                border-radius: var(--default-border-radius);
+                border: 2px solid var(--default-border-color);
+            }
+        }
+
+    }
+
+    .dishes {
+        padding: 24px 12px;
+
+        .dish {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 4px;
+            
+            .left {
+                display: flex;
+                text-decoration: none;
+
+                .image {
+                    img {
+                        width: 52px;
+                        height: 52px;
+                        border-radius: var(--default-small-radius);
+                    }
+                }
+
+                .name-price {
+                    padding-left: 4px;
+                    display: flex;
+                    flex-direction: column;
+
+                    span {
+                        margin: 0;
+                    }
+
+                    .price {
+                        display: flex;
+                        align-items: center;
+
+                        .dish-comment {
+                            margin: 0;
+
+                            .dot {
+                                margin: 0 6px;
+                                font-size: 12px;
+                            }
+
+                            .global-text {
+                                margin: 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .right {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                button {
+                    display: none;
+                    background-color: transparent;
+                }
+            }
+
+            &:hover {
+                .right {
+                    button {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+
+    .no-dishes {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 124px;
+
+        &.red {
+            background-color: rgba(255, 0, 0, 0.158)
+        }
+    }
+
+    .subtotal {
+        padding: 24px 12px;
+        border-top: 1px solid var(--default-border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .checkout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            button {
+                border-radius: var(--default-small-radius);
+                padding: 12px;
+                height: 42px;
+            }
+        }
+    }
+}

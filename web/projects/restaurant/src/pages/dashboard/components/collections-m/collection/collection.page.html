@@ -1,0 +1,66 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." type="button" class="icon-button">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Collection
+            </span>
+        </div>
+        <div class="buttons">
+            <a type="button" routerLink="edit" class="orange-button button">
+                Edit
+            </a>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="!collection" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="info" *ngIf="collection">
+            <div class="image">
+                <img [src]="image" alt="">
+            </div>
+            <div class="name-description">
+                <div class="name">
+                    <span class="global-text text bold big black">
+                        {{ collection.name }}
+                    </span>
+                </div>
+                <div class="description">
+                    <span class="global-text text">
+                        {{ collection.description }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="dishes" *ngIf="dishes">
+            <div class="title" *ngIf="dishes.length > 0">
+                <span class="global-subtitle">
+                    Dishes
+                </span>
+            </div>
+            <div class="list" *ngIf="dishes.length > 0">
+                <a routerLink="../../dishes/{{ dish.id }}" *ngFor="let dish of dishes" class="dish">
+                    <div class="image">
+                        <img [src]="dish.image" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text bold black big">
+                            {{ dish.name }}
+                        </span>
+                    </div>
+                </a>
+            </div>
+            <div *ngIf="dishes.length == 0" class="no-dishes">
+                <span class="global-text bold black big">
+                    Add dishes
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

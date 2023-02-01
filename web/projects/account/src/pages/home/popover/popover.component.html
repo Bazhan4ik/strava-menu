@@ -1,0 +1,20 @@
+<div class="app" (mousedown)="close()">
+    <div class="popover" #popover (mousedown)="$event.stopPropagation()">
+        <!-- <a type="button" routerLink="/profile" class="global-link gray">
+            <mat-icon>manage_accounts</mat-icon>
+            Manager account
+        </a>
+        <a type="button" target="_blank" [href]="customerLink" class="global-link gray">
+            <mat-icon>
+                restaurant
+            </mat-icon>
+            Switch to customer
+        </a> -->
+        <a type="button" class="global-link gray pointer" (click)="logout()">
+            <mat-icon>
+                logout
+            </mat-icon>
+            Logout
+        </a>
+    </div>
+</div>

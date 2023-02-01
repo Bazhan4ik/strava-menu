@@ -1,0 +1,27 @@
+.app {
+    .no-collections {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .collections {
+        width: 100%;
+
+        .collection {
+            .collection-header {
+                padding: 12px 24px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .dishes {
+                padding-left: 24px;
+                display: flex;
+                gap: 12px;
+            }
+        }
+    }
+}

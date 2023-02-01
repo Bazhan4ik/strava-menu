@@ -1,0 +1,132 @@
+.app {
+    width: 100%;
+    min-height: 100vh;
+    overflow: auto;
+    position: relative;
+
+    background: rgb(238, 174, 202);
+    background: -moz-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    background: -webkit-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#eeaeca", endColorstr="#ffd653", GradientType=1);
+
+    .box {
+        background-color: var(--default-background);
+        border-top-left-radius: var(--default-border-radius);
+        border-top-right-radius: var(--default-border-radius);
+        width: 512px;
+        margin-top: 20vh;
+        min-height: 80vh;
+        box-shadow: var(--default-box-shadow);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            // -webkit-box-shadow: 0px -5px 5px -5px rgba(34, 60, 80, 0.6) inset;
+            // -moz-box-shadow: 0px -5px 5px -5px rgba(34, 60, 80, 0.6) inset;
+            // box-shadow: 0px -5px 5px -5px rgba(34, 60, 80, 0.6) inset;
+
+            border-bottom: 1px solid var(--default-border-color);
+
+            border-top-left-radius: var(--default-border-radius);
+            border-top-right-radius: var(--default-border-radius);
+            background-color: var(--default-background);
+
+            .name {
+                .text {
+                    font-size: 20px;
+                }
+            }
+
+            .avatar {
+                button {
+                    padding: 4px 8px;
+                    border-radius: var(--default-border-radius);
+                    display: flex;
+                    align-items: center;
+                    background: none;
+
+                    &:hover {
+                        background-color: var(--gray-light);
+                    }
+
+                    img {
+                        width: 34px;
+                        height: 34px;
+                        border-radius: 100%;
+                        border: 2px solid var(--orange);
+                    }
+                }
+            }
+        }
+
+        .content {
+            padding: 16px 32px;
+            height: 100%;
+
+            .sub-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .title {
+                    .text {
+                        font-size: 18px;
+                    }
+                }
+            }
+
+            .restaurants {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 24px;
+
+                .restaurant {
+                    padding: 12px 12px;
+                    width: 90%;
+                    border-radius: var(--default-border-radius);
+                    background-color: var(--default-on-background);
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    text-decoration: none;
+
+                    &:hover {
+                        background-color: var(--gray-light);
+                    }
+
+                    .left {
+                        display: flex;
+                        justify-content: center;
+                        flex-direction: column;
+
+                        .name {
+                            color: var(--text-color-black);
+                            font-size: 17px;
+                        }
+
+                        .redirectTo {
+                            display: flex;
+                            align-items: center;
+
+                            mat-icon {
+                                font-size: 14px;
+                                height: 18px;
+                                width: 18px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,62 @@
+<div class="app settings-app">
+    <div class="block basic" *ngIf="restaurant">
+        <div class="header">
+            <div class="title">
+                <span class="global-subtitle">
+                    Basic information
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="editBasic()" *ngIf="!edit.basic" class="button">
+                    Edit
+                </button>
+                <button (click)="editBasicClose()" *ngIf="edit.basic" class="button">
+                    Close
+                </button>
+            </div>
+        </div>
+        <ng-container [ngSwitch]="edit.basic">
+            <ng-container *ngSwitchCase="false">
+                <div class="body">
+                    <div class="name">
+                        <div class="icon">
+                            <mat-icon>
+                                storefront
+                            </mat-icon>
+                        </div>
+                        <div class="value">
+                            <span class="global-text big bold">
+                                {{ restaurant.name }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        <div class="icon">
+                            <mat-icon>
+                                description
+                            </mat-icon>
+                        </div>
+                        <div class="value">
+                            <span class="global-text big bold" *ngIf="!restaurant.description">
+                                No description
+                            </span>
+                            <span class="global-text small" *ngIf="restaurant.description">
+                                Description
+                            </span>
+                            <span class="global-text black description-value" *ngIf="restaurant.description">
+                                {{ restaurant.description }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container #nameEditContainer *ngSwitchCase="true"></ng-container>
+        </ng-container>
+    </div>
+    <div *ngIf="!restaurant" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

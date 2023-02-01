@@ -1,0 +1,49 @@
+<div class="app">
+    <div class="box">
+        <div class="header" *ngIf="user">
+            <div class="name">
+                <span class="global-title text">
+                    {{ user.name.first }} {{ user.name.last }}
+                </span>
+            </div>
+            <div class="avatar">
+                <button #popoverButton (click)="more()">
+                    <img [src]="avatar || './../../../../../global-resources/images/plain-avatar.jpg'" alt="">
+                    <mat-icon >expand_more</mat-icon>
+                </button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="sub-header">
+                <div class="title">
+                    <span class="global-title text">
+                        Restaurants
+                    </span>
+                </div>
+                <div class="add">
+                    <a type="button" routerLink="/add-restaurant" class="button orange-button">
+                        Add restaurant
+                    </a>
+                </div>
+            </div>
+
+            <div class="restaurants" *ngIf="user">
+                <a *ngFor="let restaurant of user.restaurants" href="{{ restaurantUrl }}/dashboard/{{ restaurant.id }}" type="button" class="restaurant">
+                    <div class="left">
+                        <span class="global-text name">
+                            {{ restaurant.name }}
+                        </span>
+                        <span class="global-text small redirectTo">
+                            {{ restaurant.redirectTo }} <mat-icon>arrow_forward</mat-icon>
+                        </span>
+                    </div>
+                    <mat-icon class="the-icon">chevron_right</mat-icon>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<app-popover *ngIf="openPopover" (leave)="closePopover($event)" [position]="popoverPosition"></app-popover>

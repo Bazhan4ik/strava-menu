@@ -1,0 +1,95 @@
+<div class="app">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." class="icon-button" type="button">
+                <mat-icon>
+                    arrow_back
+                </mat-icon>
+            </a>
+            <span class="global-subtitle">
+                Checkout
+            </span>
+        </div>
+    </div>
+
+    <div class="not-payment">
+        <div *ngIf="dishes && dishes.length > 0" class="dishes">
+            <div *ngFor="let dish of dishes" class="dish">
+                <div class="name">
+                    <span class="global-text big black bold">
+                        {{ dish.name }}
+                    </span>
+                    <span class="x">
+                        x
+                    </span>
+                    <span class="amount">
+                        {{ dish.amount }}
+                    </span>
+                </div>
+                <div class="price">
+                    <span class="big">
+                        ${{ dish.price / 100 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="money" *ngIf="money">
+            <div class="subtotal">
+                <div class="title">
+                    <span class="global-text big">
+                        Subtotal
+                    </span>
+                </div>
+                <div class="border"></div>
+                <div class="value">
+                    <span class="global-text big">
+                        ${{ money.subtotal / 100 }}
+                    </span>
+                </div>
+            </div>
+            <div class="hst">
+                <div class="title">
+                    <span class="global-text big">
+                        HST
+                    </span>
+                </div>
+                <div class="border"></div>
+                <div class="value">
+                    <span class="global-text big">
+                        ${{ money.hst / 100 }}
+                    </span>
+                </div>
+            </div>
+            <div class="total">
+                <div class="title">
+                    <span class="global-text bigger black bold">
+                        Total
+                    </span>
+                </div>
+                <div class="border"></div>
+                <div class="value">
+                    <span class="global-text big black bold">
+                        ${{ money.total / 100 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment">
+        <ng-container *ngIf="elementsOptions.clientSecret">
+            <ngx-stripe-payment [clientSecret]="elementsOptions.clientSecret">
+            </ngx-stripe-payment>
+            <button class="button orange-button">
+                PAY
+            </button>
+        </ng-container>
+    </div>
+
+    <div *ngIf="!money || !dishes" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

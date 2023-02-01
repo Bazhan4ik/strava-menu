@@ -1,5 +1,4 @@
 node_modules
-dist
 
 
 
@@ -35,3 +34,7 @@ web/node_modules
 web/platforms
 web/plugins
 web/www
+
+
+server/dist
+server/.env

@@ -1,0 +1,30 @@
+.app {
+
+    
+
+    .box {
+        border-radius: var(--default-border-radius);
+        background-color: var(--default-background);
+        width: 324px;
+
+        .header {
+            padding: 0 12px;
+            height: 42px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content {
+            padding: 12px;
+
+            .buttons {
+                margin-top: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    }
+}

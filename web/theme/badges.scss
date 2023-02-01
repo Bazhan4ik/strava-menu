@@ -1,0 +1,15 @@
+.global-badge {
+    padding: 3px 6px;
+    border-radius: var(--default-border-radius);
+    font-size: 15px;
+    font-family: var(--button-font);
+
+    &.orange {
+        background-color: var(--orange-light);
+        color: var(--orange-darker);
+    }
+    &.purple {
+        background-color: var(--purple-light);
+        color: var(--purple-darker);
+    }
+}

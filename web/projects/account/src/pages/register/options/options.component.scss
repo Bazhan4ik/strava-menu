@@ -1,0 +1,28 @@
+.app {
+    .sub-header {
+        margin-bottom: 18px;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        a[type=button] {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            height: 44px;
+
+            mat-icon,
+            img {
+                margin-left: 32px;
+                margin-right: 24px;
+            }
+        }
+    }
+
+    .login {
+        margin-top: 12px;
+    }
+}

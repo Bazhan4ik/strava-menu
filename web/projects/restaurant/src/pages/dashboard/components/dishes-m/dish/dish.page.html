@@ -1,0 +1,67 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." class="icon-button" type="button">
+                <mat-icon>close</mat-icon>
+            </a>
+        </div>
+        <div class="buttons">
+            <a routerLink="edit" type="button" class="button orange-button">Edit</a>
+        </div>
+    </div>
+    <div class="content">
+        <div class="top" *ngIf="dish">
+            <div class="image">
+                <img [src]="image || './../../../../../../../../global-resources/images/no-image.svg'" alt="">    
+            </div>
+            <div class="info">
+                <div class="name">
+                    <span class="global-text bigger black bold">
+                        {{ dish.name }}
+                    </span>
+                </div>
+                <div class="price">
+                    <span class="global-text normal">
+                        ${{ dish.price / 100 }}
+                    </span>
+                </div>
+                <div class="tags" *ngIf="dish.tags && dish.tags.length > 0">
+                    <span *ngFor="let tag of dish.tags" class="global-badge orange">
+                        {{ tag.title }}
+                    </span>
+                </div>
+                <div class="description">
+                    <span class="global-text small">
+                        {{ dish.description }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="global-loading height-124" *ngIf="!dish">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="bottom">
+            <div class="tabs">
+                <a routerLink="collections" class="button" type="button">
+                    Collections
+                </a>
+                <a routerLink="orders" class="button" type="button">
+                    Orders
+                </a>
+                <a routerLink="staff" class="button" type="button">
+                    Staff
+                </a>
+            </div>
+            <div class="pages" *ngIf="dish">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+<ng-container #modalContainer></ng-container>

@@ -1,0 +1,60 @@
+.app {
+    .content {
+        .top {
+            width: 100%;
+            display: flex;
+            
+            
+            .image {
+                img {
+                    border-radius: var(--default-border-radius);
+                    height: 128px;
+                    width: 128px;
+                    border: 2px solid var(--orange);
+                }
+            }
+
+            .info {
+                padding-left: 8px;
+
+                .price {
+                    margin-bottom: 4px;
+                    padding-bottom: 4px;
+                    border-bottom: 1px solid var(--default-border-color);
+                }
+
+                .description {
+                    margin-top: 8px;
+                }
+
+                .tags {
+                    margin-top: 4px;
+                    display: flex;
+                    gap: 8px;
+                }
+            }
+        }
+
+        .bottom {
+            margin-top: 12px;
+            padding-top: 6px;
+            border-top: 1px solid var(--default-border-color);
+            
+            .tabs {
+                margin-bottom: 12px;
+                padding-bottom: 6px;
+                border-bottom: 1px solid var(--default-border-color);
+                display: flex;
+                gap: 6px;
+
+                a.button {
+
+
+                    &.active {
+                        border-bottom: 2px solid var(--orange);
+                    }
+                }
+            }
+        }
+    }
+}

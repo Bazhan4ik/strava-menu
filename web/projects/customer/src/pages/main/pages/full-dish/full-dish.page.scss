@@ -1,0 +1,110 @@
+.app {
+    padding: 0 24px;
+
+    .dish {
+        margin-top: 12px;
+
+        .info {
+            display: flex;
+
+            .image {
+                img {
+                    border-radius: var(--default-border-radius);
+                    border: 2px solid var(--orange);
+                    width: 196px;
+                    height: 196px;
+                }
+            }
+
+            .name-description-buy {
+                position: relative;
+                width: calc(100% - 196px);
+                padding-left: 8px;
+
+                .name {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                .tags {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 4px;
+                }
+
+                .buy {
+                    position: absolute;
+                    bottom: 4px;
+                    left: 0;
+                    margin-top: 12px;
+                    width: 100%;
+
+                    .count {
+                        margin-left: 8px;
+                    }
+
+                    .buttons {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        margin: 0 8px;
+                        width: 100%;
+
+                        #add-span {
+                            // width: calc(100% - 38px - 16px);
+                            width: auto;
+
+                            #add {
+                                padding: 0;
+                                height: 38px;
+                                width: 100%;
+                                padding-right: 16px;
+                                justify-content: flex-start;
+                                gap: 0;
+
+                                .global-text {
+                                    font-family: var(--button-font);
+                                }
+
+                                mat-icon {
+                                    margin: 0 12px;
+                                }
+                            }
+                        }
+
+
+                        #comment-span {
+                            width: 38px;
+
+                            #comment {
+                                height: 38px;
+                                width: 38px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .recommendations {
+        width: 100%;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--default-border-color);
+
+        .collection-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dishes {
+            margin-top: 12px;
+            display: flex;
+            gap: 12px;
+        }
+    }
+}

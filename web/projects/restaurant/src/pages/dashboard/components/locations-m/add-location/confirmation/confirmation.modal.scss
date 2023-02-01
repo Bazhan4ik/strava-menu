@@ -1,0 +1,21 @@
+.app {
+
+
+    .box {
+        width: 512px;
+        padding: 12px;
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+
+        .place {
+            margin-top: 12px;
+        }
+
+        .buttons {
+            margin-top: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+}

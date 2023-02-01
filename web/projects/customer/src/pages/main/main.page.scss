@@ -1,0 +1,61 @@
+.app {
+
+    width: 100%;
+    height: 100%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background: rgb(255,196,9);
+    background: linear-gradient(90deg, rgba(255,196,9,1) 0%, rgba(255,81,81,1) 50%, rgba(252,176,69,1) 100%);
+    
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+
+    padding-top: 10vh;
+    display: flex;
+    justify-content: center;
+    
+
+    .box {
+        width: 624px;
+        height: 100%;
+
+        .header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--customer-box-background);
+            border-top-left-radius: var(--default-border-radius);
+            border-top-right-radius: var(--default-border-radius);
+            
+            #preview, #checkout {
+                border-radius: var(--default-small-radius);
+                padding: 12px;
+                height: 42px;
+            }
+        }
+
+        .content {
+            min-height: 100%;
+            padding-bottom: 200px;
+            background-color: var(--customer-box-background);
+        }
+    }
+    
+}
+
+
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}

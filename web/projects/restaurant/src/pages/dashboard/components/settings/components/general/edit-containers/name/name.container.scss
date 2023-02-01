@@ -1,0 +1,17 @@
+.app {
+    padding: 12px;
+
+    .name, .description, .buttons {
+        margin-top: 12px;
+
+        input {
+            width: 324px;
+        }
+
+        textarea {
+            width: 400px;
+        }
+    }
+
+
+}

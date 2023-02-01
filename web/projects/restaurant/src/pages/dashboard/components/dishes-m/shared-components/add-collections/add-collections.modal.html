@@ -1,0 +1,55 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <div class="title">
+                <button (click)="close()" class="icon-button">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <span class="global-subtitle">
+                    Edit collections
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="save()" class="button orange-button">
+                    Save
+                </button>
+            </div>
+        </div>
+        <div class="body">
+
+            <div *ngIf="collections && collections.length > 0" class="list">
+                <div *ngFor="let collection of collections; index as collectionIndex" class="collection">
+                    <div class="info">
+                        <div class="image">
+                            <img [src]="collection.image" alt="">
+                        </div>
+                        <div class="name">
+                            <span class="global-text big black bold">
+                                {{ collection.name }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="buttons">                        
+                        <div class="default-checkbox">
+                            <input id="checkbox-{{ collectionIndex }}" (change)="onChange($event, collection)" [checked]="ids.includes(collection._id)" type="checkbox" aria-hidden="true" />
+                            <label for="checkbox-{{ collectionIndex }}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="collections && collections.length == 0" class="no-collections">
+                <span class="global-text big bold black">
+                    No collections
+                </span>
+            </div>
+
+            <div *ngIf="!collections || loading" [class.full-page]="loading" class="global-loading height-124">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</div>

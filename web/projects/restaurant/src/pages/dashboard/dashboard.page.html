@@ -1,0 +1,71 @@
+<div class="app">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                StravaMenu
+            </span>
+        </div>
+        <div class="account">
+            
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div class="restaurant">
+            <span class="global-text text normal">
+                {{ restaurant.name }}
+            </span>
+        </div>
+        <div class="links">
+            <a class="global-link" routerLink="home" [class.active]="currentPage == 'home'">
+                <mat-icon>
+                    home
+                </mat-icon>
+                Home
+            </a>
+            <a class="global-link" routerLink="menu" [class.active]="currentPage == 'menu'">
+                <mat-icon>
+                    restaurant_menu
+                </mat-icon>
+                Menu
+            </a>
+            <a class="global-link" routerLink="locations" [class.active]="currentPage == 'locations'">
+                <mat-icon>
+                    place
+                </mat-icon>
+                Locations
+            </a>
+            <a class="global-link" [class.active]="currentPage == 'orders'">
+                <mat-icon>
+                    all_inbox
+                </mat-icon>
+                Orders
+            </a>
+            <a class="global-link" [class.active]="currentPage == 'customers'">
+                <mat-icon>
+                    face
+                </mat-icon>
+                Customers
+            </a>
+            <a class="global-link" [class.active]="currentPage == 'analytics'">
+                <mat-icon>
+                    insights
+                </mat-icon>
+                Analytics
+            </a>
+            <div class="border">
+
+            </div>
+            <a class="global-link settings" routerLink="settings" [class.active]="currentPage == 'settings'">
+                <mat-icon>
+                    settings
+                </mat-icon>
+                Settings
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+.app {
+    .content {
+        .search {
+            input {}
+        }
+
+        .full-address {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--default-border-color);
+
+            .top {
+                width: 100%;
+                display: flex;
+                gap: 12px;
+
+                input {
+                    width: 248px;
+                }
+            }
+
+            .address {
+                margin-top: 12px;
+
+                .double {
+                    margin-top: 12px;
+                    display: grid;
+                    gap: 12px;
+                    grid-template-columns: 1fr 196px;
+                }
+            }
+
+            .map {
+                // display: flex;
+                // align-items: center;
+                // justify-content: center;
+                width: 324px;
+                height: 324px;
+                margin-top: 12px;
+                border: 2px solid var(--orange);
+            }
+        }
+    }
+}

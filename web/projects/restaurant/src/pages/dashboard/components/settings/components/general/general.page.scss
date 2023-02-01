@@ -1,0 +1,53 @@
+.app {
+    .basic {
+        .body {
+            display: flex;
+            justify-content: space-between;
+            padding-right: 64px;
+
+            .name, .description {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                height: 42px;
+
+                .icon {
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+
+                    mat-icon {
+                        width: 42px;
+                        height: 42px;
+                        border-radius: 100%;
+                        background-color: var(--default-on-background);
+                        color: var(--text-color-gray)
+                    }
+                }
+                
+                .value {
+                    display: flex;
+                    justify-content: center;
+                    flex-direction: column;
+
+                    span {
+                        margin: 0;
+                    }
+
+                    .description-value {
+                        max-width: 324px;
+                    }
+                }
+            }
+
+            .description {
+                align-items: normal;
+                height: auto;
+
+                .value {
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}

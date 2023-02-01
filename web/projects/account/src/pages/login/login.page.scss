@@ -1,0 +1,76 @@
+.app {
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow: auto;
+
+    background: rgb(238, 174, 202);
+    background: -moz-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    background: -webkit-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#eeaeca", endColorstr="#ffd653", GradientType=1);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20vh;
+
+    .box {
+        padding: 32px 24px;
+        background-color: var(--white);
+        border-top-left-radius: var(--default-border-radius);
+        border-top-right-radius: var(--default-border-radius);
+        width: 512px;
+        height: 100%;
+        box-shadow: var(--default-box-shadow);
+
+        .form {
+            .email {
+                margin-top: 24px;
+            }
+    
+            .name {
+                display: flex;
+                margin-top: 24px;
+                gap: 24px;
+    
+                input {
+                    width: 100%;
+                }
+            }
+    
+            .password {
+                .label {
+                    margin-top: 24px;
+                    margin-bottom: 4px;
+                }
+            }
+
+            .message {
+                span {
+                    color: var(--red);
+                }
+            }
+    
+            .submit {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 24px;
+    
+                button {
+                    width: 100%;
+                    height: 42px;
+                }
+            }
+        }
+        
+        .links {
+            margin-top: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+    }
+}

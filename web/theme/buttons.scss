@@ -1,0 +1,89 @@
+@import "./badges.scss";
+
+.button {
+    color: var(--black);
+    font-size: 16px;
+    border-radius: var(--default-border-radius);
+    background: none;
+    height: 30px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: scale .5s;
+    text-decoration: none;
+    cursor: pointer;
+
+    * {
+        text-decoration: none;
+    }
+
+    .text {
+        text-decoration: none;
+        color: var(--black);
+    }
+}
+
+.orange-button {
+    background-color: var(--orange) !important;
+
+    &:hover {
+        background-color: var(--orange-hover) !important;
+    }
+}
+
+.purple-button {
+    background-color: var(--purple) !important;
+    color: var(--white) !important;
+
+    mat-icon {
+        color: var(--white-icon-color) !important;
+    }
+
+    &:hover {
+        background-color: var(--purple-hover) !important;
+    }
+}
+
+
+.white-button {
+    background-color: var(--white);
+    border: 1px solid var(--gray);
+
+    &:hover {
+        background-color: var(--white-hover);
+    }
+}
+
+.icon-button {
+    height: 36px;
+    width: 36px;
+    border-radius: 100%;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--black);
+
+    
+    mat-icon {
+        font-size: 22px;
+        color: var(--black);
+        vertical-align: middle;
+    }
+
+    &.big {
+        width: 44px;
+        height: 44px;
+        
+        mat-icon {
+            font-size: 28px;
+        }
+    }
+
+    &.square {
+        border-radius: var(--default-border-radius);
+    }
+}

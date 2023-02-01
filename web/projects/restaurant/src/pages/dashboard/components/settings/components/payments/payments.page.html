@@ -1,0 +1,57 @@
+<div class="app settings-app">
+    <div *ngIf="loaded && (!address || !bankAccount || isDobRequired || isNameRequired)" class="requirements block">
+        <div class="header">
+            <div class="title">
+                <span class="global-subtitle">
+                    Complete verification
+                </span>
+            </div>
+        </div>
+        <div class="body" *ngIf="!address">
+            <app-address [locations]="savedLocations" (leave)="onAddressEdit($event)"></app-address>
+        </div>
+        <div class="body" *ngIf="!bankAccount">
+            <app-bank-account (leave)="onBankAccountEdit($event)"></app-bank-account>
+        </div>
+        <div class="body" *ngIf="isNameRequired">
+            <app-name (leave)="onNameEdit($event)"></app-name>
+        </div>
+        <div class="body" *ngIf="isDobRequired">
+            <app-dob (leave)="onDobEdit($event)"></app-dob>
+        </div>
+    </div>
+    <div *ngIf="loaded && bankAccount" class="bank-account block">
+        <div class="header">
+            <div class="title">
+                <span class="global-subtitle">
+                    Bank account
+                </span>
+            </div>
+        </div>
+        <div class="body">
+            <div class="info">
+                <span class="global-text">
+                    Bank account for payouts end with
+                </span>
+                <span class="global-text black bold">{{ bankAccount.last4 }}</span>
+            </div>
+            <div class="currency">
+                <span class="global-text">
+                    All the money converted to
+                </span>
+                <span class="global-text bold black upper">{{ bankAccount.currency }}</span>
+            </div>
+            <div class="status">
+                <span class="global-badge" [class.purple]="bankAccount.status == 'new'">
+                    {{ bankAccount.status }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!loaded" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

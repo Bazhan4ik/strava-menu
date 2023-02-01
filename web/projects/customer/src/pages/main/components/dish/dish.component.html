@@ -1,0 +1,17 @@
+<a type="button" [routerLink]="goDown ? ['..', dish.id] : [dish.id]" [queryParams]="{ c: collection }" class="app" [class.small]="small">
+    <div class="image">
+        <img [src]="image" alt="">
+    </div>
+    <div class="name-price">
+        <div class="name">
+            <span class="global-text bold black" [class.big]="!small">
+                {{ dish.name }}
+            </span>
+        </div>
+        <div class="price">
+            <span class="global-text bold small">
+                ${{ dish.price / 100 }}
+            </span>
+        </div>
+    </div>
+</a>

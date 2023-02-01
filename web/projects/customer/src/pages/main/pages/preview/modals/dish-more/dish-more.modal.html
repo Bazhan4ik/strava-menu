@@ -1,0 +1,33 @@
+<div class="app" (click)="close()">
+    <div class="box" [style.left]="position.left" [style.top]="position.top">
+        <button id="more" (click)="more()">
+            <mat-icon>
+                open_in_new
+            </mat-icon>
+            <span class="global-text big black">
+                See the dish
+            </span>
+        </button>
+        <button id="comment" (click)="comment()">
+            <mat-icon>
+                textsms
+            </mat-icon>
+            <span class="global-text big black">
+                <span *ngIf="isComment">
+                    Change comment
+                </span>
+                <span *ngIf="!isComment">
+                    Add comment
+                </span>
+            </span>
+        </button>
+        <button id="remove" (click)="remove()">
+            <mat-icon>
+                delete
+            </mat-icon>
+            <span class="global-text big black red">
+                Remove
+            </span>
+        </button>
+    </div>
+</div>

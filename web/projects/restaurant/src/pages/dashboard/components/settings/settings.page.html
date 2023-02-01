@@ -1,0 +1,23 @@
+<div class="app content-page big">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Settings
+            </span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="navigation">
+            <a class="link" routerLink="general" [class.active]="currentPage == 'general'">
+                General
+            </a>
+            <a class="link" routerLink="payments" [class.active]="currentPage == 'payments'">
+                Payments
+            </a>
+        </div>
+        <div class="page">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

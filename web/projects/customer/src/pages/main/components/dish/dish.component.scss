@@ -1,0 +1,25 @@
+.app {
+    width: 196px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: 0.25s all;
+    border-radius: var(--default-border-radius);
+    outline: none;
+
+    &.small {
+        width: 154px;
+    }
+
+    .image {
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--default-border-radius);
+        }
+    }
+
+    // &:hover {
+    //     box-shadow: var(--default-box-shadow);
+    // }
+}

@@ -1,0 +1,95 @@
+mat-icon {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    color: var(--black);
+}
+
+
+
+.global-loading {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.height-124 {
+        min-height: 124px;
+    }
+
+    &.full-page {
+        height: 100%;
+        width: 100%;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: var(--background-modal);
+    }
+
+    div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        margin: 8px;
+        border: 3px solid var(--default-border-color);
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: var(--default-border-color) transparent transparent transparent;
+    }
+    
+    div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+    
+    div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+    
+    div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+}
+
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.pac-container:after {
+    /* Disclaimer: not needed to show 'powered by Google' if also a Google Map is shown */
+
+    background-image: none !important;
+    height: 0px;
+}
+
+
+
+
+.modal-app {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    align-items: center;
+    top: 0;
+    left: 0;
+    background-color: var(--background-modal);
+    z-index: 1001;
+    
+    &.padding-20 {
+        padding-top: 20vh;
+        align-items: baseline;
+    }
+}

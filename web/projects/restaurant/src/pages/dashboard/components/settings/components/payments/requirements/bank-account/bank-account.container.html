@@ -1,0 +1,51 @@
+<div class="app">
+    <div class="the-header">
+        <div class="title">
+            <span class="global-subtitle">
+                Bank account
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="orange-button button">
+                Save
+            </button>
+        </div>
+    </div>
+    <div class="form">
+        <div class="number">
+            <div class="label">
+                <span class="global-text">
+                    Bank account number
+                </span>
+            </div>
+            <input class="global-input" type="text" (input)="onNumberInput($event)">
+        </div>
+        <div class="b-i">
+            <div class="branch input">
+                <div class="label">
+                    <span class="global-text">
+                        Branch number
+                    </span>
+                </div>
+                <input class="global-input" type="text" (input)="onBranchInput($event)">
+            </div>
+            <div class="institution input">
+                <div class="label">
+                    <span class="global-text">
+                        Institution number
+                    </span>
+                </div>
+                <input type="text" class="global-input" (input)="onInstitutionInput($event)">
+            </div>
+        </div>
+        
+        <div class="name">
+            <div class="label">
+                <span class="global-text">
+                    Holder's full name
+                </span>
+            </div>
+            <input [(ngModel)]="name" class="global-input" type="text">
+        </div>
+    </div>
+</div>

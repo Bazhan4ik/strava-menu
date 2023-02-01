@@ -1,0 +1,52 @@
+.app {
+    .content {
+        .info {
+            display: flex;
+
+            .image {
+                img {
+                    width: 64px;
+                    height: 64px;
+                    border-radius: var(--default-small-radius);
+                }
+            }
+
+            .name-description {
+                padding: 4px;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        .dishes {
+            margin-top: 12px;
+            .list {
+                padding-top: 6px;
+
+                .dish {
+                    display: flex;
+                    gap: 8px;
+                    text-decoration: none;
+                    border-radius: var(--default-small-radius);
+                    padding: 4px;
+                    
+                    .image {
+                        img {
+                            width: 42px;
+                            height: 42px;
+                            border-radius: var(--default-small-radius);
+                        };
+                    }
+
+                    .name {
+                        padding: 4px;
+                    }
+
+                    &:hover {
+                        background-color: var(--default-on-background);
+                    }
+                }
+            }
+        }
+    }
+}

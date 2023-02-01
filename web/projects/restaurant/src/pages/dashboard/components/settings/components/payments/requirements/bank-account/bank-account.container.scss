@@ -1,0 +1,43 @@
+.app {
+    .the-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form {
+
+        .number {
+            margin-top: 24px;
+
+            input {
+                width: 324px;
+            }
+        }
+
+        .b-i {
+            margin-top: 24px;
+            display: flex;
+            gap: 24px;
+
+            .branch {
+                input {
+                    width: 324px;
+                }
+            }
+            .institution {
+                input {
+                    width: 196px;
+                }
+            }
+        }
+
+        .name {
+            margin-top: 24px;
+
+            input {
+                width: 324px;    
+            }
+        }
+    }
+}

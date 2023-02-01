@@ -1,0 +1,31 @@
+.app {
+    .content {
+        .top {
+            display: flex;
+            justify-content: space-between;
+
+            .tabs {
+                display: flex;
+                gap: 4px;
+                padding-bottom: 8px;
+    
+                a {
+                    padding: 2px 8px;
+                    border-radius: 0;
+    
+                    &:hover {
+                        scale: none;
+                    }
+    
+                    &.active {
+                        border-bottom: 3px solid var(--orange);
+                    }
+                }
+            }
+
+            .buttons {
+                
+            }
+        }
+    }
+}

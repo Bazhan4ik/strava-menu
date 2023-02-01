@@ -1,0 +1,21 @@
+<div class="app">
+    <div class="name">
+        <div class="label">
+            <span class="global-text normal">
+                Name
+            </span>
+        </div>
+        <input (input)="input()" type="text" [(ngModel)]="newName" class="global-input">
+    </div>
+    <div class="description">
+        <div class="label">
+            <span class="global-text normal">Description</span>
+        </div>
+        <textarea (input)="input()" class="global-input vertical" [(ngModel)]="newDescription"></textarea>
+    </div>
+    <div class="buttons">
+        <button (click)="save()" [disabled]="!changed" class="button orange-button">
+            Save
+        </button>
+    </div>
+</div>

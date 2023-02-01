@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&family=Lato:wght@400;700&family=Roboto:wght@400;700&display=swap&family=Material+Icons+Outlined');
+
+
+:root {
+
+    // text-font and button-font can be 400 regular and 700 bold.
+    --text-font: 'Lato', sans-serif;
+    --button-font: 'Open Sans', sans-serif; 
+    --title-font: 'Roboto', sans-serif;
+
+    --text-color-black: var(--black);
+    --text-color-gray: #5a5a5a;
+
+    --default-border-color: #d9d9d9;
+
+    --background-modal: rgb(0, 0, 0, 0.2);
+    --default-background: var(--white);
+    --default-on-background: rgb(245, 245, 245);
+
+    --default-border-radius: 8px;
+    --default-small-radius: 4px;
+    --input-border-radius: 4px;
+
+    --default-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);;
+
+    --white-icon-color: #e4e4e4;
+
+
+    --white: #FFFFFF;
+    --green: #2ECC71;
+    --blue: #3880FF;
+    --orange: #FFC409;
+    --pink: #E74DBF;
+    --purple: #9B1FE8;
+    --black: #111111;
+    --gray: #AAAAAA;
+    --red: #EB445A;
+    --sea: #3dc2ff;
+    --brown: #964B00;
+
+    --white-hover: rgba(0, 0, 0, 0.02);
+    --green-hover: #29b866;
+    --blue-hover: #3273e6;
+    --orange-hover: #e6b008;
+    --pink-hover: #d045ac;
+    --purple-hover: #8c1cd1;
+    --black-hover: #0f0f0f;
+    --gray-hover: #999999;
+    --red-hover: #d43d51;
+    --sea-hover: #37afe6;
+    --brown-hover: #874400;
+
+    --green-dark: #29b866;
+    --blue-dark: #3273e6;
+    --orange-dark: #e6b008;
+    --pink-dark: #d045ac;
+    --purple-dark: #8c1cd1;
+    --black-dark: #0f0f0f;
+    --gray-dark: #999999;
+    --red-dark: #d43d51;
+    --sea-dark: #37afe6;
+    --brown-dark: #874400;
+
+    --green-darker: #25a65c;
+    --blue-darker: #2d68cf;
+    --orange-darker: #cf9e07;
+    --pink-darker: #bb3e9b;
+    --purple-darker: #7e19bc;
+    --black-darker: #0e0e0e;
+    --gray-darker: #8a8a8a;
+    --red-darker: #bf3749;
+    --sea-darker: #329ecf;
+    --brown-darker: #7a3d00;
+
+    --white-light: #ffffff;
+    --green-light: #c0f0d4;
+    --blue-light: #c3d9ff;
+    --orange-light: #ffedb5;
+    --pink-light: #f8caec;
+    --purple-light: #e1bcf8;
+    --black-light: #b8b8b8;
+    --gray-light: #e6e6e6;
+    --red-light: #f9c7ce;
+    --sea-light: #c5edff;
+    --brown-light: #e0c9b3;
+
+    --green-lighter: #e8f9ef;
+    --blue-lighter: #ebf3ff;
+    --orange-lighter: #fff9e7;
+    --pink-lighter: #fce6f6;
+    --purple-lighter: #fdeef9;
+    --black-lighter: #e7e7e7;
+    --gray-lighter: #f7f7f7;
+    --red-lighter: #fdedef;
+    --sea-lighter: #ecf9ff;
+    --brown-lighter: #f5eee6;
+}

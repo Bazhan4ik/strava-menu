@@ -1,0 +1,112 @@
+.app {
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--default-on-background);
+    
+
+    .header {
+        height: 52px;
+        background-color: var(--default-background);
+        border-bottom: 1px solid var(--default-border-color);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+
+        .title {
+            display: flex;
+            align-items: center;
+            padding-left: 42px;
+            height: 100%;
+        }
+    }
+
+    .navigation {
+        background-color: var(--default-background);
+        height: 100%;
+        position: fixed;
+        top: 52px;
+        left: 0;
+        border-right: 1px solid var(--default-border-color);
+        width: 208px;
+
+        .restaurant {
+            padding-left: 42px;
+            margin-top: 6px;
+            border-bottom: 1px solid var(--default-border-color);
+            padding-bottom: 6px;
+            margin-right: 12px;
+
+            .text {
+                font-weight: 600;
+                color: var(--text-color-black);
+            }
+        }
+
+        .links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-right: 12px;
+
+            a {
+                width: 100%;
+                margin-top: 6px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                color: var(--text-color-black);
+                font-family: var(--button-font);
+                cursor: pointer;
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+
+                mat-icon {
+                    margin: 0 12px;
+                    height: 18px;
+                    width: 18px;
+                    font-size: 20px;
+                    color: var(--gray-dark)
+                }
+
+                &:hover {
+                    text-decoration: none;
+                    background-color: var(--gray-light);
+                }
+
+                &.active {
+                    border-left: 3px solid var(--orange-dark);
+                    color: var(--orange-dark);
+                    background-color: var(--orange-lighter);
+
+                    mat-icon {
+                        color: var(--orange-dark);
+                    }
+                }
+            }
+
+            .border {
+                margin-top: 6px;
+                width: 100%;
+                border-top: 1px solid var(--default-border-color);
+            }
+
+            .settings {
+
+            }
+        }
+    }
+
+    .content {
+
+        display: flex;
+        justify-content: center;
+
+        padding-top: 104px;
+
+    }
+}

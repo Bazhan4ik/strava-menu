@@ -1,0 +1,60 @@
+<div class="app content-page expand">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Locations
+            </span>
+        </div>
+        <div class="buttons">
+            <a routerLink="add" type="button" class="button orange-button">
+                <mat-icon>
+                    add
+                </mat-icon>
+                Add location
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <div class="list" *ngIf="locations && locations.length > 0">
+            <a type="button" routerLink="{{ location.id }}" *ngFor="let location of locations" class="location">
+                <div class="name">
+                    <span class="global-text bold big black">
+                        {{ location.name }}
+                    </span>
+                </div>
+                <div class="info">
+                    <div class="state">
+                        <span class="global-text">
+                            {{ location.state }}
+                        </span>
+                    </div>
+                    <div class="city">
+                        <span class="global-text">
+                            {{ location.city }}
+                        </span>
+                    </div>
+                    <div class="line1">
+                        <span class="global-text">
+                            {{ location.line1 }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div *ngIf="locations && locations.length == 0" class="no-locations">
+            <span class="global-text big black bold">
+                Add your first location
+            </span>
+        </div>
+
+        <div *ngIf="!locations" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

@@ -1,46 +1,57 @@
 {
-    "name": "web",
-    "version": "0.0.0",
-    "scripts": {
-        "ng": "ng",
-
-        "build:dev:public": "ng build --project=public --watch",
-        "build:dev:account": "ng build --project=account --watch",
-        "build:dev:restaurant": "ng build --project=restaurant --watch",
-
-        "build:prod:public": "ng build --project=public",
-        "build:prod:account": "ng build --project=account",
-        "build:prod:restaurant": "ng build --project=restaurant",
-
-        "build:prod": "npm install && npm run build:prod:public && npm run build:prod:account && npm run build:prod:restaurant"
-    },
-    "private": true,
-    "dependencies": {
-        "@angular/animations": "^15.0.0",
-        "@angular/common": "^15.0.0",
-        "@angular/compiler": "^15.0.0",
-        "@angular/core": "^15.0.0",
-        "@angular/forms": "^15.0.0",
-        "@angular/platform-browser": "^15.0.0",
-        "@angular/platform-browser-dynamic": "^15.0.0",
-        "@angular/router": "^15.0.0",
-        "@angular-devkit/build-angular": "^15.0.4",
-        "@angular/compiler-cli": "^15.0.0",
-        "rxjs": "~7.5.0",
-        "tslib": "^2.3.0",
-        "zone.js": "~0.12.0",
-        "@angular/cli": "~15.0.4",
-        "@ionic/angular": "latest"
-    },
-    "devDependencies": {
-        "@types/jasmine": "~4.3.0",
-        "jasmine-core": "~4.5.0",
-        "karma": "~6.4.0",
-        "karma-chrome-launcher": "~3.1.0",
-        "karma-coverage": "~2.2.0",
-        "karma-jasmine": "~5.1.0",
-        "karma-jasmine-html-reporter": "~2.0.0",
-        "typescript": "~4.8.2",
-        "@ionic/angular-toolkit": "latest"
-    }
+  "name": "web",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "build:dev:public": "ng build --project=public --watch --configuration development",
+    "build:dev:account": "ng build --project=account --watch  --configuration development",
+    "build:dev:restaurant": "ng build --project=restaurant --watch  --configuration development",
+    "build:dev:customer": "ng build --project=customer --watch  --configuration development",
+    "build:prod:public": "ng build --project=public",
+    "build:prod:account": "ng build --project=account",
+    "build:prod:restaurant": "ng build --project=restaurant",
+    "build:prod:customer": "ng build --project=customer",
+    "build:prod": "npm install && npm run build:prod:public && npm run build:prod:customer && npm run build:prod:account && npm run build:prod:restaurant"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular-devkit/build-angular": "^15.0.4",
+    "@angular/animations": "^15.0.4",
+    "@angular/cdk": "^15.0.4",
+    "@angular/cli": "~15.0.4",
+    "@angular/common": "^15.0.0",
+    "@angular/compiler": "^15.0.0",
+    "@angular/compiler-cli": "^15.0.0",
+    "@angular/core": "^15.0.0",
+    "@angular/forms": "^15.0.0",
+    "@angular/google-maps": "^15.1.1",
+    "@angular/material": "^15.0.4",
+    "@angular/platform-browser": "^15.0.0",
+    "@angular/platform-browser-dynamic": "^15.0.0",
+    "@angular/router": "^15.0.0",
+    "@ionic/angular": "latest",
+    "@types/google.maps": "^3.51.0",
+    "angular-code-input": "^1.6.0",
+    "ionic": "^4.1.2",
+    "ngx-chips": "^3.0.0",
+    "ngx-cookie-service": "^15.0.0",
+    "ngx-image-cropper": "^6.3.2",
+    "ngx-stripe": "^15.2.0",
+    "rxjs": "~7.5.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.12.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^15.0.4",
+    "@angular/compiler-cli": "^15.0.0",
+    "@ionic/angular-toolkit": "latest",
+    "@types/jasmine": "~4.3.0",
+    "jasmine-core": "~4.5.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.0.0",
+    "typescript": "~4.8.2"
+  }
 }

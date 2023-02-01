@@ -1,0 +1,18 @@
+.app {
+
+    .name-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .inputs {
+        margin-top: 24px;
+        display: flex;
+        gap: 24px;
+
+        .input {
+            width: 324px;
+        }
+    }
+}

@@ -1,0 +1,37 @@
+.app {
+    .collections {
+        .collections-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list {
+            padding-top: 8px;
+            
+            .collection {
+                text-decoration: none;
+                border-radius: var(--default-small-radius);
+                display: flex;
+                padding: 4px;
+                gap: 8px;
+
+                .image {
+                    img {
+                        width: 42px;
+                        height: 42px;
+                        border-radius: var(--default-small-radius);
+                    }
+                }
+
+                .name {
+                    padding: 4px;
+                }
+
+                &:hover {
+                    background-color: var(--default-on-background);
+                }
+            }
+        }
+    }
+}

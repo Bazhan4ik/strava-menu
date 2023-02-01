@@ -1,0 +1,91 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a class="icon-button" type="button" routerLink="..">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Add collection
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="orange-button button">
+                Save
+            </button>
+        </div>
+    </div>
+    <div class="content" *ngIf="collection">
+
+        <div class="image">
+            <img [src]="image" alt="">
+            <button (click)="setImage()" class="button orange-button">
+                Set image
+            </button>
+        </div>
+
+        <div class="name">
+            <div class="label">
+                <span class="global-text">
+                    Name
+                </span>
+            </div>
+            <input type="text" class="global-input" [(ngModel)]="name">
+        </div>
+
+
+        <div class="description">
+            <div class="label">
+                <span class="global-text">
+                    Description <span class="global-text small gray">(optional)</span>
+                </span>
+            </div>
+            <textarea type="text" class="global-input vertical" [(ngModel)]="description"></textarea>
+        </div>
+
+        <div class="dishes">
+            <div class="header">
+                <div class="title">
+                    <span class="global-text bold big">
+                        Dishes
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button (click)="addDishes()" class="button orange-button">
+                        Add
+                    </button>
+                </div>
+            </div>
+            <div class="list" *ngIf="dishes && dishes.length > 0">
+                <div class="dish" (click)="removeDish(dish.id)" *ngFor="let dish of dishes">
+                    <div class="image">
+                        <img [src]="dish.image" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ dish.name }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!dishes || dishes.length == 0" class="no-dishes">
+                <span class="global-text">
+                    No dishes selected
+                </span>
+            </div>
+        </div>
+
+        
+    </div>
+    
+    <div *ngIf="!collection" class="content">
+        <div class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+
+<ng-container #modalContainer></ng-container>

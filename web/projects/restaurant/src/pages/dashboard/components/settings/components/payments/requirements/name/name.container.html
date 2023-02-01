@@ -1,0 +1,39 @@
+<div class="app">
+    <div class="name-header">
+        <div class="title">
+            <span class="global-subtitle">
+                Owner's name
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="button orange-button">
+                Save
+            </button>
+        </div>
+    </div>
+    <div class="inputs" *ngIf="!loading">
+        <div class="input">
+            <div class="label">
+                <span class="global-text">
+                    First name
+                </span>
+                <input class="global-input" [(ngModel)]="first" type="text">
+            </div>
+        </div>
+        <div class="input">
+            <div class="label">
+                <span class="global-text">
+                    Last name
+                </span>
+            </div>
+            <input class="global-input" [(ngModel)]="last" type="text">
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

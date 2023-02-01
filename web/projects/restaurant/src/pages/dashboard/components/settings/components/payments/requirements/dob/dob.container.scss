@@ -1,0 +1,17 @@
+.app {
+    .dob-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .input {
+        display: flex;
+        flex-direction: column;
+        margin-top: 24px;
+
+        .global-input {
+            width: 324px;
+        }
+    }
+}

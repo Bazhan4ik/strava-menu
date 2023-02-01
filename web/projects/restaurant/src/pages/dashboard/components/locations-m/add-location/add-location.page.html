@@ -1,0 +1,80 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." type="button" class="icon-button">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Add location
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="orange-button button">
+                Save
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="search">
+            <input #placesInput class="global-input" type="text">
+        </div>
+        <div class="full-address" *ngIf="place">
+
+            <div class="top">
+                <div class="city">
+                    <div class="label">
+                        <span class="global-text">
+                            Province
+                        </span>
+                    </div>
+                    <input type="text" [(ngModel)]="state" class="global-input">
+                </div>
+                <div class="city">
+                    <div class="label">
+                        <span class="global-text">
+                            City
+                        </span>
+                    </div>
+                    <input type="text" [(ngModel)]="city" class="global-input">
+                </div>
+            </div>
+
+            <div class="address">
+                <div class="label">
+                    <span class="global-text">
+                        Address line 1
+                    </span>
+                </div>
+                <input type="text" [(ngModel)]="addressLine1" class="global-input">
+                <div class="double">
+                    <div class="line2">
+                        <div class="label">
+                            <span class="global-text">
+                                Address line 2
+                            </span>
+                        </div>
+                        <input type="text" [(ngModel)]="addressLine2" class="global-input">
+                    </div>
+                    <div class="postal-code">
+                        <div class="label">
+                            <span class="global-text">
+                                Postal code
+                            </span>
+                        </div>
+                        <input type="text" [(ngModel)]="postalCode" class="global-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="map" >
+                <google-map [options]="mapOptions" [height]="'100%'" [width]="'100%'">
+                    <map-marker [position]="placeLocation" [options]="markerOptions"></map-marker>
+                </google-map>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-container #modalContainer></ng-container>

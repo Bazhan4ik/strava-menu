@@ -69,6 +69,15 @@
                 "web:dev:build:restaurant",
             ],
         },
+        {
+            "label": "web:dev:build:customer",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "web:dev:build:customer",
+            ],
+        },
 
         { // ALL
             "label": "web:dev",
@@ -78,6 +87,7 @@
                 "web:dev:build:account",
                 "web:dev:build:public",
                 "web:dev:build:restaurant",
+                "web:dev:build:customer",
             ]
         },
 

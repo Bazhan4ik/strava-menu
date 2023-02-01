@@ -1,0 +1,78 @@
+<div class="app">
+    <div class="header">
+        <a type="button" routerLink=".."  class="icon-button">
+            <mat-icon>arrow_back</mat-icon>
+        </a>
+    </div>
+    <div *ngIf="!dish" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="dish" *ngIf="dish">
+        <div class="info" *ngIf="dish">
+            <div class="image">
+                <img [src]="image" alt="">
+            </div>
+            <div class="name-description-buy">
+                <div class="name">
+                    <span class="name global-text big black">
+                        {{ dish.name }}
+                    </span>
+                    <span class="price global-text">
+                        ${{ dish.price / 100 }}
+                    </span>
+                </div>
+                <div class="description">
+                    <span class="global-text">
+                        {{ dish.description }}
+                    </span>
+                </div>
+                <div class="buy">
+                    <div class="count" *ngIf="amount">
+                        <span class="global-text">
+                            {{ amount }} in cart
+                        </span>
+                    </div>
+                    <div class="buttons">
+                        <span id="add-span" title="Add to cart">
+                            <button (click)="add()" id="add" class="orange-button button">
+                                <mat-icon>add</mat-icon>
+                                <span class="global-text big black">
+                                    Add to card
+                                </span>
+                            </button>
+                        </span>
+                        <span id="comment-span" title="Add with comment">
+                            <button (click)="comment()" id="comment" class="purple-button square icon-button">
+                                <mat-icon>textsms</mat-icon>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="collection && collection.dishes.length > 0" class="recommendations">
+        <div class="collection-header">
+            <div class="title">
+                <span class="global-subtitle">
+                    More from {{ collection.title }}
+                </span>
+            </div>
+            <div class="buttons" *ngIf="collection.redirectable">
+                <button class="icon-button">
+                    <mat-icon>
+                        arrow_forward
+                    </mat-icon>
+                </button>
+            </div>
+        </div>
+        <div class="dishes">
+            <app-dish *ngFor="let dish of collection.dishes" [dish]="dish" [goDown]="true" [small]="true" [collection]="collection.id"></app-dish>
+        </div>
+    </div>
+</div>
+
+<ng-container #modalContainer></ng-container>

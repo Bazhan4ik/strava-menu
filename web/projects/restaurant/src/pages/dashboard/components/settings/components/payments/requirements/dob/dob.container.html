@@ -1,0 +1,25 @@
+<div class="app">
+    <div class="dob-header">
+        <div class="title">
+            <span class="global-subtitle">
+                Owner's date of birth
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="orange-button button">Save</button>
+        </div>
+    </div>
+    <div class="input" *ngIf="!loading">
+        <input type="text" class="global-input" placeholder="MM/DD/YYYY" (input)="onInput($event)" id="the-input">
+        <span class="global-text">
+            MM/DD/YYYY
+        </span>
+    </div>
+
+    <div *ngIf="loading" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="app">
+
+    <div class="sub-header">
+        <a routerLink="/register" type="button" class="icon-button">
+            <mat-icon fontSet="material-icons-outlined">arrow_back</mat-icon>
+        </a>
+        <div class="sub-title">
+            <span class="global-subtitle">
+                Register by Email
+            </span>
+        </div>
+    </div>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="email">
+            <input type="email" class="global-input" placeholder="Email address" formControlName="email">
+        </div>
+        <div class="name">
+            <input type="text" class="global-input" placeholder="First name" formControlName="firstName">
+            <input type="text" class="global-input" placeholder="Last name" formControlName="lastName">
+        </div>
+        <div class="name-message">
+            <p class="global-text small">
+                Enter your first and last name as they appear on your government issued ID
+            </p>
+        </div>
+        <div class="password">
+            <div class="label">
+                <span class="global-text">
+                    Password
+                </span>
+            </div>
+            <input type="password" class="global-input" formControlName="password">
+            <div class="label">
+                <span class="global-text">
+                    Confirm password
+                </span>
+            </div>
+            <input type="password" [class.red]="passwordMessage" class="global-input confirm-password" formControlName="confirmPassword">
+
+            <div class="message" *ngIf="passwordMessage">
+                <span class="global-text red">
+                    {{ passwordMessage }}
+                </span>
+            </div>
+        </div>
+
+        <div class="submit">
+            <button type="submit" class="button orange-button">Create account</button>
+        </div>
+    </form>
+    
+</div>

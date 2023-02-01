@@ -1,0 +1,40 @@
+.app {
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow: auto;
+
+    background: rgb(238, 174, 202);
+    background: -moz-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    background: -webkit-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#eeaeca", endColorstr="#ffd653", GradientType=1);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20vh;
+
+    .box {
+        padding: 32px 24px;
+        background-color: var(--white);
+        border-top-left-radius: var(--default-border-radius);
+        border-top-right-radius: var(--default-border-radius);
+        width: 512px;
+        height: 100%;
+        box-shadow: var(--default-box-shadow);
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .links {
+            margin-top: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+    }
+
+}

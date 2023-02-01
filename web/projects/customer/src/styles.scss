@@ -1,0 +1,32 @@
+
+
+.setup-app {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--default-on-background);
+    padding-top: 20vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .header {
+        display: flex;   
+        width: 624px;
+        justify-content: space-between;
+        padding: 4px;
+
+        .subheader {
+            display: flex;
+            align-items: flex-end;
+        }
+    }
+
+    .box {
+        padding: 24px;
+        width: 624px;
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+        border: 2px solid var(--orange);
+        height: auto;
+    }
+}

@@ -1,0 +1,32 @@
+<div class="app">
+    <div *ngIf="collections && collections.length == 0" class="no-collections">
+        <span class="global-text bold big black">
+            No collections
+        </span>
+    </div>
+    <div class="collections" *ngIf="collections && collections.length > 0">
+        <div class="collection" *ngFor="let collection of collections">
+            <div class="collection-header">
+                <div class="title">
+                    <span class="global-subtitle">
+                        {{ collection.title }}
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button *ngIf="collection.redirectable" class="button">
+                        <span class="text global-text black bigger">MORE</span> <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="dishes">
+                <app-dish *ngFor="let dish of collection.dishes" [collection]="collection.id" [dish]="dish"></app-dish>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!collections" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

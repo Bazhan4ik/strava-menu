@@ -1,0 +1,65 @@
+<div class="app" *ngIf="locations && locations.length > 0">
+    <div class="address-header">
+        <div class="title">
+            <span class="global-text bigger bold">
+                Add address
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="orange-button button">
+                Save
+            </button>
+        </div>
+    </div>
+    <div class="locations" *ngIf="!loading">
+        <button class="location" *ngFor="let location of locations" (click)="select(location)">
+            <div *ngIf="location.id == selected?.id" class="selected">
+                <mat-icon>done</mat-icon>
+            </div>
+            <div class="left">
+                <span class="global-text big black bold">
+                    {{ location.name }}
+                </span>
+            </div>
+            <div class="right">
+                <div class="state">
+                    <span class="global-text big">
+                        {{ location.state }}
+                    </span>
+                </div>
+                <div class="city">
+                    <span class="global-text big">
+                        {{ location.city }}
+                    </span>
+                </div>
+                <div class="line">
+                    <span class="global-text big">
+                        {{ location.line1 }}
+                    </span>
+                </div>
+                <div class="line">
+                    <span class="global-text big">
+                        {{ location.line2 }}
+                    </span>
+                </div>
+                <div class="postal-code">
+                    <span class="global-text big">
+                        {{ location.postalCode }}
+                    </span>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="global-loading height-124" *ngIf="loading">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<div *ngIf="!locations || locations.length == 0" class="app">
+    <span class="global-text big">
+        Add your first location at <a routerLink="../../locations" class="global-link">locations page</a>
+    </span>
+</div>

@@ -1,0 +1,49 @@
+<div class="app setup-app">
+    <div class="header" *ngIf="restaurant">
+        <div class="title">
+            <span class="global-title">
+                {{ restaurant.name }}
+            </span>
+        </div>
+        <div class="subheader">
+            <span class="global-subheader">
+                Select location
+            </span>
+        </div>
+    </div>
+    <div class="box">
+        <div class="locations">
+            <a *ngFor="let location of locations" routerLink="{{ location.id }}" class="location">
+                <div class="name">
+                    <mat-icon>
+                        place
+                    </mat-icon>
+                    <span class="global-text bold black big">
+                        {{ location.name }}
+                    </span>
+                </div>
+                <div class="city">
+                    <span class="global-text">
+                        {{ location.city }}
+                    </span>
+                </div>
+                <div class="line-1">
+                    <span class="global-text">
+                        {{ location.addressLine1 }}
+                    </span>
+                </div>
+                <div class="line-2">
+                    <span class="global-text">
+                        {{ location.addressLine2 }}
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div *ngIf="!locations" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

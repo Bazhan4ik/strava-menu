@@ -1,0 +1,26 @@
+.app {
+    .list {
+        .collection {
+            display: flex;
+            text-decoration: none;
+            border-radius: var(--default-small-radius);
+            padding: 6px;
+
+            .image {
+                img {
+                    width: 64px;
+                    height: 64px;
+                    border-radius: var(--default-small-radius);
+                }
+            }
+
+            .name {
+                padding: 4px;
+            }
+
+            &:hover {
+                background-color: var(--default-on-background);
+            }
+        }
+    }
+}
