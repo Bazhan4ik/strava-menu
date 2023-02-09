@@ -14,6 +14,7 @@
     --default-border-color: #d9d9d9;
 
     --background-modal: rgb(0, 0, 0, 0.2);
+    --background-modal-white: rgb(255, 255, 255, 0.4);
     --default-background: var(--white);
     --default-on-background: rgb(245, 245, 245);
 
@@ -94,4 +95,22 @@
     --red-lighter: #fdedef;
     --sea-lighter: #ecf9ff;
     --brown-lighter: #f5eee6;
+
+
+    --ion-color-orange: #ffc409;
+	--ion-color-orange-rgb: 255,196,9;
+	--ion-color-orange-contrast: #000000;
+	--ion-color-orange-contrast-rgb: 0,0,0;
+	--ion-color-orange-shade: #e0ac08;
+	--ion-color-orange-tint: #ffca22;
 }
+
+.ion-color-orange {
+    --ion-color-base: var(--ion-color-orange);
+    --ion-color-base-rgb: var(--ion-color-orange-rgb);
+    --ion-color-contrast: var(--ion-color-orange-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-orange-contrast-rgb);
+    --ion-color-shade: var(--ion-color-orange-shade);
+    --ion-color-tint: var(--ion-color-orange-tint);
+}
+  

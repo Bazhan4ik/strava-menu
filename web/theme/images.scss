@@ -1,0 +1,15 @@
+.global-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    object-fit: cover;
+
+    &.outline {
+        outline: 2px solid var(--orange);
+    }
+
+    &.small {
+        width: 30px;
+        height: 30px;
+    }
+}

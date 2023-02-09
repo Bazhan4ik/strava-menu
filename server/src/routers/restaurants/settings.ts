@@ -15,7 +15,7 @@ const router = Router({ mergeParams: true });
 
 
 
-router.put("/general", logged(), restaurantWorker({ info: { name: 1, description: 1 } }, { restaurant: { settings: { info: true } } }), async (req, res) => {
+router.put("/general", logged(), restaurantWorker({ info: { name: 1, description: 1 } }, { settings: { info: true } }), async (req, res) => {
     const { restaurant } = res.locals as Locals;
     const { name, description } = req.body;
 
@@ -32,7 +32,7 @@ router.put("/general", logged(), restaurantWorker({ info: { name: 1, description
     res.send({ updated: update.ok == 1 });
 });
 
-router.get("/general", logged(), restaurantWorker({ info: { name: 1, description: 1, } }, { restaurant: { settings: { info: true } } }), async (req, res) => {
+router.get("/general", logged(), restaurantWorker({ info: { name: 1, description: 1, } }, { settings: { info: true } }), async (req, res) => {
     const { restaurant } = res.locals as Locals;
 
 
@@ -43,7 +43,7 @@ router.get("/general", logged(), restaurantWorker({ info: { name: 1, description
 });
 
 
-router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 }, locations: 1 }, { restaurant: { settings: { payments: true } } }), async (req, res) => {
+router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 }, locations: 1 }, { settings: { payments: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
 
     if(!restaurant.stripe?.stripeAccountId) {
@@ -162,7 +162,7 @@ router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 
 
     res.send(response);
 });
-router.post("/payments/address", logged(), restaurantWorker({ stripe: { stripeAccountId: 1, }, locations: 1 }, { restaurant: { settings: { payments: true } } }), async (req, res) => {
+router.post("/payments/address", logged(), restaurantWorker({ stripe: { stripeAccountId: 1, }, locations: 1 }, { settings: { payments: true } }), async (req, res) => {
     const { location: locationId } = req.body;
     const { restaurant, } = res.locals as Locals;
 
@@ -216,7 +216,7 @@ router.post("/payments/address", logged(), restaurantWorker({ stripe: { stripeAc
 
     await updateRestaurant({ _id: restaurant._id, }, { $set: { "locations.$[location].isUsedForStripe": true } }, { arrayFilters: [{ "location._id": location._id }], projection: { _id: 1 } })
 });
-router.post("/payments/dob", logged(), restaurantWorker({ stripe: { stripeAccountId: 1, } }, { restaurant: { settings: { payments: true } } }), async (req, res) => {
+router.post("/payments/dob", logged(), restaurantWorker({ stripe: { stripeAccountId: 1, } }, { settings: { payments: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
     const { dob } = req.body;
 
@@ -261,7 +261,7 @@ router.post("/payments/dob", logged(), restaurantWorker({ stripe: { stripeAccoun
 
     updateUser({ _id: user._id }, { $set: { "info.dob": dob } }, { projection: { _id: 1 } });
 });
-router.post("/payments/name", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 } }, { restaurant: { settings: { payments: true } } }), async (req, res) => {
+router.post("/payments/name", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 } }, { settings: { payments: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
     const { name } = req.body;
 
@@ -290,7 +290,7 @@ router.post("/payments/name", logged(), restaurantWorker({ stripe: { stripeAccou
 
     res.send({ updated: true });
 });
-router.post("/payments/bank-account", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 } }, { restaurant: { settings: { payments: true } } }), async (req, res) => {
+router.post("/payments/bank-account", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 } }, { settings: { payments: true } }), async (req, res) => {
     const { branch, number, institution, name } = req.body;
     const { restaurant } = res.locals as Locals;
 

@@ -4,7 +4,7 @@ import { getDishes } from "../../../utils/dishes.js";
 import { id } from "../../../utils/id.js";
 import { logged } from "../../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../../utils/middleware/restaurant.js";
-import { bufferFromString } from "../../../utils/other/bufferFromString.js";
+import { bufferFromString } from "../../../utils/bufferFromString.js";
 import { Collection } from "../../../models/restaurant.js";
 import { updateRestaurant } from "../../../utils/restaurant.js";
 import { DEFAULT_COLLECTIONS_IDS } from "../../../../resources/data/collections.js";
@@ -19,7 +19,7 @@ router.use("/dishes", DishesRouter);
 
 
 
-router.get("/collections", logged(), restaurantWorker({ collections: 1, }, { restaurant: { dishes: { available: true } } }), async (req, res) => {
+router.get("/collections", logged(), restaurantWorker({ collections: 1, }, { dishes: { available: true } }), async (req, res) => {
     const { restaurant } = res.locals as Locals;
 
     const result = [];
@@ -38,7 +38,7 @@ router.get("/collections", logged(), restaurantWorker({ collections: 1, }, { res
 
     res.send(result);
 });
-router.post("/collections", logged(), restaurantWorker({ collections: 1, }, { restaurant: { collections: { adding: true } } }), async (req, res) => {
+router.post("/collections", logged(), restaurantWorker({ collections: 1, }, { collections: { adding: true } }), async (req, res) => {
     const { name, description, dishes, image } = req.body;
     const { user, restaurant } = res.locals as Locals;
 
@@ -86,7 +86,7 @@ router.post("/collections", logged(), restaurantWorker({ collections: 1, }, { re
 
     res.send({ updated: update.ok == 1 });
 });
-router.put("/collections/:collectionId", logged(), restaurantWorker({}, { restaurant: { collections: { adding: true } } }), async (req, res) => {
+router.put("/collections/:collectionId", logged(), restaurantWorker({}, { collections: { adding: true } }), async (req, res) => {
     const { name, description, dishes, image } = req.body;
     const { restaurant, user } = res.locals as Locals;
     const { collectionId } = req.params; // object id is used here
@@ -127,7 +127,7 @@ router.put("/collections/:collectionId", logged(), restaurantWorker({}, { restau
 
     res.send({ updated: result.ok == 1, id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase() });
 });
-router.get("/collections/dishes-to-select", logged(), restaurantWorker({}, { restaurant: { collections: { adding: true } } }), async (req, res) => {
+router.get("/collections/dishes-to-select", logged(), restaurantWorker({}, { collections: { adding: true } }), async (req, res) => {
     const { restaurant } = res.locals as Locals;
 
 
@@ -147,7 +147,7 @@ router.get("/collections/dishes-to-select", logged(), restaurantWorker({}, { res
     
     res.send(result);
 });
-router.get("/collections/:collectionId", logged(), restaurantWorker({ collections: 1 }, { restaurant: { collections: { availables: true } } }), async (req, res) => {
+router.get("/collections/:collectionId", logged(), restaurantWorker({ collections: 1 }, { collections: { available: true } }), async (req, res) => {
     const { collectionId } = req.params; // converted name id is used here
     const { restaurant } = res.locals as Locals;
 

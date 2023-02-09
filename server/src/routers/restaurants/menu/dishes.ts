@@ -8,9 +8,9 @@ import { addDish, getDish, getDishes, updateDish } from "../../../utils/dishes.j
 import { id } from "../../../utils/id.js";
 import { logged } from "../../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../../utils/middleware/restaurant.js";
-import { bufferFromString } from "../../../utils/other/bufferFromString.js";
-import { getIngredients } from "../../../utils/other/ingredients.js";
-import { getTags } from "../../../utils/other/tags.js";
+import { bufferFromString } from "../../../utils/bufferFromString.js";
+import { getIngredients } from "../../../utils/ingredients.js";
+import { getTags } from "../../../utils/tags.js";
 import { updateRestaurant } from "../../../utils/restaurant.js";
 
 
@@ -20,7 +20,7 @@ const router = Router({ mergeParams: true });
 
 
 
-router.post("/", logged(), restaurantWorker({}, { restaurant: { dishes: { adding: true } } }), async (req, res) => {
+router.post("/", logged(), restaurantWorker({}, { dishes: { adding: true } }), async (req, res) => {
     const { name, price, description, tags, ingredients, image } = req.body;
     const { restaurant, user } = res.locals as Locals;
     console.log(req.body);
@@ -106,7 +106,7 @@ router.post("/", logged(), restaurantWorker({}, { restaurant: { dishes: { adding
         updated: result,
     });
 });
-router.get("/", logged(), restaurantWorker({}, { restaurant: { dishes: { available: true } } }), async (req, res) => {
+router.get("/", logged(), restaurantWorker({}, { dishes: { available: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
 
 
@@ -133,7 +133,7 @@ router.get("/", logged(), restaurantWorker({}, { restaurant: { dishes: { availab
 
     res.send(result);
 });
-router.get("/:dishId", logged(), restaurantWorker({}, { restaurant: { dishes: { available: true } } }), async (req, res) => {
+router.get("/:dishId", logged(), restaurantWorker({}, { dishes: { available: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant } = res.locals as Locals;
 
@@ -168,7 +168,7 @@ router.get("/:dishId", logged(), restaurantWorker({}, { restaurant: { dishes: { 
     res.send(returnDish);
 
 });
-router.put("/:dishId", logged(), restaurantWorker({}, { restaurant: { dishes: { adding: true } } }), async (req, res) => {
+router.put("/:dishId", logged(), restaurantWorker({}, { dishes: { adding: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant, user } = res.locals as Locals;
     const { name, price, ingredients, image, description, tags, } = req.body;
@@ -222,7 +222,7 @@ router.put("/:dishId", logged(), restaurantWorker({}, { restaurant: { dishes: { 
 
     res.send({ updated: result.ok == 1, newId: update["id"] });
 });
-router.get("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { restaurant: { dishes: { available: true } } }), async (req, res) => {
+router.get("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { available: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant } = res.locals as Locals;
 
@@ -252,7 +252,7 @@ router.get("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }
 
     res.send(collections);
 });
-router.put("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { restaurant: { dishes: { adding: true, }, collections: { adding: true } } }), async (req, res) => {
+router.put("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { adding: true, }, collections: { adding: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant } = res.locals as Locals;
     const { collections } = req.body;

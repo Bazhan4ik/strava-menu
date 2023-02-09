@@ -1,0 +1,107 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Orders
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="orders && orders.length > 0" class="list">
+            <div *ngFor="let order of orders" class="order">
+                <a type="button" routerLink="{{ order._id }}" class="order-info">
+                    <div class="customer">
+                        <div class="avatar">
+                            <img [src]="order.customer.avatar" class="global-avatar outline" alt="">
+                        </div>
+                        <div class="name">
+                            <span class="global-text big black bold">
+                                {{ order.customer.name }}
+                            </span>
+                            <span *ngIf="order.customer.staff" class="global-text">
+                                (staff)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <div class="date">
+                            <span class="global-text black">
+                                {{ order.date }}
+                            </span>
+                        </div>
+                        <div class="location">
+                            <span class="global-text black">
+                                {{ order.location }}
+                            </span>
+                        </div>
+                        <div class="total">
+                            <span class="global-text black">
+                                Total: <span class="global-text bold">
+                                    ${{ order.total / 100 }}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <span class="global-badge" [class.green]="order.status == 'done'">
+                            {{ order.status }}
+                        </span>
+                    </div>
+                </a>
+                <div class="dishes">
+                    <div *ngFor="let dish of order.dishes" class="dish">
+                        <div class="dish-info">
+                            <div class="image">
+                                <img [src]="dish.image" alt="">
+                            </div>
+                            <div class="name-price">
+                                <div class="name">
+                                    <span class="global-text black bold">
+                                        {{ dish.name }}
+                                    </span>
+                                </div>
+                                <div class="price">
+                                    <span class="global-text">
+                                        ${{ dish.price / 100 }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="staff">
+                            <div class="cook">
+                                <span class="global-text black">
+                                    cook: <span class="global-text bold">{{ dish.cook.name }}</span>
+                                </span>
+                            </div>
+                            <div class="waiter">
+                                <span class="global-text black">
+                                    waiter: <span class="global-text bold">{{ dish.waiter.name }}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="status">
+                            <span class="global-badge" [class.green]="dish.status == 'served'">
+                                {{ dish.status }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <a routerLink="{{ order._id }}" *ngIf="order.dishesAmount > 2" type="button" class="more">
+                    SEE ALL {{ order.dishesAmount }} DISHES
+                    <mat-icon>chevron_right</mat-icon>
+                </a>
+            </div>
+        </div>
+        <div *ngIf="orders && orders.length == 0" class="no-orders">
+            <span class="global-text big black bold">
+                No orders
+            </span>
+        </div>
+        <div *ngIf="!orders" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

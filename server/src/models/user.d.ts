@@ -9,11 +9,16 @@ interface User {
 
     blacklisted?: ObjectId[];
 
-    restaurants: { restaurantId: ObjectId; redirectTo: "dashboard" | "cook" | "waiter"; }[];
+    restaurants: { restaurantId: ObjectId; redirectTo: "dashboard" | "staff" }[];
 
     orders?: { restaurantId: ObjectId; orderId: ObjectId; }[];
 
     stripeCustomerId?: string;
+
+    avatar?: {
+        buffer: Buffer;
+        modified: number;
+    };
     
     info?: {
         password?: string;
@@ -23,10 +28,6 @@ interface User {
         
         created?: number;
 
-        avatar?: {
-            binary: Buffer;
-            modified: number;
-        };
         name?: {
             first: string;
             last: string;

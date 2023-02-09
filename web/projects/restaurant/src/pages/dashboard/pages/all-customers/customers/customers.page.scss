@@ -1,0 +1,40 @@
+.app {
+    .content {
+        .list {
+            .customer {
+                padding: 8px;
+                display: grid;
+                grid-template-columns: 45% 25% 30%;
+                border-radius: var(--default-border-radius);
+
+                &:hover {
+                    background-color: var(--default-on-background);
+                }
+
+                .profile {
+                    display: flex;
+
+                    .avatar {
+                        display: flex;
+                        align-items: center;
+                        margin: 0 12px;
+                    }
+
+                    .name {
+                        padding: 4px;
+                    }
+                }
+                .total {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .visit {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}

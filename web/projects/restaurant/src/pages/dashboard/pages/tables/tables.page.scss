@@ -1,0 +1,43 @@
+.app {
+    .content {
+        .list {
+            .location {
+                .top {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .name {
+
+                    }
+                }
+                .tables {
+                    padding-top: 12px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 12px;
+
+                    .add {
+                        width: 196px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        button {
+                            background: none;
+                            width: 32px;
+                            height: 32px;
+
+                            mat-icon {
+                                color: var(--gray-dark);
+                                width: 32px;
+                                height: 32px;
+                                font-size: 26px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

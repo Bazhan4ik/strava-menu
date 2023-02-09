@@ -1,0 +1,57 @@
+<div class="app content-page expand">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Tables
+            </span>
+        </div>
+        <div class="buttons">
+            <!-- <button class="orange-button button">
+                <mat-icon>add</mat-icon>
+                Add
+            </button> -->
+        </div>
+    </div>
+    <div class="content">
+        <div class="list" *ngIf="locations && locations.length > 0">
+            <div class="location" *ngFor="let location of locations">
+                <div class="top">
+                    <div class="name">
+                        <span class="global-subtitle">
+                            {{ location.locationName }}
+                        </span>
+                    </div>
+                    <div class="buttons">
+                        <button class="button orange-button" (click)="printAll()">
+                            <mat-icon>print</mat-icon> Print all
+                        </button>
+                    </div>
+                </div>
+                <div class="tables">
+                    <app-table *ngFor="let table of location.tables" [locationId]="location.locationId" (sendUrl)="addDownloadUrl(location.locationId, table.id, $event)" [table]="table"></app-table>
+                    <div class="add">
+                        <button (click)="addTable(location.locationId)" id="add-table-{{ location.locationId }}">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                    <div class="add">
+                        <button (click)="removeTable(location.locationId)" id="remove-table-{{ location.locationId }}">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="locations && locations.length == 0" class="no-locations">
+            <span class="global-text big black bold">
+                Add locations
+            </span>
+        </div>
+        <div *ngIf="!locations" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

@@ -52,6 +52,15 @@
             ],
         },
         {
+            "label": "web:dev:build:staff",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "web:dev:build:staff",
+            ],
+        },
+        {
             "label": "web:dev:build:public",
             "type": "shell",
             "command": "npm",
@@ -88,6 +97,7 @@
                 "web:dev:build:public",
                 "web:dev:build:restaurant",
                 "web:dev:build:customer",
+                "web:dev:build:staff",
             ]
         },
 

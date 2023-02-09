@@ -1,0 +1,61 @@
+<div class="app">
+    <div class="header" *ngIf="user">
+        <div class="title">
+            <a routerLink=".." class="icon-button" type="button">
+                <mat-icon>
+                    arrow_back
+                </mat-icon>
+            </a>
+            <span class="global-subtitle">
+                {{ user.name }}
+            </span>
+        </div>
+    </div>
+    <app-worker-settings (change)="setSettings($event)"></app-worker-settings>
+    <div class="locations">
+        <button [class.selected]="location == l._id" (click)="selectLocation(l._id)" *ngFor="let l of locations" class="location">
+            <div class="left">
+                <div class="icon">
+                    <mat-icon>
+                        place
+                    </mat-icon>
+                </div>
+            </div>
+            <div class="right">
+                <div class="name">
+                    <span class="global-text big black bold">
+                        {{ l.name }}
+                    </span>
+                </div>
+                <div class="city">
+                    <span class="global-text">
+                        {{ l.city }}
+                    </span>
+                </div>
+                <div class="line1">
+                    <span class="global-text">
+                        {{ l.line1 }}
+                    </span>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="buttons">
+        <button (click)="save()" class="orange-button button">
+            Save
+        </button>
+    </div>
+
+    <div *ngIf="!user" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div *ngIf="loading" class="global-loading full-page">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

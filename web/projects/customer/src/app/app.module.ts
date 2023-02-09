@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Interceptor } from '../other/interceptor';
 import { NgxStripeModule } from 'ngx-stripe';
+import { SocketIoModule } from "ngx-socket-io";
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { NgxStripeModule } from 'ngx-stripe';
         AppRoutingModule,
         IonicModule.forRoot(),
         HttpClientModule,
-        NgxStripeModule.forRoot("pk_live_51KNlK6LbfOFI72xWRXoAtn8SftvASaSDw25bxr6vNYfKqkGf5LkJlyS9Thj5Y2mEFZuJMbDOwlIYA8MNyoowX2tg00Mkv9wgP9"),
+        NgxStripeModule.forRoot("pk_test_51KNlK6LbfOFI72xW4xnsuE6JQRte49N0HFiLw9mfQn8JF1JuImLOr2QJZewBZwXiPRNgsS6ebeiOisn3Gebp0zLT00i143bkrp"),
+        SocketIoModule.forRoot({ url: "https://api.mydomain.com:3000", })
     ],
     providers: [
         {

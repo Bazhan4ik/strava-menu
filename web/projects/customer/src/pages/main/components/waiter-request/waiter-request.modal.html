@@ -1,0 +1,26 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="reason">
+            <span *ngIf="request.reason == 'cash'" class="global-text big black bold">
+                Paying with cash
+            </span>
+        </div>
+        <div class="status">
+            <div *ngIf="!request.accepted" class="waiting">
+                <span class="global-tex">
+                    Waiting for waiter to accept
+                </span>
+            </div>
+            <div *ngIf="request.waiter" class="accepted">
+                <span class="global-text black bold">
+                    Waiter is on the way!
+                </span>
+            </div>
+        </div>
+        <div class="buttons">
+            <button (click)="cancel()" class="button orange-button">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>

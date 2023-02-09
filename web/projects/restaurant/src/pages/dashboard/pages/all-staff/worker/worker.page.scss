@@ -1,0 +1,44 @@
+.app {
+    .content {
+        .account {
+            display: flex;
+
+            .avatar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .name-email {
+                padding: 4px 8px;
+            }
+        }
+    }
+}
+
+.modal-app {
+    height: 100%;
+    overflow-y: auto;
+
+    .box {
+        border-top-left-radius: var(--default-border-radius);
+        border-top-right-radius: var(--default-border-radius);
+        min-height: 100%;
+        width: 512px;
+        background-color: var(--default-background);
+        padding: 12px;
+        position: relative;
+        padding-bottom: 100px;
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+    }
+}

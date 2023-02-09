@@ -72,8 +72,7 @@ export class PreviewPage implements OnInit {
     }
 
     async dishMore(ev: any, dish: Dish) {
-        console.log(dish);
-    
+        
         const popoverPosition = ev.target.getBoundingClientRect(ev.target);
 
         const { DishMoreModal } = await import("./modals/dish-more/dish-more.modal");
@@ -107,6 +106,13 @@ export class PreviewPage implements OnInit {
                     for(let i in this.dishes) {
                         if(this.dishes[i]._id == dish._id) {
                             this.dishes.splice(+i, 1);
+                            break;
+                        }
+                    }
+
+                    for(let i in this.service.session.dishes) {
+                        if(this.service.session.dishes[i]._id == dish._id) {
+                            this.service.session.dishes.splice(+i, 1);
                             break;
                         }
                     }

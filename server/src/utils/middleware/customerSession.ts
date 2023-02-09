@@ -13,6 +13,14 @@ function customerSession(sessionProjection: any = { _id: 1 }, userProjection: an
             throw "No restaurant provided in customerSession() middleware";
         }
 
+
+        if(!sessionProjection.info) {
+            sessionProjection.info = { location: 1 };
+        } else if(sessionProjection.info != 1 && !sessionProjection.info.location) {
+            sessionProjection.info.location = 1;
+        }
+
+
         passport.authenticate('jwt', { session: false }, async (err, user, info) => {
 
             if (err) {
@@ -29,8 +37,6 @@ function customerSession(sessionProjection: any = { _id: 1 }, userProjection: an
 
                 const sessionId = req.headers["user-session-id"];
 
-                console.error(sessionId);
-
                 if(!sessionId || typeof sessionId != "string") {
                     if(strict) {
                         return res.status(401).send({
@@ -40,18 +46,16 @@ function customerSession(sessionProjection: any = { _id: 1 }, userProjection: an
 
                     return next();
                 }
+                
+                const session = await getSession(res.locals.restaurant._id, { _id: id(sessionId), status: "ordering" }, { projection: sessionProjection });
 
                 
-                const session = await getSession(res.locals.restaurant._id, { _id: id(sessionId), status: { $ne: "progress" } }, { projection: sessionProjection });
-
-                console.log(session);
                 
                 if(!session && strict) {
                     return res.status(404).send({
                         reason: "SessionNotFound"
                     });
                 }
-
 
                 res.locals.session = session;
 

@@ -1,0 +1,32 @@
+.app {
+    .search {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .users {
+        .user {
+            height: 52px;
+            display: grid;
+            grid-template-columns: 42px 1fr 42px;
+            border-bottom: 1px solid var(--default-border-color);
+
+            .avatar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .name-email {
+                padding: 4px;
+            }
+
+            .buttons {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    }
+}

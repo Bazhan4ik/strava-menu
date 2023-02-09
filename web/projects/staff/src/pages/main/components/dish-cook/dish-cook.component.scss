@@ -1,0 +1,38 @@
+.app {
+    border-radius: var(--default-border-radius);
+    width: 264px;
+    background-color: var(--default-background);
+    box-shadow: var(--default-box-shadow);
+
+    .image {
+        width: 100%;
+        height: 128px;
+
+        img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            border-top-left-radius: var(--default-border-radius);
+            border-top-right-radius: var(--default-border-radius);
+        }
+    }
+
+    .name-id {
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .customer-delay, .cooking-delay {
+        border-top: 1px solid var(--default-border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+    }
+
+    &.orange {
+        outline: 2px solid var(--orange);
+    }
+}

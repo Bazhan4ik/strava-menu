@@ -1,0 +1,241 @@
+<div class="app">
+    <div class="work block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Roles
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Work as cook
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.work.cook"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Work as waiter
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.work.waiter"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dishes block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Dishes
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Adding / changing
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.dishes.adding"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Removing
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.dishes.removing"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="collections block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Collections
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Adding / changing
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.collections.adding"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Removing
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.collections.removing"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="staff block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Staff
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Hiring
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.staff.hiring"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Firing
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.staff.firing"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Changing settings
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.staff.settings"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="customers block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Customers
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Blacklisting
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.customers.blacklisting"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Managing tables and QR codes
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.customers.tables"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="restaurant-locations block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Locations
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Adding / updating
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.locations.adding"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Removing
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.locations.removing"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="restaurant-settings block">
+        <div class="block-header">
+            <span class="global-subtitle">
+                Settings
+            </span>
+        </div>
+        <div class="settings">
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Customers settings
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.settings.customers"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        General restaurant settings
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.settings.info"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+            <div class="option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Payment settings
+                    </span>
+                </div>
+                <div class="value">
+                    <ion-toggle mode="ios" color="orange" [(ngModel)]="settings.settings.payments"
+                        (ionChange)="onChange()"></ion-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

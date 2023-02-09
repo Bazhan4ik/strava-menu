@@ -4,11 +4,11 @@
     height: 100%;
     overflow: auto;
 
-    background: rgb(238, 174, 202);
-    background: -moz-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
-    background: -webkit-radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
-    background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(255, 214, 83, 1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#eeaeca", endColorstr="#ffd653", GradientType=1);
+    background: rgb(255,196,9);
+    background: linear-gradient(90deg, rgba(255,196,9,1) 0%, rgba(255,81,81,1) 50%, rgba(252,176,69,1) 100%);
+    
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
 
     display: flex;
     flex-direction: column;
@@ -37,4 +37,17 @@
         }
     }
 
+}
+
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }

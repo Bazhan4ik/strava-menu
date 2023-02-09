@@ -1,4 +1,7 @@
 <div class="app">
+    <div class="tracking" *ngIf="tracking && tracking.length > 0">
+        <app-mini-tracking [dishes]="tracking"></app-mini-tracking>
+    </div>
     <div *ngIf="collections && collections.length == 0" class="no-collections">
         <span class="global-text bold big black">
             No collections

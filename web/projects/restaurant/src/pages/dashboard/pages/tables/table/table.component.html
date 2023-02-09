@@ -1,0 +1,33 @@
+<div class="app">
+    <div class="top">
+        <div class="qr-code">
+            <qrcode (qrCodeURL)="setDownloadUrl($event)" [qrdata]="qrurl" [margin]="2" [elementType]="'img'" [errorCorrectionLevel]="'M'"></qrcode>
+        </div>
+        <div class="orders">
+            <span class="global-text">
+                Orders:
+                <span class="global-text bold black">
+                    {{ table.orders }}
+                </span>
+            </span>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="id">
+            <span class="global-text big">
+                Table:
+                <span class="global-text big black bold">
+                    {{ table.id }}
+                </span>
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="print()" class="icon-button">
+                <mat-icon>print</mat-icon>
+            </button>
+            <a [href]="downloadUrl" download="{{ locationId }}_table_{{ table.id }}.jpg" class="icon-button">
+                <mat-icon>file_download</mat-icon>
+            </a>
+        </div>
+    </div>
+</div>

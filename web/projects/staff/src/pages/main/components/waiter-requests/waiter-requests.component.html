@@ -1,0 +1,25 @@
+<div class="app">
+    <div class="header">
+        <div class="title">
+            <span class="global-subtitle">
+                Waiter requests
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="list" *ngIf="requests && requests.length > 0">
+            <app-waiter-request (resolved)="onRequestResolved(request._id)" *ngFor="let request of requests" [request]="request"></app-waiter-request>
+        </div>
+        <div class="no-requests" *ngIf="requests && requests.length == 0">
+            <span class="global-text big black bold">
+                No requests
+            </span>
+        </div>
+        <div *ngIf="!requests" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

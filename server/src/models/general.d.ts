@@ -1,11 +1,13 @@
 import { Restaurant } from "./restaurant.js";
-import { Order } from "./session.js";
+import { Session } from "./session.js";
 import { User } from "./user.js";
+import { ObjectId } from "mongodb";
 
 interface Locals {
     user: User;
     restaurant: Restaurant;
-    session: Order;
+    session: Session;
+    location: ObjectId;
 }
 
 

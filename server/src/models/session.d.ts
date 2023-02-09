@@ -3,28 +3,28 @@ import { ObjectId } from "mongodb";
 
 
 
-type OrderType = "dinein" | "takeout";
+type SessionType = "dinein" | "takeout";
 
 /**
  * 
- * @type ordering - when user is not payed for the order yet
- * @type progress - when user payed for the order and the order has some dishes not finished yet
- * @type done - when all the dishes were cooked and served
- * @type removed - when order was removed, should have Order.removed property
+ * @ordering - when user is not payed for the order yet
+ * @progress - when user payed for the order and the order has some dishes not finished yet
+ * @done - when all the dishes were cooked and served
+ * @removed - when order was removed, should have Order.removed property
  * 
  */
-type OrderStatus = "ordering" | "progress" | "done" | "removed";
+type SessionStatus = "ordering" | "progress" | "done" | "removed";
 
 /**
  * 
- * @type ordered - when the dish is not cooked yet, when the customer adds dish to the session it should be "ordered" status even though the order is not confirmed yet
- * @type cooking - when a cook took the dish. cook has to click TAKE button. the dish is not cooked yet.
- * @type cooked - when the dish is cooked and is ready to be served
- * @type served - when the waiter served the dish    --    final status
- * @type removed - when someone deleted the dish. should have Dish.removed property
+ * @ordered - when the dish is not cooked yet, when the customer adds dish to the session it should be "ordered" status even though the order is not confirmed yet
+ * @cooking - when a cook took the dish. cook has to click TAKE button. the dish is not cooked yet.
+ * @cooked - when the dish is cooked and is ready to be served
+ * @served - when the waiter served the dish    --    final status
+ * @removed - when someone deleted the dish. should have Dish.removed property
  * 
  */
-type DishStatus = "ordered" | "cooking" | "cooked" | "served" | "removed";
+type SessionDishStatus = "ordered" | "cooking" | "cooked" | "served" | "removed";
 
 /**
  * 
@@ -36,10 +36,10 @@ type DishStatus = "ordered" | "cooking" | "cooked" | "served" | "removed";
 type WaiterRequestReason = "cash" | "payment" | "other";
 
 
-interface OrderDish {
+interface SessionDish {
     _id: ObjectId;
     dishId: ObjectId; // object id of the dish
-    status: DishStatus; // status of the dish
+    status: SessionDishStatus; // status of the dish
     
     staff?: {
         cook?: ObjectId; // final cook of the dish
@@ -56,16 +56,16 @@ interface OrderDish {
         taken?: number; // the the dish was taken to cook
         cooked?: number; // when the dish was cooked
         served?: number; // when the dish was served to the customer
+    };
 
-        removed?: {
-            time: number; // when was removed
-            userId: ObjectId; // who removed
-            reason: "components" | "other" | string; // what is the reason
-        };
-    }
+    removed?: {
+        time: number; // when was removed
+        userId: ObjectId; // who removed
+        reason: "ingredients" | "other" | string; // what is the reason
+    };
 }
 
-interface OrderPayment {
+interface SessionPayment {
     method?: "card" | "cash"; // payed by
     paymentIntentId?: string; // stripe payment intent id to not generate it everytime user is at checkout
     money?: {
@@ -75,7 +75,7 @@ interface OrderPayment {
     };
 }
 
-interface OrderTiming {
+interface SessionTiming {
     ordered?: number; // time ordered
     connected?: number; // when user connected
 
@@ -94,7 +94,7 @@ interface OrderTiming {
     };
 }
 
-interface OrderCustomer {
+interface SessionCustomer {
     customerId?: ObjectId | null; // customer's ObjectId
     onBehalf?: ObjectId; // waiter's ObjectId
     socketId: string; // socket id to send data
@@ -102,10 +102,11 @@ interface OrderCustomer {
     by: "customer" | "staff"; // ordered by customer or by the staff
 }
 
-interface OrderInfo {
-    type: OrderType; // is the order take out or dine in
+interface SessionInfo {
+    type: SessionType; // is the order take out or dine in
     id: string; // can be table where the customer sits or random generated 4 digit takeout order number
     comment?: string; // comment for the order
+    location: ObjectId;
 }
 
 interface TimelineComponent {
@@ -115,46 +116,53 @@ interface TimelineComponent {
     time: number; // time when action happened
 }
 
-interface Order {
-    _id: ObjectId;
-    status: OrderStatus; // status of the order
-
-    info: OrderInfo;
-    customer: OrderCustomer;
-    timing: OrderTiming;
-    payment?: OrderPayment;
+interface WaiterRequest {
+    reason: WaiterRequestReason; // reason why waiter was requested
+    active: boolean; // true if was not answered by waiter yet
+    _id: ObjectId; // id of the request
     
-    dishes: OrderDish[]; // dishes ordered
+    requestedTime: number; // when requested
+    canceledTime?: number; // when canceled. if waiter is not undefined then it was canceled by customer, if waiterId exists then waiter canceled it
+    acceptedTime?: number; // when waiter accepted the request
+    resolvedTime?: number; // when waiter resolved the request
+    
+    waiterId?: ObjectId; // id of the waiter dealing with the request
 
-    waiterRequests: { // all waiter requests
-        reason: WaiterRequestReason; // reason why waiter was requested
-        active: boolean; // true if was not answered by waiter yet
-        _id: ObjectId; // id of the request
-        
-        requestedTime: number; // when requested
-        requestCanceledTime?: number; // when canceled. if waiter is not undefined then it was canceled by customer, if waiterId exists then waiter canceled it
-        requestAcceptedTime?: number; // when waiter accepted the request
-        requestResolvedTime?: number; // when waiter resolved the request
-        
-        waiterId?: ObjectId; // id of the waiter dealing with the request
+    waiters?: { waiterId: ObjectId; canceledTime: number; }[]; // all the waiters that accepted the request and then quitted it
+}
 
-        otherWaitersId?: ObjectId[]; // all the waiters that accepted the request and then quitted it
-    }[];
+interface Session {
+    _id: ObjectId;
+    
+    status: SessionStatus; // status of the order
 
-    timeline: TimelineComponent[];
+    info: SessionInfo;
+
+    customer: SessionCustomer;
+
+    timing: SessionTiming;
+
+    payment?: SessionPayment;
+    
+    dishes: SessionDish[]; // dishes ordered
+
+    waiterRequests: WaiterRequest[]; // waiter requests
+
+    timeline: TimelineComponent[]; // timeline of the order
 }
 
 
 export {
-    Order,
-    OrderDish,
+    Session,
+    SessionDish,
     WaiterRequestReason,
-    DishStatus,
-    OrderStatus,
-    OrderType,
+    SessionDishStatus,
+    SessionStatus,
+    SessionType,
     TimelineComponent,
-    OrderCustomer,
-    OrderInfo,
-    OrderTiming,
-    OrderPayment
+    SessionCustomer,
+    SessionInfo,
+    SessionTiming,
+    SessionPayment,
+    WaiterRequest
 }

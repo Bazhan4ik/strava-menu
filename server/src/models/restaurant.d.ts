@@ -38,7 +38,11 @@ interface Restaurant {
     settings?: RestaurantSettings;
     collections: Collection[];
     locations?: Location[];
+    customers?: Customer[];
     staff?: Worker[];
+    tables?: {
+        [locationId: string]: Table[]
+    };
 }
 
 
@@ -94,9 +98,22 @@ interface Collection {
     description: string;
 }
 
+interface Table {
+    id: number;
+    _id: ObjectId;
+    orders: ObjectId[];
+}
+
+interface Customer {
+    userId: ObjectId;
+    orders: ObjectId[];
+    last: number;
+}
+
 
 export {
     Restaurant,
     Collection,
     Location,
+    Table,
 }

@@ -36,7 +36,7 @@ export class UserService {
 
     async login(email: string, password: string) {
         const result = await firstValueFrom(
-            this.http.post<{ token: string; expires: number; }>(this.url + "/login", { email: "bazhantt@gmail.com", password: "Kaliman228" }, { headers: { "Skip-Authentication": "true" } })
+            this.http.post<{ token: string; expires: number; }>(this.url + "/login", { email, password }, { headers: { "Skip-Authentication": "true" } })
         );
 
         return true;

@@ -1,0 +1,55 @@
+.app {
+    height: 100%;
+    padding-top: 20vh;
+    background-color: var(--default-on-background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .header {
+        width: 512px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .box {
+        background-color: var(--default-background);
+        width: 512px;
+        border: 2px solid var(--orange);
+        border-radius: var(--default-border-radius);
+        padding: 24px;
+
+        .locations {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+
+
+            .location {
+                border: 2px solid var(--default-border-color);
+                border-radius: var(--default-border-radius);
+                padding: 12px;
+                text-decoration: none;
+                transition: 0.2s all;
+
+                .name {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    mat-icon {
+                        font-size: 20px;
+                        width: 20px;
+                        height: 20px;
+                        color: var(--text-color-gray)
+                    }
+                }
+
+                &:hover {
+                    box-shadow: var(--default-box-shadow);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,51 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Customers
+            </span>
+        </div>
+    </div>    
+    <div class="content">
+
+        <div *ngIf="customers && customers.length > 0" class="list">
+            <div class="customer" *ngFor="let customer of customers">
+                <div class="profile">
+                    <div class="avatar">
+                        <img [src]="customer.avatar" class="global-avatar outline" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ customer.name }}
+                        </span>
+                    </div>
+                </div>
+                <div class="total">
+                    <span class="global-text">
+                        Total spent: <span class="global-text black bold">{{ customer.total / 100 }}</span>
+                    </span>
+                </div>
+                <div class="visit">
+                    <span class="global-text">
+                        Last visit:
+                        <span class="global-text black bold">
+                            {{ customer.date }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="customers && customers.length == 0" class="no-customers">
+            <span class="global-text big black bold">
+                No customers
+            </span>
+        </div>
+
+        <div *ngIf="!customers" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

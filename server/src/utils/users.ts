@@ -29,6 +29,16 @@ async function getUser(filter: Filter<User>, options: FindOptions<User>): Promis
         throw e;
     }
 }
+function getUsers(filter: Filter<User>, options: FindOptions<User>) {
+    try {
+        const result = client.db(mainDBName).collection<User>("users").find(filter, options);
+
+        return result;
+    } catch (e) {
+        console.error("at getUser");
+        throw e;
+    }
+}
 
 
 async function updateUser(filter: Filter<User>, update: UpdateFilter<User>, options: FindOneAndUpdateOptions) {
@@ -36,8 +46,8 @@ async function updateUser(filter: Filter<User>, update: UpdateFilter<User>, opti
         const result = await client.db(mainDBName).collection<User>("users").findOneAndUpdate(filter, update, options);
 
         return {
-            user: result.value,
-            ok: result.ok,
+            user: result?.value,
+            ok: result?.ok,
         }
     } catch (error) {
         console.error("at updateUser");
@@ -49,7 +59,8 @@ async function updateUser(filter: Filter<User>, update: UpdateFilter<User>, opti
 export {
     addUser,
     getUser,
-    updateUser
+    updateUser,
+    getUsers,
 }
 
 

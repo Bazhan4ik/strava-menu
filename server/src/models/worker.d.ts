@@ -6,52 +6,51 @@ interface WorkerSettings {
         waiter?: boolean;
         manager?: boolean;
     };
-    restaurant?: {
-        settings?: {
-            customers?: boolean;
-            payments?: boolean;
-            info?: boolean;
-            available?: boolean;
-        };
-
-        locations?: {
-            available?: boolean;
-
-            adding?: boolean;
-            removing?: boolean;
-        }
-
-        dishes?: {
-            available?: boolean; // if one of the optoins below are true other is true, other lets worker see the list of dishes, dishes info, dishes statistics
-
-            removing?: boolean;
-            adding?: boolean;
-        }
-
-        collections?: {
-            availables?: boolean;
-
-            removing?: boolean;
-            adding?: boolean;
-        }
-
-        staff?: {
-            available?: boolean;
-
-            settings?: boolean;
-            firing?: boolean;
-            hiring?: boolean;
-        }
-
-
-        customers?: {
-            available?: boolean;
-
-            blacklisting?: boolean;
-            tables?: boolean;
-        };
-
+    
+    settings?: {
+        customers?: boolean;
+        payments?: boolean;
+        info?: boolean;
+        available?: boolean;
     };
+
+    locations?: {
+        available?: boolean;
+
+        adding?: boolean;
+        removing?: boolean;
+    }
+
+    dishes?: {
+        available?: boolean; // if one of the optoins below are true other is true, other lets worker see the list of dishes, dishes info, dishes statistics
+
+        removing?: boolean;
+        adding?: boolean;
+    }
+
+    collections?: {
+        available?: boolean;
+
+        removing?: boolean;
+        adding?: boolean;
+    }
+
+    staff?: {
+        available?: boolean;
+
+        settings?: boolean;
+        firing?: boolean;
+        hiring?: boolean;
+    }
+
+
+    customers?: {
+        available?: boolean;
+
+        blacklisting?: boolean;
+        tables?: boolean;
+    };
+
 
     isOwner?: boolean;
 }
@@ -59,11 +58,11 @@ interface WorkerSettings {
 interface Worker {
     userId: ObjectId;
     settings: WorkerSettings;
-    
+
     joined?: number;
 
     locations: ObjectId[];
-    
+
     lastUpdate?: {
         time: number;
         userId: ObjectId;

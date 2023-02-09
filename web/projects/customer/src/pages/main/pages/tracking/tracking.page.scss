@@ -1,0 +1,61 @@
+.app {
+    padding: 0 24px;
+    height: 100%;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .title {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+
+
+    .content {
+        padding-top: 24px;
+        display: flex;
+        gap: 12px;
+
+        .dish {
+            width: 168px;
+
+            .image {
+                img {
+                    border-radius: var(--default-border-radius);
+                    width: 100%;
+                    height: auto;
+                }
+            }
+            .name-status {
+                .status {
+                    margin-top: 6px;
+                    span {
+                        padding: 2px 6px;
+                        border-radius: 4px;
+
+                        &.orange {
+                            background-color: var(--orange);
+                            color: var(--black);
+                        }
+                        &.gray {
+                            background-color: var(--gray);
+                            color: var(--black);
+                        }
+                        &.purple {
+                            background-color: var(--purple);
+                            color: rgb(235, 235, 235);
+                        }
+                        &.green {
+                            background-color: var(--green);
+                            color: rgb(245, 245, 245);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -11,7 +11,7 @@ const router = Router({ mergeParams: true });
 
 
 
-router.post("/", logged(), restaurantWorker({}, { restaurant: { locations: { adding: true } } }), async (req, res) => {
+router.post("/", logged(), restaurantWorker({}, { locations: { adding: true } }), async (req, res) => {
     const { city, state, addressLine1, addressLine2, postalCode, latlng, name } = req.body;
     const { restaurant } = res.locals as Locals;
 
@@ -31,24 +31,32 @@ router.post("/", logged(), restaurantWorker({}, { restaurant: { locations: { add
         latlngParsed = [latlng.lat, latlng.lng];
     }
 
+    const $push: any = {
+        locations: {
+            city: city,
+            country: "CA",
+            postalCode: postalCode,
+            line1: addressLine1,
+            line2: addressLine2,
+            state: state,
+            latlng: latlngParsed!,
+
+
+            name: name,
+            _id: id(),
+            id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase(),
+        }
+    };
+
+    const $set: any = {};
+    $set[`tables.${$push.locations.id}`] = [];
+
     const result = await updateRestaurant(
         { _id: restaurant._id },
-        { $push: {
-            locations: {
-                city: city,
-                country: "CA",
-                postalCode: postalCode,
-                line1: addressLine1,
-                line2: addressLine2,
-                state: state,
-                latlng: latlngParsed!,
-
-
-                name: name,
-                _id: id(),
-                id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase(),
-            }
-        } },
+        {
+            $push, 
+            $set,
+        },
         { projection: { _id: 1 } }
     );
 
@@ -56,7 +64,7 @@ router.post("/", logged(), restaurantWorker({}, { restaurant: { locations: { add
     res.send({ updated: result.ok == 1 });
 });
 
-router.get("/", logged(), restaurantWorker({ locations: 1 }, { restaurant: { locations: { available: true } } }), async (req, res) => {
+router.get("/", logged(), restaurantWorker({ locations: 1 }, { locations: { available: true } }), async (req, res) => {
     const { restaurant } = res.locals as Locals;
 
     if(!restaurant.locations) {

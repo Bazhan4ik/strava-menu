@@ -1,0 +1,15 @@
+.app {
+    .box {
+        width: 324px;
+        padding: 12px;
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+
+        .buttons {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+    }
+}

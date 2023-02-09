@@ -1,0 +1,36 @@
+<div class="app">
+    <div class="header">
+        <div class="title">
+            <span class="global-subtitle">
+                Tracking
+            </span>
+        </div>
+        <div class="buttons">
+            <a type="button" routerLink="tracking" class="button">
+                <span class="text global-text black bigger">MORE</span> <mat-icon>arrow_forward</mat-icon>
+            </a>
+        </div>
+    </div>
+    <div class="dishes">
+        <div *ngFor="let dish of dishes" class="dish">
+            <div class="image">
+                <img [src]="dish.image" alt="">
+            </div>
+            <div class="name-status">
+                <div class="name">
+                    <span class="global-text bold black big">
+                        {{ dish.name }}
+                    </span>
+                </div>
+                <div class="status">
+                    <span *ngIf="dish.status != 'ordered'" [class.orange]="dish.status == 'cooked'" [class.green]="dish.status == 'served'" [class.purple]="dish.status == 'cooking'">
+                        {{ dish.status }}
+                    </span>
+                    <span *ngIf="dish.status == 'ordered'" class="gray">
+                        waiting
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

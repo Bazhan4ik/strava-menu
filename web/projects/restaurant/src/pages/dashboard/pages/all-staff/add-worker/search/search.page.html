@@ -1,0 +1,43 @@
+<div class="app">
+    <div class="search">
+        <input placeholder="Email address" [disabled]="loading" type="text" class="global-input" [(ngModel)]="searchText">
+        <button (click)="search()" [disabled]="loading" class="icon-button orange-button square">
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+    <div *ngIf="loading" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div *ngIf="!loading && (users && users.length > 0)" class="users">
+        <div class="user" *ngFor="let user of users">
+            <div class="avatar">
+                <img [src]="user.avatar" class="global-avatar outline" alt="">
+            </div>
+            <div class="name-email">
+                <div class="name">
+                    <span class="global-text big black bold">
+                        {{ user.name }}
+                    </span>
+                </div>
+                <div class="email">
+                    <span class="global-text">
+                        {{ user.email }}
+                    </span>
+                </div>
+            </div>
+            <div class="buttons">
+                <a type="button" routerLink="{{ user._id }}" class="icon-button.orange-button">
+                    <mat-icon>add</mat-icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="users && users.length == 0" class="no-users">
+        <span class="global-subtitle">
+            No users found
+        </span>
+    </div>
+</div>

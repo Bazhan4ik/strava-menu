@@ -1,0 +1,42 @@
+<div class="app content-page expand">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Staff
+            </span>
+        </div>
+        <div class="buttons">
+            <a type="button" routerLink="add" class="orange-button button">
+                <mat-icon>add</mat-icon>
+                Add worker
+            </a>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="staff && staff.length > 0" class="list">
+            <a type="button" routerLink="{{ worker._id }}" *ngFor="let worker of staff" class="worker">
+                <div class="avatar">
+                    <img [src]="worker.avatar" class="global-avatar outline big" alt="">
+                </div>
+                <div class="name-location">
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ worker.name }}
+                        </span>
+                    </div>
+                    <div class="location">
+                        <span class="global-text">
+                            {{ worker.location?.name }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="global-loading height-124" *ngIf="!staff">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

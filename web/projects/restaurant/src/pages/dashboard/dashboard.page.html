@@ -6,7 +6,13 @@
             </span>
         </div>
         <div class="account">
-            
+            <a [href]="accountUrl" class="icon-button account">
+                <mat-icon>account_circle</mat-icon>
+            </a>
+            <a [href]="staffUrl" class="button orange-button">
+                Staff
+                <mat-icon>chevron_right</mat-icon>
+            </a>
         </div>
     </div>
 
@@ -23,40 +29,52 @@
                 </mat-icon>
                 Home
             </a>
-            <a class="global-link" routerLink="menu" [class.active]="currentPage == 'menu'">
+            <a class="global-link" [class.disabled]="!pages.menu" routerLink="menu" [class.active]="currentPage == 'menu'">
                 <mat-icon>
                     restaurant_menu
                 </mat-icon>
                 Menu
             </a>
-            <a class="global-link" routerLink="locations" [class.active]="currentPage == 'locations'">
+            <a class="global-link" [class.disabled]="!pages.locations" routerLink="locations" [class.active]="currentPage == 'locations'">
                 <mat-icon>
                     place
                 </mat-icon>
                 Locations
             </a>
-            <a class="global-link" [class.active]="currentPage == 'orders'">
+            <a class="global-link" [class.disabled]="!pages.staff" routerLink="staff" [class.active]="currentPage == 'staff'">
+                <mat-icon>
+                    people
+                </mat-icon>
+                Staff
+            </a>
+            <a class="global-link" [class.disabled]="!pages.orders" routerLink="orders" [class.active]="currentPage == 'orders'">
                 <mat-icon>
                     all_inbox
                 </mat-icon>
                 Orders
             </a>
-            <a class="global-link" [class.active]="currentPage == 'customers'">
+            <a class="global-link" [class.disabled]="!pages.customers" routerLink="customers" [class.active]="currentPage == 'customers'">
                 <mat-icon>
                     face
                 </mat-icon>
                 Customers
             </a>
-            <a class="global-link" [class.active]="currentPage == 'analytics'">
+            <a class="global-link" [class.disabled]="!pages.tables" routerLink="tables" [class.active]="currentPage == 'tables'">
+                <mat-icon>
+                    table_restaurant
+                </mat-icon>
+                Tables
+            </a>
+            <!-- <a class="global-link" [class.disabled]="!pages.analytics" [class.active]="currentPage == 'analytics'">
                 <mat-icon>
                     insights
                 </mat-icon>
                 Analytics
-            </a>
+            </a> -->
             <div class="border">
 
             </div>
-            <a class="global-link settings" routerLink="settings" [class.active]="currentPage == 'settings'">
+            <a class="global-link settings" [class.disabled]="!pages.settings" routerLink="settings" [class.active]="currentPage == 'settings'">
                 <mat-icon>
                     settings
                 </mat-icon>

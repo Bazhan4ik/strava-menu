@@ -1,0 +1,24 @@
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+[req_distinguished_name]
+C = CA
+ST = Ontario
+L = St. Thomas
+O = StravaMenu
+OU = Idontknow 
+CN = www.localhost.com
+[v3_req]
+keyUsage = critical, digitalSignature, keyAgreement
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = mydomain.com
+DNS.2 = localhost.com
+DNS.3 = localhost
+DNS.4 = www.localhost.com
+DNS.5 = account.mydomain.com
+DNS.6 = restaurant.mydomain.com
+DNS.7 = www.mydomain.com
+DNS.8 = api.mydomain.com

@@ -1,0 +1,33 @@
+.app {
+    .content {
+        .list {
+            .worker {
+                height: 64px;
+                padding: 8px;
+                width: 100%;
+                display: flex;
+                border-radius: var(--default-small-radius);
+                text-decoration: none;
+
+                &:hover {
+                    background-color: var(--default-on-background);
+                }
+
+                .avatar {
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    margin: 0 12px;
+                }
+
+                .name-location {
+                    height: 100%;
+                }
+
+                &:last-of-type {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+}

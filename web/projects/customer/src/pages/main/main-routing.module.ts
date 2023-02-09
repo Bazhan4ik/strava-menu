@@ -20,6 +20,10 @@ const routes: Routes = [
                 loadComponent: () => import("./pages/checkout/checkout.page").then(c => c.CheckoutPage),
             },
             {
+                path: "tracking",
+                loadComponent: () => import("./pages/tracking/tracking.page").then(c => c.TrackingPage),
+            },
+            {
                 path: ":dishId",
                 loadComponent: () => import("./pages/full-dish/full-dish.page").then(c => c.FullDishPage),
             }

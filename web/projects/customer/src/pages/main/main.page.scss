@@ -30,10 +30,27 @@
             border-top-left-radius: var(--default-border-radius);
             border-top-right-radius: var(--default-border-radius);
             
-            #preview, #checkout {
-                border-radius: var(--default-small-radius);
-                padding: 12px;
-                height: 42px;
+            .buttons {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                #preview {
+                    border-radius: var(--default-small-radius);
+                    padding: 12px;
+                    height: 42px;
+                }
+    
+                #expand-button {
+                    width: 42px;
+                    height: 42px;
+
+                    mat-icon {
+                        height: 26px;
+                        width: 26px;
+                        font-size: 26px;
+                    }
+                }
             }
         }
 
@@ -44,6 +61,42 @@
         }
     }
     
+}
+
+.popover-app {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    .box {
+        background-color: var(--default-background);
+        padding: 8px;
+        border-radius: var(--default-border-radius);
+        width: 234px;
+        position: absolute;
+
+        button {
+            height: 32px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--default-border-color);
+            background: none;
+
+            &:hover {
+                background-color: var(--default-on-background);
+            }
+
+            mat-icon {
+                margin: 0 12px;
+                width: 18px;
+                height: 18px;
+                font-size: 18px;
+            }
+        }
+    };
 }
 
 

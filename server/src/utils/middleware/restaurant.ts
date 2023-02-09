@@ -8,31 +8,53 @@ function restaurantWorker(projection: any = {}, ...settings: WorkerSettings[]) {
 
         const { user } = res.locals as Locals;
 
-        const { restaurantId } = req.params;
+        const { restaurantId, locationId } = req.params;
 
         if(projection) {
             if(!projection.staff) {
                 projection.staff = {};
             }
 
-            projection.staff.settings = 1;
-            projection.staff.userId = 1;
+            if(projection.staff != 1) {
+                projection.staff.settings = 1;
+                projection.staff.userId = 1;
+            }
         }
 
-        const result = await getRestaurant({ "info.id": restaurantId }, { projection: projection, });
+        if(locationId) {
+            projection.locations = { id: 1, _id: 1 };
+        }
+
+        const restaurant = await getRestaurant({ "info.id": restaurantId }, { projection: projection, });
 
 
-        if(!result || !result.staff) {
+
+
+        if(!restaurant || !restaurant.staff) {
             return res.status(404).send({ reason: "RestaurantNotFound" });
         }
 
-        for(let worker of result.staff) {
+        for(let worker of restaurant.staff) {
             if(worker.userId.equals(user._id)) {
-                const allowed = compareWorkerSettings(worker.settings, settings);
 
-                if(allowed) {
+                let locationPassed = true;
 
-                    res.locals.restaurant = result;
+                if(locationId && restaurant.locations) {
+                    locationPassed = false;
+                    for(let location of restaurant.locations) {
+                        if(location.id == locationId) {
+                            locationPassed = true;
+                            res.locals.location = location._id;
+                            break;
+                        }
+                    }
+                }
+
+                const passed = compareWorkerSettings(worker.settings, settings);
+
+                if(passed && locationPassed) {
+
+                    res.locals.restaurant = restaurant;
 
                     return next();
                 }

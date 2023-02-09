@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, UrlTree } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { CustomerService } from '../services/customer.service';
@@ -11,7 +11,9 @@ export class SessionGuard implements CanActivate {
 
     constructor(
         private cookieService: CookieService,
-        private service: CustomerService
+        private service: CustomerService,
+        private router: Router,
+        private route: ActivatedRoute,
     ) { };
 
     async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
@@ -20,11 +22,11 @@ export class SessionGuard implements CanActivate {
 
         const locatioId = route.paramMap.get("locationId");
         const restaurant = route.paramMap.get("restaurantId");
+        const table = route.queryParamMap.get("table");
+        const socketId = await this.service.socketId();
 
 
-        const result = await this.service.init(restaurant!, locatioId!);
-        
-
+        const result = await this.service.init(restaurant!, locatioId!, socketId!, table!);
 
         return result;
     }

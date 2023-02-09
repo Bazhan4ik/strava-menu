@@ -56,8 +56,8 @@ async function updateRestaurant(filter: Filter<Restaurant>, update: UpdateFilter
         const result = await client.db(mainDBName).collection<Restaurant>("restaurants").findOneAndUpdate(filter, update, options);
 
         return {
-            restaurant: result.value,
-            ok: result.ok,
+            restaurant: result?.value,
+            ok: result?.ok,
         };
     } catch (e) {
         console.error("at updateRestaurant()");
@@ -70,22 +70,23 @@ function compareWorkerSettings(
     workerSettings: WorkerSettings,
     compareTo: WorkerSettings[]
 ) {
-    return Object.entries(compareTo).every(([key1, value1]: [string, boolean | object]) => {
-        if(workerSettings.isOwner) {
+    if(workerSettings.isOwner) {
+        return true;
+    }
+
+    for(let settings of compareTo) {
+        const passed = Object.entries(settings).every(([key1, value1]: [string, object]) => {
+            return Object.entries(value1).every(([key2, value2]: [string, boolean]) => {
+                return workerSettings[key1 as keyof WorkerSettings]![key2 as keyof WorkerSettings["collections"]] == value2;
+            });
+        });
+
+        if(passed) {
             return true;
         }
-        if (typeof value1 === "object") {
-            return Object.entries(value1).every(([key2, value2]) => {
-                if(typeof value2 === "object") {
-                    return Object.entries(value2).every(([key3, value3]) => {
-                        return workerSettings[key1 as keyof WorkerSettings]![key2 as keyof WorkerSettings["restaurant"]]![key3 as keyof WorkerSettings["restaurant"]] === value3;
-                    });
-                }
-                return workerSettings[key1 as keyof WorkerSettings]![key2 as keyof WorkerSettings["work"]] === value2;
-            });
-        }
-        return workerSettings[key1 as keyof WorkerSettings] === value1;
-    });
+    }
+    
+    return false;
 }
 
 

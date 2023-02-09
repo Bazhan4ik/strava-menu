@@ -1,0 +1,19 @@
+.app {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    .header {
+        width: 100%;
+        border-bottom: 2px solid var(--default-border-color);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        justify-content: space-between;
+    }
+
+    .content {
+        
+    }
+}

@@ -1,0 +1,55 @@
+<div class="app" [class.orange]="request.waiter">
+    <div class="reason">
+        <span *ngIf="request.reason == 'cash'" class="global-text big black bold">
+            {{ request.customer?.name }} wants to pay with cash
+        </span>
+    </div>
+    <div *ngIf="request.waiter" class="accepted">
+        <div class="waiter">
+            <img [src]="waiterAvatar" class="global-avatar small outline">
+            <div class="name">
+                <span class="global-text black bold">
+                    {{ request.waiter.name }}
+                </span>
+                <span class="global-text">
+                    accepted
+                </span>
+            </div>
+        </div>
+        <div class="time" *ngIf="request.acceptedTime">
+            <span *ngIf="request.acceptedTime.hours" class="hours">
+                {{ request.acceptedTime.hours }} hrs
+            </span>
+            <span class="hours">
+                {{ request.acceptedTime.minutes }} min
+            </span>
+        </div>
+    </div>
+    <div class="money" *ngIf="request.self && request.reason == 'cash'">
+        <span class="global-text">
+            {{ request.customer?.name }} has to pay <span class="global-text bold black">${{ request.total / 100 }}</span>
+        </span>
+    </div>
+    <div class="bottom">
+        <div class="time" *ngIf="request.requestedTime">
+            <span *ngIf="request.requestedTime.hours" class="hours">
+                {{ request.requestedTime.hours }} hrs
+            </span>
+            <span class="hours">
+                {{ request.requestedTime.minutes }} min
+            </span>
+        </div>
+        <div class="buttons">
+            <button class="button green-button" (click)="resolve()" *ngIf="request.self">
+                <span *ngIf="request.reason != 'cash'">
+                    Resolved
+                </span>
+                <span *ngIf="request.reason == 'cash'">
+                    Collected ${{ request.total / 100 }}
+                </span>
+            </button>
+            <button class="button red-button" (click)="cancel()" *ngIf="request.self">Cancel</button>
+            <button class="orange-button button" *ngIf="!request.waiter" (click)="accept()">Accept</button>
+        </div>
+    </div>
+</div>

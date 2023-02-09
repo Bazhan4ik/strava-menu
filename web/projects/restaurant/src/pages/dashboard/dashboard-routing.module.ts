@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { IonMenu } from '@ionic/angular';
 import { DashboardPage } from './dashboard.page';
 
 const routes: Routes = [
@@ -14,13 +15,13 @@ const routes: Routes = [
             },
             {
                 path: "home",
-                loadChildren: () => import("./components/home/home.module").then(m => m.HomeModule),
+                loadChildren: () => import("./pages/home/home.module").then(m => m.HomeModule),
             },
 
 
             {
                 path: "menu",
-                loadChildren: () => import("./components/menu/menu.module").then(m => m.MenuModule),
+                loadChildren: () => import("./pages/all-dishes/menu/menu.module").then(m => m.MenuModule),
             }
             
 
@@ -29,15 +30,15 @@ const routes: Routes = [
 
             {
                 path: "menu/dishes/add",
-                loadChildren: () => import("./components/dishes-m/add-dish/add-dish.module").then(m => m.AddDishModule),
+                loadChildren: () => import("./pages/all-dishes/add-dish/add-dish.module").then(m => m.AddDishModule),
             },
             {
                 path: "menu/dishes/:dishId",
-                loadChildren: () => import("./components/dishes-m/dish/dish.module").then(m => m.DishModule),
+                loadChildren: () => import("./pages/all-dishes/dish/dish.module").then(m => m.DishModule),
             },
             {
                 path: "menu/dishes/:dishId/edit",
-                loadChildren: () => import("./components/dishes-m/edit-dish/edit-dish.module").then(m => m.EditDishModule),
+                loadChildren: () => import("./pages/all-dishes/edit-dish/edit-dish.module").then(m => m.EditDishModule),
             }
             
             
@@ -46,33 +47,82 @@ const routes: Routes = [
 
             {
                 path: "menu/collections/add",
-                loadChildren: () => import("./components/collections-m/add-collection/add-collection.module").then(m => m.AddCollectionModule),
+                loadChildren: () => import("./pages/all-collections/add-collection/add-collection.module").then(m => m.AddCollectionModule),
             },
             {
                 path: "menu/collections/:collectionId",
-                loadChildren: () => import("./components/collections-m/collection/collection.module").then(m => m.CollectionModule),
+                loadChildren: () => import("./pages/all-collections/collection/collection.module").then(m => m.CollectionModule),
             },
             {
                 path: "menu/collections/:collectionId/edit",
-                loadChildren: () => import("./components/collections-m/edit-collection/edit-collection.module").then(m => m.EditCollectionModule),
+                loadChildren: () => import("./pages/all-collections/edit-collection/edit-collection.module").then(m => m.EditCollectionModule),
             }
-            
-            
+
+
             ,
-        
-            
+
+
             {
                 path: "settings",
-                loadChildren: () => import("./components/settings/settings.module").then(m => m.SettingsModule),
-            },
+                loadChildren: () => import("./pages/settings/settings.module").then(m => m.SettingsModule),
+            }
+
+
+            ,
+
+
             {
                 path: "locations",
-                loadChildren: () => import("./components/locations-m/locations/locations.module").then(m => m.LocationsModule),
+                loadChildren: () => import("./pages/all-locations/locations/locations.module").then(m => m.LocationsModule),
             },
             {
                 path: "locations/add",
-                loadChildren: () => import("./components/locations-m/add-location/add-location.module").then(m => m.AddLocationModule),
+                loadChildren: () => import("./pages/all-locations/add-location/add-location.module").then(m => m.AddLocationModule),
+            }
+
+
+            ,
+
+
+            {
+                path: "staff",
+                loadChildren: () => import("./pages/all-staff/staff/staff.module").then(m => m.StaffModule),
             },
+            {
+                path: "staff/add",
+                loadChildren: () => import("./pages/all-staff/add-worker/add-worker.module").then(m => m.AddWorkerModule),
+            },
+            {
+                path: "staff/:userId",
+                loadChildren: () => import("./pages/all-staff/worker/worker.module").then(m => m.WorkerModule),
+            }
+
+
+            ,
+
+
+            {
+                path: "orders",
+                loadChildren: () => import("./pages/orders/orders.module").then(m => m.OrdersModule),
+            }
+
+
+            ,
+
+
+            {
+                path: "customers",
+                loadChildren: () => import("./pages/all-customers/customers/customers.module").then(m => m.CustomersModule),
+            }
+
+
+            ,
+
+
+            {
+                path: "tables",
+                loadChildren: () => import("./pages/tables/tables.module").then(m => m.TablesModule),
+            }
         ]
     },
 ];

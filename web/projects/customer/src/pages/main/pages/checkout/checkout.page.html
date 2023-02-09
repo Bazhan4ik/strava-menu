@@ -76,20 +76,49 @@
         </div>
     </div>
 
-    <div class="payment">
-        <ng-container *ngIf="elementsOptions.clientSecret">
-            <ngx-stripe-payment [clientSecret]="elementsOptions.clientSecret">
-            </ngx-stripe-payment>
-            <button class="button orange-button">
-                PAY
-            </button>
-        </ng-container>
-    </div>
-
     <div *ngIf="!money || !dishes" class="global-loading height-124">
         <div></div>
         <div></div>
         <div></div>
         <div></div>
     </div>
+
+    <div *ngIf="elementsOptions.clientSecret" class="request">
+        <button class="orange-button button" (click)="cash()">
+            PAY WITH CASH
+        </button>
+    </div>
+
+    <div class="payment">
+        <ng-container *ngIf="elementsOptions.clientSecret">
+            <div class="email" *ngIf="showEmailInput">
+                <div class="label">
+                    <span class="global-text">
+                        Email address
+                    </span>
+                </div>
+                <input type="email" [(ngModel)]="email" id="email" class="global-input">
+            </div>
+
+            <ngx-stripe-payment [elementsOptions]="elementsOptions" [clientSecret]="elementsOptions.clientSecret">
+            </ngx-stripe-payment>
+
+            <div class="buttons">
+                <button (click)="pay()" class="button orange-button">
+                    PAY
+                </button>
+            </div>
+        </ng-container>
+
+        <div *ngIf="!elementsOptions.clientSecret || loading" class="global-loading full-page">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+    </div>
 </div>
+
+
+<ng-container #modalContainer></ng-container>

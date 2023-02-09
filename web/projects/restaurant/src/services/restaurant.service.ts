@@ -6,6 +6,7 @@ import { firstValueFrom } from "rxjs";
 interface Restaurant {
     name: string;
     id: string;
+    pages: any;
 }
 
 @Injectable({
@@ -44,6 +45,11 @@ export class RestaurantService {
     put<T>(body: any, ...path: string[]) {
         return firstValueFrom(
             this.http.put<T>(this.base + this.restaurant.id + "/" + path.join("/"), body)
+        );
+    }
+    delete<T>(...path: string[]) {
+        return firstValueFrom(
+            this.http.delete<T>(this.base + this.restaurant.id + "/" + path.join("/")),
         );
     }
 

@@ -1,14 +1,17 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
-import Stripe from "stripe";
 import { Locals } from "../../models/general.js";
-import { OrderDish, OrderType, TimelineComponent } from "../../models/session.js";
+import { SessionDish, SessionType, TimelineComponent, WaiterRequest } from "../../models/session.js";
 import { stripe } from "../../setup/stripe.js";
 import { getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { customerSession } from "../../utils/middleware/customerSession.js";
 import { customerRestaurant } from "../../utils/middleware/customRestaurant.js";
-import { createSession, updateSession } from "../../utils/sessions.js";
+import { createSession, updateSession, updateSessions } from "../../utils/sessions.js";
+import { sendToWaiterCancelWaiterRequest, sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
+import { joinCustomer } from "../../utils/socket/socket.js";
+import { convertTime, getDelay } from "../../utils/time.js";
+import { getUser } from "../../utils/users.js";
 
 
 const router = Router({ mergeParams: true });
@@ -16,9 +19,68 @@ const router = Router({ mergeParams: true });
 
 
 
-router.get("/", customerRestaurant({ info: { name: 1, id : 1 } }), customerSession({ info: 1, dishes: { _id: 1, dishId: 1, info: 1 }, }, {}, false), async (req, res) => {
+router.get("/",
+        customerRestaurant({ info: { name: 1, id : 1 }, tables: 1, locations: { _id: 1, id: 1 } }),
+        customerSession({
+            info: 1,
+            waiterRequests: 1,
+            dishes: {
+                _id: 1,
+                dishId: 1,
+                info: 1
+            },
+        }, {}, false),
+        async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
-    const { socketId, table } = req.params;
+    let { socketId, table: tableId, location } = req.query;
+
+    if(!restaurant.locations || restaurant.locations.length == 0) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    if(!location || typeof location != "string") {
+        return res.status(400).send({ reason: "LocationNotProvided" });
+    }
+
+    const getLocationId = () => {
+
+        for(let l of restaurant.locations!) {
+            if(l.id == location) {
+                return l._id;
+            }
+        }
+
+        return null;
+    }
+    const getTable = () => {
+        if(!tableId || typeof tableId != "string") {
+            return null!;
+        }
+        for(let t of restaurant.tables![location as string]) {
+            if(t._id.equals(tableId as string)) {
+                return t.id;
+            }
+        }
+        return null!;
+    }
+
+    const locationId = getLocationId();
+    const table = getTable();
+
+    console.log(table);
+
+    if(!locationId) {
+        return res.status(400).send({ reason: "InvalidLocation" });
+    }
+
+    if(typeof socketId != "string") {
+        socketId = undefined;
+    } else {
+        joinCustomer(socketId as string, restaurant._id, locationId);
+    }
+
+
+
 
     const response: any = {
         restaurant: {
@@ -26,9 +88,10 @@ router.get("/", customerRestaurant({ info: { name: 1, id : 1 } }), customerSessi
             id: restaurant?.info.id,
         },
     }
+    
 
     if(!session) {
-        
+
         const newSessionId = id();
 
         const newSession = await createSession(restaurant._id, {
@@ -49,8 +112,9 @@ router.get("/", customerRestaurant({ info: { name: 1, id : 1 } }), customerSessi
                 }
             ],
             info: {
-                id: table && !isNaN(+table) ? table : null!,
+                id: table?.toString(),
                 type: "dinein",
+                location: locationId,
             },
             status: "ordering",
             dishes: [],
@@ -59,22 +123,95 @@ router.get("/", customerRestaurant({ info: { name: 1, id : 1 } }), customerSessi
 
         response.session = {
             dishes: [],
-            id: table && !isNaN(+table) ? table : null!,
+            id: table?.toString()!,
             type: "dinein",
         };
 
         response.setSessionId = newSessionId;
     } else {
+
+        const getWaiterRequest = async () => {
+            if(!session.waiterRequests) {
+                return null!;
+            }
+            for(let request of session.waiterRequests) {
+                if(request.active) {
+
+                    let waiter: any = null!;
+
+                    if(request.waiterId) {
+                        const user = await getUser({ _id: request.waiterId }, { projection: { info: { name: 1, }, avatar: 1, } });
+
+                        if(!user) {
+                            console.error("at session.ts getWaiterRequest()");
+                            throw "no waiter account";
+                        };
+
+                        waiter = {
+                            name: `${user.info?.name?.first} ${user.info?.name?.last}`,
+                            avatar: user.avatar?.buffer,
+                        };
+                    }
+
+                    return {
+                        _id: request._id,
+                        reason: request.reason,
+                        active: request.active,
+                        accepted: convertTime(request.acceptedTime),
+                        waiter: waiter,
+                    }
+                }
+            }
+        }
+
         response.session = {
             info: session.info,
-            dishes: session.dishes.map(d => { return { dishId: d.dishId, _id: d._id, comment: d.info.comment } })
+            dishes: session.dishes.map(d => { return { dishId: d.dishId, _id: d._id, comment: d.info.comment } }),
+            waiterRequest: await getWaiterRequest(),
         }
+
+        const $set: any = {
+            "customer.socketId": socketId,
+            "info.location": locationId,
+        };
+
+        if(table) {
+            $set["info.id"] = table.toString();
+        }
+        
+        updateSession(
+            restaurant._id,
+            { _id: session._id },
+            { $set },
+            { noResponse: true },
+        );
     }
 
-    console.log(response);
-
     res.send(response);
+
+
+    if(user) {
+        updateSessions(restaurant._id, { "customer.customerId": user._id }, { $set: { "customer.socketId": socketId } }, { noResponse: true });
+    }
 });
+
+router.post("/socketId", customerRestaurant({ info: { name: 1, id : 1 } }), customerSession({ info: { location: 1, } }, {}, false), async (req, res) => {
+    const { restaurant, session } = res.locals as Locals;
+    const { socketId } = req.body;
+
+    if(!socketId) {
+        return res.status(400).send({ reason: "SocketIdNotProvided" });
+    }
+
+    if(typeof socketId != "string") {
+        return res.status(422).send({ reason: "InvalidInput" });
+    }
+
+    joinCustomer(socketId, restaurant._id, session.info.location);
+
+    res.send({ updated: true });
+});
+
 
 router.put("/comment", customerRestaurant({ }), customerSession({ info: { comment: 1 } }, { }), async (req, res) => {
     const { restaurant, session } = res.locals as Locals;
@@ -105,7 +242,7 @@ router.put("/comment", customerRestaurant({ }), customerSession({ info: { commen
     res.send({ updated: update.ok == 1 });
 });
 
-router.post("/dish", customerRestaurant({  }), customerSession({ }, { }), async (req, res) => {
+router.post("/dish", customerRestaurant({  }), customerSession({ info: { type: 1, id: 1 } }, { info: { name: { last: 1 } } }), async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
     const { dishId, comment } = req.body;
 
@@ -117,12 +254,24 @@ router.post("/dish", customerRestaurant({  }), customerSession({ }, { }), async 
         return res.status(422).send({ reason: "InvalidInput" });
     }
 
-    const newDish: OrderDish = {
+    const dishGeneratedId = () => {
+
+        // 3 random numbers at the end
+        const rand = Math.floor(Math.random() * 900 + 100).toString();
+
+        // either order type first letter (T | D) and 1 number of order id or first letter of last name of the customer
+        const orderIndicator = session.info.id ? session.info.type[0].toUpperCase() + session.info.id[0] : user.info?.name?.last[0];
+
+        return `${orderIndicator}-${rand}`;
+    }
+
+    const newDish: SessionDish = {
         dishId: id(dishId),
         _id: id(),
         status: "ordered",
         info: {
             comment: comment || null!,
+            id: dishGeneratedId(),
         },
     };
 
@@ -276,7 +425,7 @@ router.put("/type", customerRestaurant({ }), customerSession({ info: { type: 1, 
         id = Math.floor(Math.random() * 9000 + 1000).toString();
     }
 
-    const update = await updateSession(restaurant._id, { _id: session._id }, { $set: { "info.type": type as OrderType, "info.id": id! } }, { projection: { _id: 1 } });
+    const update = await updateSession(restaurant._id, { _id: session._id }, { $set: { "info.type": type as SessionType, "info.id": id! } }, { projection: { _id: 1 } });
     
 
     res.send({ updated: update.ok == 1, id });
@@ -285,7 +434,7 @@ router.put("/type", customerRestaurant({ }), customerSession({ info: { type: 1, 
 
 
 
-router.get("/checkout", customerRestaurant({ }), customerSession({ dishes: { dishId: 1, _id: 1 }, payment: 1, }, { stripeCustomerId: 1 }), async (req, res) => {
+router.get("/checkout", customerRestaurant({ }), customerSession({ dishes: { dishId: 1, _id: 1 }, payment: 1, }, { stripeCustomerId: 1, info: { email: 1, } }), async (req, res) => {
     const { session, restaurant, user } = res.locals as Locals;
 
     if(!restaurant.stripe || !restaurant.stripe.stripeAccountId) {
@@ -298,33 +447,124 @@ router.get("/checkout", customerRestaurant({ }), customerSession({ dishes: { dis
         return res.status(500).send({ reason: "InvalidDishes" });
     }
 
-    const paymentIntent = await createPaymentIntent(
-        user?.stripeCustomerId,
-        restaurant.stripe.stripeAccountId,
-        result.money.total,
-        session.payment?.paymentIntentId
-    );
 
-    if(paymentIntent) {
-        const update = await updateSession(restaurant._id,
-            { _id: session._id, },
-            { $set: { "payment.paymentIntentId": paymentIntent.id } },
-            { projection: { _id: 1 } }
-        );
+    if(!result || !result.money.total) {
+        return res.status(403).send({ reason: "InvalidAmount" });
     }
 
-    const { money, dishes } = result;
 
+    const paymentIntent = await createPaymentIntent(
+        {
+            stripeAccountId: restaurant.stripe.stripeAccountId,
+            stripeCustomerId: user?.stripeCustomerId,
+            restaurantId: restaurant._id.toString(),
+            pid: session.payment?.paymentIntentId,
+            sessionId: session._id.toString(),
+            total: result.money.total,
+        }
+    );
+
+    if(!paymentIntent) {
+        return res.status(403).send({ reason: "PaymentState" });
+    }
 
     
-
-
-
+    const { money, dishes } = result;
+    
+    
     res.send({
         money,
         dishes,
         clientSecret: paymentIntent.client_secret,
+        email: user.info?.email,
     });
+
+
+    const update = await updateSession(restaurant._id,
+        { _id: session._id, },
+        { $set: {
+            "payment.paymentIntentId": paymentIntent.id,
+            "payment.money": money,
+        } },
+        { projection: { _id: 1 } }
+    );
+});
+
+router.put("/request/cash", customerRestaurant({ }), customerSession({ payment: { money: { total: 1, }, } }, { info: { name: 1, }, avatar: 1, }), async (req, res) => {
+    const { restaurant, session, user } = res.locals as Locals;
+
+
+    const newRequest: WaiterRequest = {
+        _id: id(),
+        active: true,
+        reason: "cash",
+        requestedTime: Date.now(),
+    };
+
+
+    const update = await updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest } }, { projection: { _id: 1 } });
+
+
+    const request = {
+        _id: newRequest._id,
+        reason: "cash",
+        active: true,
+    }
+
+    res.send({ updated: update.ok == 1, request });
+
+    sendToWaiterWaiterRequest(restaurant._id, session.info.location, {
+        _id: newRequest._id,
+        sessionId: session._id,
+        customer: { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer },
+        requestedTime: getDelay(newRequest.requestedTime),
+        self: false,
+        total: session.payment?.money?.total || null!,
+        reason: "cash",
+    });
+});
+router.put("/request/cancel", customerRestaurant({ }), customerSession({ waiterRequests: 1, }, { }), async (req, res) => {
+    const { restaurant, session } = res.locals as Locals;
+    const { requestId } = req.body;
+
+    if(!requestId) {
+        return res.status(400).send({ reason: "RequestIdNotProvided" });
+    }
+
+    if(!session.waiterRequests || session.waiterRequests.length == 0) {
+        return res.status(400).send({ reason: "NoWaiterRequests" });
+    }
+
+
+    let request: WaiterRequest = null!;
+
+    for(let r of session.waiterRequests) {
+        if(r._id.equals(requestId) && r.active) {
+            request = r;
+            break;
+        } else if(r._id.equals(requestId)) {
+            return res.status(400).send({ reason: "RequestInactive" });
+        }
+    }
+
+    if(!request) {
+        return res.status(404).send({ reason: "RequestNotFound" });
+    }
+
+    const update = await updateSession(
+        restaurant._id,
+        { _id: session._id, },
+        { $set: {
+            "waiterRequests.$[request].active": false,
+            "waiterRequests.$[request].canceledTime": Date.now(),
+        } },
+        { arrayFilters: [ { "request._id": request._id } ], projection: { _id: 1 } },
+    );
+
+    res.send({ updated: update.ok == 1 });
+
+
+    sendToWaiterCancelWaiterRequest(restaurant._id, session.info.location, { sessionId: session._id, requestId: request._id });
 });
 
 
@@ -338,7 +578,7 @@ export {
 
 
 
-async function calculateAmount(restaurantId: ObjectId, ds: OrderDish[]) {
+async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[]) {
     const dishesId: ObjectId[] = [];
 
 
@@ -402,37 +642,50 @@ async function calculateAmount(restaurantId: ObjectId, ds: OrderDish[]) {
     };
 }
 
-async function createPaymentIntent(stripeCustomerId: string = undefined!, stripeAccountId: string, total: number, pid?: string) {
+async function createPaymentIntent(data: {
+    stripeCustomerId?: string;
+    stripeAccountId: string;
+    restaurantId: string;
+    sessionId: string;
+    total: number;
+    pid?: string;
+}) {
+    const { pid, total, stripeAccountId, stripeCustomerId, sessionId, restaurantId } = data;
     if(pid) {
-        const paymentIntent = await stripe.paymentIntents.update(pid, { amount: total });
 
-        return paymentIntent;
+        try {
+            const paymentIntent = await stripe.paymentIntents.update(pid, { amount: total });
+
+
+            return paymentIntent;
+        } catch (e: any) {
+            console.error("at session.ts createPaymentIntent() update");
+
+            if(e.raw.code == "payment_intent_unexpected_state") {
+                return null!;
+            }
+
+            throw e;
+        }
+
     } else {
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: total,
-            on_behalf_of: stripeAccountId,
-            currency: "cad",
-            customer: stripeCustomerId,
-        });
-
-        return paymentIntent;
+        try {
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: total,
+                on_behalf_of: stripeAccountId,
+                currency: "cad",
+                customer: stripeCustomerId || undefined,
+                metadata: {
+                    sessionId,
+                    restaurantId 
+                }
+            });
+    
+            return paymentIntent;
+        } catch (e) {
+            console.error("at session.ts createPaymentIntent() create");
+            throw e;
+        }
     }
 }
 
-
-
-async function a() {
-
-
-
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: 123,
-        currency: "USD",
-        metadata: {
-            
-        }
-    })
-
-
-
-}

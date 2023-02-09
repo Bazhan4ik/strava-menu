@@ -15,12 +15,33 @@
         top: 0;
         left: 0;
         z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 42px;
 
         .title {
             display: flex;
             align-items: center;
-            padding-left: 42px;
             height: 100%;
+        }
+
+        .account {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+
+            a.account {
+                height: 36px;
+                width: 36px;
+
+                mat-icon {
+                    width: 26px;
+                    height: 26px;
+                    font-size: 26px;
+                }
+            }
         }
     }
 
@@ -86,6 +107,12 @@
                     mat-icon {
                         color: var(--orange-dark);
                     }
+                }
+
+                &.disabled {
+                    pointer-events: none;
+                    cursor: not-allowed;
+                    background-color: var(--default-on-background);
                 }
             }
 

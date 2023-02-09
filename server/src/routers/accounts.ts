@@ -204,7 +204,7 @@ ${ securityCode }
 
 
 
-router.get("/", logged({ info: { avatar: 1, name: 1 }, restaurants: 1 }), async (req, res) => {
+router.get("/", logged({  avatar: 1, info: { name: 1 }, restaurants: 1 }), async (req, res) => {
     const { user } = res.locals as Locals;
 
     if(!user.info) {
@@ -232,7 +232,7 @@ router.get("/", logged({ info: { avatar: 1, name: 1 }, restaurants: 1 }), async 
     
     res.send({
         name: user.info.name,
-        avatar: user.info.avatar?.binary,
+        avatar: user.avatar?.buffer,
         restaurants: parsedRestaurants,
     });
 });
@@ -264,6 +264,8 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
             created: Date.now(),
         },
         locations: [],
+        customers: [],
+        tables: {},
         collections: [
             ...DEFAULT_COLLECTIONS,
         ],
