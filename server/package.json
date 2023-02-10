@@ -4,7 +4,9 @@
     "description": "Server for StravaMenu",
     "main": "index.js",
     "license": "ISC",
-    "scripts": {},
+    "scripts": {
+        "build:prod": "npm install && npx tsc -p tsconfig.prod.json"
+    },
     "type": "module",
     "dependencies": {
         "chalk": "^5.2.0",

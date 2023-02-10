@@ -10,7 +10,7 @@
         "server:dev:start": "npx nodemon server/dist/src/index.js",
         "server:dev:build": "npx tsc -p server/tsconfig.dev.json -w",
 
-        "server:prod:build": "cd server && npm install && npx tsc -p tsconfig.prod.json",
+        "server:prod:build": "cd server && npm run build:prod",
         "server:prod:start": "node server/dist/src/index.js",
 
         "web:dev:build:account": "cd ./web && npm run build:dev:account",
