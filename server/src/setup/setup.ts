@@ -23,7 +23,10 @@ app.use(cors({
     credentials: true,
     origin: [
         "https://restaurant.mydomain.com:3000",
-        "https://account.mydomain.com:3000"
+        "https://account.mydomain.com:3000",
+        
+        "https://restaurant.stravamenu.com",
+        "https://account.stravamenu.com",
     ]
 }));
 
