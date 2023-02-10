@@ -111,6 +111,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "environment/environment.ts",
+                                    "with": "environment/environment.prod.ts"
+                                }
+                            ],
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -285,6 +291,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "environment/environment.ts",
+                                    "with": "environment/environment.prod.ts"
+                                }
+                            ],
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -455,6 +467,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "environment/environment.ts",
+                                    "with": "environment/environment.prod.ts"
+                                }
+                            ],
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -625,6 +643,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "environment/environment.ts",
+                                    "with": "environment/environment.prod.ts"
+                                }
+                            ],
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -795,6 +819,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "environment/environment.ts",
+                                    "with": "environment/environment.prod.ts"
+                                }
+                            ],
                             "budgets": [
                                 {
                                     "type": "initial",
