@@ -21,10 +21,15 @@ const app = express();
 app.use(morgan("dev"));
 app.use(cors({
     credentials: true,
-    origin: [
-        "https://restaurant.mydomain.com:3000",
-        "https://account.mydomain.com:3000",
-    ]
+    origin: (origin: any) => {
+        console.log(origin);
+        return [
+            "https://restaurant.mydomain.com:3000",
+            "https://account.mydomain.com:3000",
+            "https://restaurant.stravamenu.com",
+            "https://account.stravamenu.com",
+        ].includes(origin);
+    }
 }));
 
 
