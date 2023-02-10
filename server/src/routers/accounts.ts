@@ -47,12 +47,7 @@ router.post("/login", async (req, res) => {
 
     const token = createJWT({ expires: Date.now() + 86_400_000, userId: user._id.toString() });
 
-    res.cookie("smjwt", token, {
-        secure: true,
-        sameSite: "none",
-        domain: ".mydomain.com",
-        expires: new Date(Date.now() + 86_400_000),
-    }).send({ token, expires: Date.now() + 86_400_000 });
+    res.send({ token, expires: Date.now() + 86_400_000 });
 });
 
 router.post("/create", async (req, res) => {

@@ -28,22 +28,25 @@ export class UserService {
 
         if(result.token) {
             // this.cookieService.set("smjwt", result.token, new Date(result.expires), "/");
-            this.cookieService.set("smjwt", result.token, new Date(result.expires), "/", "mydomain.com");
+            this.cookieService.set("smjwt", result.token, new Date(result.expires), "/", env.domain);
         }
 
         return true;
     }
 
     async login(email: string, password: string) {
-        const result = await firstValueFrom(
+        const result = await firstValueFrom<{ token: string, expires: number; }>(
             this.http.post<{ token: string; expires: number; }>(this.url + "/login", { email, password }, { headers: { "Skip-Authentication": "true" } })
         );
+
+        
+        this.cookieService.set("smjwt", result.token, new Date(result.expires), "/", `.${env.domain}`);
 
         return true;
     }
 
     logout() {
-        this.cookieService.deleteAll("/", ".mydomain.com");
+        this.cookieService.deleteAll("/", `.${env.domain}`);
 
         this.router.navigate(["login"]);
     }
