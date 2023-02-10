@@ -43,10 +43,13 @@ restaurantApp.use("/", express.static(path.join(process.cwd(), "web/dist/custome
 
 apiApp.use(cors({
     credentials: true,
-    origin: [
-        "https://restaurant.stravamenu.com",
-        "https://account.stravamenu.com",
-    ]
+    origin: (origin: any) => {
+        console.log(origin);
+        return [
+            "https://restaurant.stravamenu.com",
+            "https://account.stravamenu.com",
+        ].includes(origin);
+    }
 }));
 
 apiApp.use(express.json({ limit: "50mb" }));
