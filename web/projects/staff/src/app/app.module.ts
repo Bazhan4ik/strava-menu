@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { SocketIoModule } from 'ngx-socket-io';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from '../other/interceptor';
+import { env } from 'environment/environment';
 
 @NgModule({
     declarations: [
@@ -16,7 +17,7 @@ import { AuthInterceptor } from '../other/interceptor';
         BrowserModule,
         AppRoutingModule,
         IonicModule.forRoot(),
-        SocketIoModule.forRoot({ url: 'https://api.mydomain.com:3000', options: {} }),
+        SocketIoModule.forRoot({ url: env.apiUrl, options: {} }),
         HttpClientModule,
     ],
     providers: [

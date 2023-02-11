@@ -22,7 +22,6 @@ app.use(morgan("dev"));
 app.use(cors({
     credentials: true,
     origin: function (origin, callback) {
-        console.log(origin);
         callback(null, true);
     }
 }));    
@@ -44,7 +43,6 @@ restaurantApp.use("/", express.static(path.join(process.cwd(), "web/dist/custome
 apiApp.use(cors({
     credentials: true,
     origin: function (origin, callback) {
-        console.log(origin);
         callback(null, true);
     }
 }));

@@ -10,7 +10,8 @@ import { StaffService } from '../../services/staff.service';
 export class MainPage implements OnInit {
 
     restaurant: any;
-    dashboardUrl: string;
+    redirectUrl: string;
+    redirectText: string;
 
     constructor(
         private service: StaffService,
@@ -19,6 +20,14 @@ export class MainPage implements OnInit {
 
     ngOnInit(): void {
         this.restaurant = this.service.restaurant;
-        this.dashboardUrl = env.restaurantUrl + "/dashboard/" + this.restaurant.id;
+
+        if(this.restaurant.redirectTo == "dashboard") {
+            this.redirectText = "Dashboard";
+            this.redirectUrl = env.restaurantUrl + "/dashboard/" + this.restaurant.id;
+        } else {
+            this.redirectText = "Account";
+            this.redirectUrl = env.accountUrl + "/home";
+        }
+        
     }
 }

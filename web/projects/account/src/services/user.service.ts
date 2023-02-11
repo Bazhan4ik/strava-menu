@@ -27,8 +27,7 @@ export class UserService {
         );
 
         if(result.token) {
-            // this.cookieService.set("smjwt", result.token, new Date(result.expires), "/");
-            this.cookieService.set("smjwt", result.token, new Date(result.expires), "/", env.domain);
+            this.cookieService.set("smjwt", result.token, new Date(result.expires), "/", `.${env.domain}`);
         }
 
         return true;
@@ -39,7 +38,6 @@ export class UserService {
             this.http.post<{ token: string; expires: number; }>(this.url + "/login", { email, password }, { headers: { "Skip-Authentication": "true" } })
         );
 
-        
         this.cookieService.set("smjwt", result.token, new Date(result.expires), "/", `.${env.domain}`);
 
         return true;

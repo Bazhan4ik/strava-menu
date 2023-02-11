@@ -79,7 +79,7 @@ router.get("/", logged(), restaurantWorker({ locations: 1, }, { customers: { ava
             dishMap.set(dish._id.toString(), {
                 name: dish.info.name,
                 price: dish.info.price,
-                image: dish.library.preview,
+                image: dish.library?.preview,
             });
         }
 

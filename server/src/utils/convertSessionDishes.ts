@@ -95,7 +95,7 @@ async function convertSessionDishes(data: {
             
             dish: {
                 name: dish.info.name,
-                image: dish.library.preview,
+                image: dish.library?.preview,
             },
             
             time: {                
@@ -146,7 +146,7 @@ async function convertMultipleSessionsSessionDishes(restaurantId: ObjectId, sess
         const dishesMap = new Map<string, { name: string; image: any; }>();
 
         for(let dish of dishes) {
-            dishesMap.set(dish._id.toString(), { name: dish.info.name, image: dish.library.preview });
+            dishesMap.set(dish._id.toString(), { name: dish.info.name, image: dish.library?.preview });
         }
 
         const usersMap = new Map<string, { name: string; avatar: any; }>();
@@ -273,7 +273,7 @@ async function convertOneSessionDish(data: {
 
         dish: {
             name: dish?.info.name,
-            image: dish.library.preview,
+            image: dish.library?.preview,
         },
     };
 

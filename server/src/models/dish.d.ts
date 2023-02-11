@@ -18,7 +18,7 @@ interface Dish {
         price: number;
     };
 
-    library: {
+    library?: {
         preview: Buffer;
         modified: number;
         userId: ObjectId;

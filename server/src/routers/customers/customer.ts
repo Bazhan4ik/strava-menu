@@ -163,7 +163,7 @@ router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (re
             name: dish.info.name,
             price: dish.info.price,
             description: dish.info.description,
-            images: dish.library.list,
+            images: dish.library?.list,
             _id: dish._id,
         }
     }
@@ -247,7 +247,7 @@ router.get("/tracking", customerRestaurant({ }), customerSession({}, {}), async 
     const getMap = () => {
         const result = new Map<string, { name: string; image: any }>();
         for(let dish of dishes) {
-            result.set(dish._id.toString(), { name: dish.info.name, image: dish.library.list[0] });
+            result.set(dish._id.toString(), { name: dish.info.name, image: dish.library?.list[0] });
         }
         return result;
     }

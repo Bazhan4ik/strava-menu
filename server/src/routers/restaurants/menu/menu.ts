@@ -186,7 +186,7 @@ router.get("/collections/:collectionId", logged(), restaurantWorker({ collection
                 convertedDishes.push({
                     name: dish.info.name,
                     id: dish.id,
-                    image: dish.library.preview,
+                    image: dish.library?.preview,
                     _id: dish._id,
                 });
                 break;

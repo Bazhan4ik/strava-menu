@@ -19,7 +19,7 @@ export class LoggedInGuard implements CanActivate {
         const cookie = this.cookieService.get("smjwt");
 
         if(!cookie) {
-            window.location.href = (env.accountUrl + "/login" + "?ll=" + encodeURIComponent(this.router.url));
+            window.location.href = `${env.accountUrl}/login?ll=${ encodeURIComponent(`${env.restaurantUrl}/dashboard${this.router.url}`) }`;
         }
 
         return !!cookie;

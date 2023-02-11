@@ -34,7 +34,7 @@ export class DishesPage implements OnInit {
         this.dishes = result;
 
         for(let dish of this.dishes) {
-            dish.imageConverted = getImage(dish.image);
+            dish.imageConverted = getImage(dish.image) || "./../../../../../../../../../../global-resources/images/no-image.svg";
         }
 
         console.log(result);

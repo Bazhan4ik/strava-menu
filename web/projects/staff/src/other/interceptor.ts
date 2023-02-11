@@ -33,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
                 if(err.status == 401 || err.error.reason == "TokenInvalid" || err.error.reason == "AccountNotFound") {
                     this.cookieService.delete("smjwt");
-                    window.location.href = env.accountUrl + "/login";
+                    window.location.href = `${env.accountUrl}/login?ll=${ encodeURIComponent(`${env.restaurantUrl}/staff${this.router.url}`) }`;
                 } else if(err.status == 403) {
                     if(err.error.reason == "RestrictedAccount") {
                         this.router.navigate(["verification"]);

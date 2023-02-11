@@ -9,6 +9,8 @@ export class BankAccountContainer {
 
     name: string;
 
+    loading = false;
+
     number: string;
     branch: string;
     institution: string;
@@ -62,6 +64,7 @@ export class BankAccountContainer {
 
 
     save() {
+        this.loading = true;
         this.leave.emit({
             number: this.number,
             branch: this.branch,

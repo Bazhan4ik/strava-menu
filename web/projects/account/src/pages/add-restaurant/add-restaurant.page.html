@@ -28,7 +28,7 @@
 
             </div>
             <div class="submit">
-                <button (click)="submit()" class="orange-button button">
+                <button [disabled]="disableButton" (click)="submit()" class="orange-button button">
                     Add restaurant
                 </button>
             </div>

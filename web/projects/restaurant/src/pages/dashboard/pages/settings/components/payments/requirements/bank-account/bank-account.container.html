@@ -6,12 +6,12 @@
             </span>
         </div>
         <div class="buttons">
-            <button (click)="save()" class="orange-button button">
+            <button (click)="save()" [disabled]="loading" class="orange-button button">
                 Save
             </button>
         </div>
     </div>
-    <div class="form">
+    <div class="form" *ngIf="!loading">
         <div class="number">
             <div class="label">
                 <span class="global-text">
@@ -47,5 +47,11 @@
             </div>
             <input [(ngModel)]="name" class="global-input" type="text">
         </div>
+    </div>
+    <div *ngIf="loading" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
     </div>
 </div>

@@ -33,6 +33,12 @@ interface Restaurant {
             };
         };
     };
+
+    ingredients: {
+        prices: IngredientPrice[];
+        current: IngredientsUsage[];
+        history: IngredientsUsage[];
+    };
     
     blacklist?: (ObjectId | string)[];
     settings?: RestaurantSettings;
@@ -40,9 +46,8 @@ interface Restaurant {
     locations?: Location[];
     customers?: Customer[];
     staff?: Worker[];
-    tables?: {
-        [locationId: string]: Table[]
-    };
+    
+    tables?: { [locationId: string]: Table[]; };
 }
 
 
@@ -110,8 +115,20 @@ interface Customer {
     last: number;
 }
 
+interface IngredientPrice {
+    id: string;
+    price: number;
+}
+
+interface IngredientsUsage {
+    id: string;
+    amount: number;
+    price?: number;
+}
 
 export {
+    IngredientPrice,
+    IngredientsUsage,
     Restaurant,
     Collection,
     Location,

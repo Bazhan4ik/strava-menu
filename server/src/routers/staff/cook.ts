@@ -2,7 +2,9 @@ import { Router } from "express";
 import { Locals } from "../../models/general.js";
 import { SessionDish } from "../../models/session.js";
 import { convertMultipleSessionsSessionDishes, convertOneSessionDish } from "../../utils/convertSessionDishes.js";
+import { updateDish } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
+import { updateIngredientsUsage } from "../../utils/ingredients.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { getSessions, updateSession } from "../../utils/sessions.js";
@@ -181,6 +183,8 @@ router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), a
         convertedSessionDish,
     );
     sendToCustomerDishStatus(restaurant._id, update.session?.customer.socketId!, { sessionDishId: id(sessionDishId), status: "cooked" });
+
+    updateIngredientsUsage(restaurant._id, sessionDish.dishId);
 });
 
 

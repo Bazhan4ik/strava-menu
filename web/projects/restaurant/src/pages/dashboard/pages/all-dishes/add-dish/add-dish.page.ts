@@ -20,6 +20,7 @@ export class AddDishPage implements OnInit {
     timeout: any;
     form: FormGroup;
 
+    imageChanged = false;
     image: string = "./../../../../../../../dashboard/global-resources/images/no-image.svg"; 
     // add dashboard to get the image. this app is served on /dashboard route and without the dashboard added in this path angular will try to get the image from 
     // "https://restaurant.example.com/", should from "https://restaurant.example.com/dashboard". There should be a better solution
@@ -38,6 +39,9 @@ export class AddDishPage implements OnInit {
     
 
 
+    removeImage() {
+        this.image = "./../../../../../../../dashboard/global-resources/images/no-image.svg";
+    }
 
     onInput(ev: any) {
         clearTimeout(this.timeout);
@@ -94,6 +98,7 @@ export class AddDishPage implements OnInit {
 
         component.instance.leave.subscribe((image: string) => {
             if(image) {
+                this.imageChanged = true;
                 this.image = image;
             }
             component.destroy();
@@ -102,9 +107,6 @@ export class AddDishPage implements OnInit {
     }
 
     async save() {
-        console.log(this.form.value, this.ingredients);
-
-        
         if(!this.form.valid || this.form.value.price < 1) {
             return;
         }
@@ -113,10 +115,10 @@ export class AddDishPage implements OnInit {
             ...this.form.value,
             price: this.form.value.price * 100,
             ingredients: this.ingredients,
-            image: {
+            image: this.imageChanged ? {
                 base64: this.image,
                 resolution: 1
-            },
+            } : undefined,
         }, "menu/dishes");
         
         if(result.updated) {

@@ -58,9 +58,7 @@ export class CollectionPage implements OnInit {
         }
 
         for(let dish of this.dishes) {
-            if(dish.image) {
-                dish.image = getImage(dish.image) || "./../../../../../../../../global-resources/images/no-image.svg";
-            }
+            dish.image = getImage(dish.image) || "./../../../../../../../../global-resources/images/no-image.svg";
         }
 
         console.log(result);

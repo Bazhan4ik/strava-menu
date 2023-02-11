@@ -125,7 +125,7 @@ router.get("/", logged(), restaurantWorker({}, { dishes: { available: true } }),
             name: dish.info.name,
             price: dish.info.price,
             id: dish.id,
-            image: dish.library.preview,
+            image: dish.library?.preview,
             _id: dish._id,
         });
     }

@@ -75,8 +75,6 @@ router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 
     }
 
 
-    console.log(account.requirements!.currently_due);
-
     const isRequired = (p: string) => {
         if(account.requirements!.currently_due?.includes(p)) {
             return true;
@@ -105,18 +103,14 @@ router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 
         !isRequired("individual.address.state") &&
         !isRequired("individual.address.day")
     ) {
-        if(restaurant.locations) {
-            for(let location of restaurant.locations) {
-                if(location.isUsedForStripe) {
-                    response.address = {        // or use account.company.address instead
-                        line1: location.line1,
-                        line2: location.line2,
-                        city: location.city,
-                        state: location.state,
-                        postalCode: location.postalCode,
-                    };
-                }
-            }
+        if(account.company?.address) {
+            response.address = {
+                line1: account.company.address.line1,
+                line2: account.company.address.line2,
+                city: account.company.address.city,
+                state: account.company.address.state,
+                postalCode: account.company.address.postal_code,
+            };
         }
     } else {
         response.locations = restaurant.locations;
@@ -130,35 +124,6 @@ router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 
         response.name = true;
     }
 
-
-    for (let i of account.requirements.currently_due!) { // hover for info        
-        // switch (i) {
-        //     case "external_account":
-        //         verificationUrl = `bank-account`;
-        //         break;
-        //     case "individual.address.city":
-        //         verificationUrl = `address`;
-        //         break;
-        //     case "individual.address.line1":
-        //         verificationUrl = `address`;
-        //         break;
-        //     case "individual.address.postal_code":
-        //         verificationUrl = `address`;
-        //         break;
-        //     case "individual.address.state":
-        //         verificationUrl = `address`;
-        //         break;
-        //     case "individual.dob.day":
-        //         verificationUrl = `dob`;
-        //         break;
-        //     case "individual.first_name":
-        //         verificationUrl = `name`;
-        //         break;
-        //     case "individual.last_name":
-        //         verificationUrl = `name`;
-        //         break;
-        // }
-    }
 
     res.send(response);
 });

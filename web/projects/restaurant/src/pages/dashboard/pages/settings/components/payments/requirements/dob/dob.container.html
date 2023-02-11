@@ -6,7 +6,7 @@
             </span>
         </div>
         <div class="buttons">
-            <button (click)="save()" class="orange-button button">Save</button>
+            <button [disabled]="loading" (click)="save()" class="orange-button button">Save</button>
         </div>
     </div>
     <div class="input" *ngIf="!loading">

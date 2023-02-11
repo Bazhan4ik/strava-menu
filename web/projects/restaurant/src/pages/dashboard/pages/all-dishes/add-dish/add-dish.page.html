@@ -16,6 +16,9 @@
         <div class="image">
             <div class="image">
                 <img [src]="image" alt="">
+                <button *ngIf="imageChanged" (click)="removeImage()" class="icon-button" id="remove-image">
+                    <mat-icon>delete</mat-icon>
+                </button>
             </div>
             <div class="buttons">
                 <button (click)="setImage()" class="orange-button button">
@@ -46,20 +49,6 @@
                 </span>
             </div>
             <textarea formControlName="description" class="global-input vertical"></textarea>
-        </div>
-        <div class="tags">
-            <div class="label">
-                <span class="global-text">
-                    Select tags
-                </span>
-            </div>
-            <tag-input (onAdd)="onTagAdded()" formControlName="tags" (input)="onInput($event)" [identifyBy]="'id'" [displayBy]="'title'" [onlyFromAutocomplete]="true">
-                <tag-input-dropdown [showDropdownIfEmpty]="true" [autocompleteItems]="autocomplete">
-                    <ng-template let-item="item" let-index="index">
-                        {{ item.display }}
-                    </ng-template>
-                </tag-input-dropdown>
-            </tag-input>
         </div>
         <div class="ingredients">
             <div class="selected" *ngIf="ingredients && ingredients.length > 0">

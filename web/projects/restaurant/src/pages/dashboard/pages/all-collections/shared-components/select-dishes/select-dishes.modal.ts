@@ -60,15 +60,13 @@ export class SelectDishesModal implements OnInit {
 
 
     async ngOnInit() {
-        console.log("HELLO PLEASE WQH");
         const result: Dish[] = await this.service.get("menu/collections/dishes-to-select");
 
-        console.log(result);
 
         for(let dish of result) {
             this.dishes.push({
                 name: dish.name,
-                image: getImage(dish.image),
+                image: getImage(dish.image) || "./../../../../../../../../../global-resources/images/no-image.svg",
                 id: dish.id,
                 _id: dish._id,
             });

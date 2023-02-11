@@ -19,14 +19,13 @@ function restaurantWorker(projection: any = {}, ...settings: WorkerSettings[]) {
                 projection.staff.settings = 1;
                 projection.staff.userId = 1;
             }
-        }
 
-        if(locationId) {
-            projection.locations = { id: 1, _id: 1 };
+            if(locationId && projection.locations != 1) {
+                projection.locations = { id: 1, _id: 1 };
+            }
         }
 
         const restaurant = await getRestaurant({ "info.id": restaurantId }, { projection: projection, });
-
 
 
 

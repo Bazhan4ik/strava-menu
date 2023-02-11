@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { env } from 'environment/environment.prod';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -32,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
                 if(err.status == 401 || err.error.reason == "TokenInvalid" || err.error.reason == "AccountNotFound") {
                     this.cookieService.delete("smjwt");
-                    this.router.navigate(["login"]);
+                    window.location.href = `${env.accountUrl}/login?ll=${ encodeURIComponent(`${env.restaurantUrl}/dashboard${this.router.url}`) }`;
                 } else if(err.status == 403) {
                     if(err.error.reason == "RestrictedAccount") {
                         this.router.navigate(["verification"]);

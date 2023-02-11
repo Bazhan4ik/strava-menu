@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
 })
 export class AddRestaurantPage {
     name: string;
+    disableButton = false;
 
     constructor(
         private service: UserService,
@@ -16,10 +17,13 @@ export class AddRestaurantPage {
     ) {}
 
     async submit() {
+        this.disableButton = true;
         const result: any = await this.service.post({ name: this.name }, "add-restaurant");
 
         if(result.added) {
             this.router.navigate(["home"]);
+        } else {
+            this.disableButton = false;
         }
     }
 }

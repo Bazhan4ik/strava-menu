@@ -59,7 +59,7 @@ export class CollectionsPage implements OnInit {
                 name: collection.name,
                 id: collection.id,
                 _id: collection._id,
-                image: getImage(collection.image),
+                image: getImage(collection.image) || "./../../../../../../../../../../global-resources/images/no-image.svg",
             });
         }
 

@@ -11,6 +11,7 @@ import { addUser, getUser, updateUser } from "../utils/users.js";
 import { Locals } from "../models/general.js";
 import { DEFAULT_COLLECTIONS } from "../../resources/data/collections.js";
 import { stripe } from "../setup/stripe.js";
+import { getEmptyIngredientsUsage } from "../utils/ingredients.js";
 
 
 const router = Router();
@@ -257,6 +258,11 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
             id: parsedName,
             name: name,
             created: Date.now(),
+        },
+        ingredients: {
+            current: getEmptyIngredientsUsage(),
+            history: [],
+            prices:  [],
         },
         locations: [],
         customers: [],

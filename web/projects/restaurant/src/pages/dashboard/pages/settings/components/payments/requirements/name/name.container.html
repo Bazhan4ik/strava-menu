@@ -6,7 +6,7 @@
             </span>
         </div>
         <div class="buttons">
-            <button (click)="save()" class="button orange-button">
+            <button [disabled]="loading" (click)="save()" class="button orange-button">
                 Save
             </button>
         </div>

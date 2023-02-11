@@ -381,7 +381,7 @@ router.get("/preview", customerRestaurant({ }), customerSession({ dishes: 1, inf
         convertedDishes.push({
             name: dish.info.name,
             price: dish.info.price,
-            image: dish.library.preview,
+            image: dish.library?.preview,
             dishId: dish.id,
             dishObjectId: dish._id,
             _id: d._id,

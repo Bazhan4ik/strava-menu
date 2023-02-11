@@ -8,7 +8,7 @@ interface User {
         last: string;
     }
     avatar: any;
-    restaurants: { name: string; id: string; redirectTo: string; }[]
+    restaurants: { name: string; id: string; redirectUrl: string; redirectTo: string; }[]
 }
 
 
@@ -22,8 +22,6 @@ export class HomePage implements OnInit {
     user: User;
 
     avatar: string;
-
-    restaurantUrl: string;
 
     openPopover: boolean;
     popoverPosition: { right: number; bottom: number; };
@@ -53,12 +51,14 @@ export class HomePage implements OnInit {
 
     async ngOnInit() {
         
-        this.restaurantUrl = env.restaurantUrl;
-
         const result: User = await this.service.get<User>("");
-
+        
 
         console.log(result);
+
+        for(let restaurant of result.restaurants) {
+            restaurant.redirectUrl = `${ env.restaurantUrl }/${ restaurant.redirectTo == 'staff' ? 'staff' : 'dashboard' }/${restaurant.id}`;
+        }
 
         this.user = result;
 

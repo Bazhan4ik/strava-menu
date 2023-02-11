@@ -33,7 +33,7 @@ export class CollectionsPage implements OnInit {
             for(let collection of result) {
                 this.collections.push({
                     ...collection,
-                    image: getImage(collection.image),
+                    image: getImage(collection.image) || "./../../../../../../../../../../global-resources/images/no-image.svg",
                 });
             }
         }

@@ -1,7 +1,6 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -21,6 +20,7 @@ export class LoginPage implements OnInit {
     constructor(
         private service: UserService,
         private router: Router,
+        private route: ActivatedRoute,
     ) {}
 
     async submit() {
@@ -35,6 +35,13 @@ export class LoginPage implements OnInit {
             const result = await this.service.login(email, password);
 
             if(result) {
+                const ll = this.route.snapshot.queryParamMap.get("ll");
+                if(ll) {
+
+                    window.location.href = ll;
+
+                    return;
+                }
                 this.router.navigate(["home"]);
             }
         } catch (error: any) {
