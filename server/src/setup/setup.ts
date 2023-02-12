@@ -21,7 +21,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(cors({
     credentials: true,
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
         callback(null, true);
     }
 }));    
@@ -42,7 +42,7 @@ restaurantApp.use("/", express.static(path.join(process.cwd(), "web/dist/custome
 
 apiApp.use(cors({
     credentials: true,
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
         callback(null, true);
     }
 }));
@@ -114,7 +114,7 @@ if (process.env.PROD) {
 
 
 
-const io: Server = new Server(server, { cors: { origin: [ "https://restaurant.mydomain.com:3000", "https://restaurant.stravamenu.com" ] } });
+const io: Server = new Server(server, { cors: { origin: "*" } });
 
 
 export {
