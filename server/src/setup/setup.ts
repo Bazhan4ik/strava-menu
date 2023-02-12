@@ -114,7 +114,7 @@ if (process.env.PROD) {
 
 
 
-const io: Server = new Server(server, { cors: { origin: [ "https://restaurant.mydomain.com:3000" ] } });
+const io: Server = new Server(server, { cors: { origin: [ "https://restaurant.mydomain.com:3000", "https://restaurant.stravamenu.com" ] } });
 
 
 export {
