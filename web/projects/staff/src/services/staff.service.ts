@@ -48,7 +48,7 @@ export class StaffService {
 
     addLocationAndJoinRooms(socketId: string, locationId: string) {
         return firstValueFrom(
-            this.http.post(this.baseUrl + this.restaurant.id + "/" + locationId, { socketId })
+            this.http.get(this.baseUrl + this.restaurant.id + "/" + locationId + "/init", { params: { socketId } })
         );
     }
 

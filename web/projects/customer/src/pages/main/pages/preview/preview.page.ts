@@ -202,7 +202,7 @@ export class PreviewPage implements OnInit {
         for(let dish of result.dishes) {
             this.dishes.push({
                 ...dish,
-                image: getImage(dish.image),
+                image: getImage(dish.image) || "./../../../../../../../global-resources/images/no-image.svg",
             });
         }
 

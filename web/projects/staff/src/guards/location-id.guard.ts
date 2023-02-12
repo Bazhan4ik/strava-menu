@@ -24,14 +24,16 @@ export class LocationIdGuard implements CanActivate {
 
         const socketId = await this.socket.socketId();
 
-        const updated = await this.service.addLocationAndJoinRooms(socketId, locationId);
+        const result: any = await this.service.addLocationAndJoinRooms(socketId, locationId);
 
-        if(!updated) {
+        if(!result) {
             return false;
         }
 
         console.log("LOCATION SET");
 
+        this.service.restaurant.pages = result.pages;
+        this.service.restaurant.redirectTo = result.redirectTo;
         this.service.locationId = locationId;
 
         return true;

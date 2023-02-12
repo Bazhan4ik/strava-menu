@@ -96,7 +96,11 @@ export class FullDishPage implements OnInit, OnDestroy {
             collection: any[];
         } = await this.service.get({ c: collectionId || undefined! }, "dishes", dishId!);
 
-        this.image = getImage(result.dish.images[0]?.buffer);
+        if(result.dish.images) {
+            this.image = getImage(result.dish.images[0]?.buffer);
+        } else {
+            this.image = "./../../../../../../../global-resources/images/no-image.svg";
+        }
 
         console.log(result);
 
