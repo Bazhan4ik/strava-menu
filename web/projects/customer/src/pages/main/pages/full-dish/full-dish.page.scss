@@ -1,7 +1,9 @@
 .app {
-    padding: 0 24px;
-
+    .header {
+        padding: 0 24px;
+    };
     .dish {
+        padding: 0 24px;
         margin-top: 12px;
 
         .info {
@@ -91,7 +93,6 @@
     .recommendations {
         width: 100%;
         margin-top: 16px;
-        padding-top: 16px;
         border-top: 1px solid var(--default-border-color);
 
         .collection-header {
@@ -105,6 +106,39 @@
             margin-top: 12px;
             display: flex;
             gap: 12px;
+        }
+    }
+}
+
+
+@media screen and (max-width: 640px) {
+    .app {
+        padding: 12px;
+    }
+}
+@media screen and (max-width: 500px) {
+    .app {
+        .header {
+            padding: 0 12px;
+        }
+        .dish {
+            margin-top: 12px;
+            padding: 0 12px;
+    
+            .info {
+                display: flex;
+    
+                .image {
+                    img {
+                        width: 124px;
+                        height: 124px;
+                    }
+                }
+
+                .name-description-buy {
+                    width: calc(100% - 124px);
+                }
+            }
         }
     }
 }

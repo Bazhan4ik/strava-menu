@@ -33,7 +33,7 @@ export class DishCookComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.image = getImage(this.sessionDish.dish.image);
+        this.image = getImage(this.sessionDish.dish.image) || "./../../../../../../../global-resources/images/no-image.svg";
 
         if(this.sessionDish.time.ordered) {
             this.sessionDish.orderedTimeout = setTimeout(() => {

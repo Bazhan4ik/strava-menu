@@ -53,3 +53,38 @@
         }
     }
 }
+
+@media screen and (max-width: 530px) {
+    .app {
+        .box, .header {
+            width: 98%;
+        }
+        .box {
+    
+            .locations {
+                gap: 12px;
+    
+    
+                .location {
+    
+                    .name {
+                        
+                        .global-text {
+                            font-size: 14px;
+                        }
+                        .global-text.big {
+                            font-size: 16px;
+                        }
+
+                        mat-icon {
+                            font-size: 20px;
+                            width: 20px;
+                            height: 20px;
+                            color: var(--text-color-gray)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

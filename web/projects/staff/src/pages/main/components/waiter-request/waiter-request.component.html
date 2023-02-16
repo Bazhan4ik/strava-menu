@@ -1,8 +1,14 @@
 <div class="app" [class.orange]="request.waiter">
-    <div class="reason">
-        <span *ngIf="request.reason == 'cash'" class="global-text big black bold">
-            {{ request.customer?.name }} wants to pay with cash
+    <div class="customer-location">
+        <span class="global-text big black">
+            {{ request.ui.typeTitle }}
+            <span class="global-text small">
+                {{ request.ui.idTitle }}
+            </span>
         </span>
+    </div>
+    <div class="reason">
+        {{ request.ui.reasonTitle }}
     </div>
     <div *ngIf="request.waiter" class="accepted">
         <div class="waiter">
@@ -25,9 +31,9 @@
             </span>
         </div>
     </div>
-    <div class="money" *ngIf="request.self && request.reason == 'cash'">
+    <div class="money" *ngIf="request.self && request.ui.acceptedTitle">
         <span class="global-text">
-            {{ request.customer?.name }} has to pay <span class="global-text bold black">${{ request.total / 100 }}</span>
+            {{ request.ui.acceptedTitle }}
         </span>
     </div>
     <div class="bottom">
@@ -41,15 +47,10 @@
         </div>
         <div class="buttons">
             <button class="button green-button" (click)="resolve()" *ngIf="request.self">
-                <span *ngIf="request.reason != 'cash'">
-                    Resolved
-                </span>
-                <span *ngIf="request.reason == 'cash'">
-                    Collected ${{ request.total / 100 }}
-                </span>
+                {{ request.ui.resolveButtonText }}
             </button>
-            <button class="button red-button" (click)="cancel()" *ngIf="request.self">Cancel</button>
-            <button class="orange-button button" *ngIf="!request.waiter" (click)="accept()">Accept</button>
+            <button class="button red-button" (click)="cancel()" *ngIf="request.self">{{ request.ui.cancelButtonText }}</button>
+            <button class="orange-button button" *ngIf="!request.waiter" (click)="accept()">{{ request.ui.acceptButtonText }}</button>
         </div>
     </div>
 </div>

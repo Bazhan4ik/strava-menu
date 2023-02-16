@@ -42,3 +42,19 @@
         }
     }
 }
+
+@media screen and (max-width: 1200px) {
+    .app {
+        .content {
+            width: 100%;
+            
+            .full-address {
+                .top {
+                    input {
+                        width: 50%;
+                    }
+                }
+            }
+        }
+    }
+}

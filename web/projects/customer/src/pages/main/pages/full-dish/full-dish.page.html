@@ -55,23 +55,7 @@
         </div>
     </div>
     <div *ngIf="collection && collection.dishes.length > 0" class="recommendations">
-        <div class="collection-header">
-            <div class="title">
-                <span class="global-subtitle">
-                    More from {{ collection.title }}
-                </span>
-            </div>
-            <div class="buttons" *ngIf="collection.redirectable">
-                <button class="icon-button">
-                    <mat-icon>
-                        arrow_forward
-                    </mat-icon>
-                </button>
-            </div>
-        </div>
-        <div class="dishes">
-            <app-dish *ngFor="let dish of collection.dishes" [dish]="dish" [goDown]="true" [small]="true" [collection]="collection.id"></app-dish>
-        </div>
+        <app-collection [collection]="collection" [goDown]="true" [small]="true"></app-collection>
     </div>
 </div>
 

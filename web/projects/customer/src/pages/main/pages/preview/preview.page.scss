@@ -183,3 +183,19 @@
         }
     }
 }
+
+@media screen and (max-width: 640px) {
+    .app {
+        padding: 0 12px;
+
+        .dishes {
+            .dish {
+                .right {
+                    button {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,7 @@
 .app {
     .box {
+        width: 512px;
+
         .locations {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -28,6 +30,32 @@
 
                 &:hover {
                     box-shadow: var(--default-box-shadow);
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 530px) {
+    .app {
+        .box, .header {
+            width: 98%;
+        }
+        .box {
+            padding: 12px;
+
+            .locations {
+                gap: 12px;
+
+                .location {
+                    padding: 6px;
+
+                    .global-text {
+                        font-size: 14px;
+                    }
+                    .global-text.big {
+                        font-size: 16px;
+                    }
                 }
             }
         }

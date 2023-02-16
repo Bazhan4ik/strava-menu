@@ -55,6 +55,7 @@
         }
 
         .content {
+            // padding-top: 24px;
             min-height: 100%;
             padding-bottom: 200px;
             background-color: var(--customer-box-background);
@@ -100,4 +101,45 @@
 }
 
 
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
 
+@media screen and (max-width: 640px) {
+    .app {
+        .box {
+            width: 98%;
+
+            
+            .header {
+                padding: 12px;
+
+
+                .title {
+                    .global-title {
+                        font-size: 20px;
+                    }
+                }
+                .buttons {
+                    #preview {
+                        height: 34px;
+                        padding: 8px;
+                    }
+                    #expand-button {
+                        height: 34px;
+                        width: 34px;
+                    }
+                }
+            }
+
+        }
+    }
+}

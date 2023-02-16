@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { DishComponent } from '../../components/dish/dish.component';
+import { CollectionComponent } from '../../components/collection/collection.component';
 import { MiniTrackingComponent } from '../../components/mini-tracking/mini-tracking.component';
 import { Collection } from '../../models/collection';
 
@@ -11,7 +11,7 @@ import { Collection } from '../../models/collection';
     templateUrl: './recommendations.page.html',
     styleUrls: ['./recommendations.page.scss'],
     standalone: true,
-    imports: [CommonModule, DishComponent, MatIconModule, MiniTrackingComponent],
+    imports: [CommonModule, CollectionComponent, MatIconModule, MiniTrackingComponent],
 })
 export class RecommendationsPage implements OnInit {
     collections: Collection[];

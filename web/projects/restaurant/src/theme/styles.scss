@@ -1,6 +1,6 @@
 .content-page {
-    width: 712px;
     margin: 40px;
+    width: 712px;
     margin-left: 220px;
     margin-top: 0;
     
@@ -34,14 +34,12 @@
         box-shadow: var(--default-box-shadow);
         background-color: var(--default-background);
         padding: 12px;
+        width: 100%;
+        max-width: 712px;
     }
 
     &.expand {
         width: calc(100vw - 208px - 80px);
-    }
-
-    &.big {
-        width: calc(85vw - 208px - 80px);
     }
 }
 
@@ -73,5 +71,26 @@
         .body {
             padding: 12px;
         }
+    }
+}
+
+
+@media screen and (max-width: 1200px) {
+    .content-page {
+        margin: 0;
+        width: 100%;
+        max-width: 712px;
+
+        &.expand {
+            width: calc(100vw - 24px);
+        }
+    }
+}
+
+@media screen and (max-width: 736px) {
+    .content-page:not(.expand) {
+        width: calc(100vw - 24px);
+        margin-left: 24px;
+        margin-right: 24px;
     }
 }

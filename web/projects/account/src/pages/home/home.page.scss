@@ -144,3 +144,12 @@
 		background-position: 0% 50%;
 	}
 }
+
+
+@media screen and (max-width: 524px) {
+    .app {
+        .box {
+            width: calc(100% - 24px);
+        }
+    }
+}

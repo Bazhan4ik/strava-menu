@@ -1,0 +1,23 @@
+<div class="app">
+    <div class="collection-header">
+        <div class="title">
+            <span class="global-subtitle">
+                {{ collection.title }}
+            </span>
+            <span *ngIf="collection.redirectable" class="global-text">
+                redirectable
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="left()" class="icon-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <button (click)="right()" class="icon-button">
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="dishes" #list>
+        <app-dish *ngFor="let dish of collection.dishes" [small]="small" [goDown]="goDown" [collection]="collection.id" [dish]="dish"></app-dish>
+    </div>
+</div>

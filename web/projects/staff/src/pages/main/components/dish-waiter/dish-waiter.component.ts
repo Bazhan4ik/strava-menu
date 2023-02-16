@@ -15,8 +15,6 @@ export class DishWaiterComponent implements OnInit {
 
 
     ngOnInit() {
-        if(this.sessionDish.dish.image) {
-            this.image = getImage(this.sessionDish.dish.image);
-        }
+        this.image = getImage(this.sessionDish.dish.image) || "./../../../../../../../global-resources/images/no-image.svg";
     }
 }

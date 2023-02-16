@@ -11,6 +11,19 @@ interface ConvertedWaiterRequest {
     reason: string;
     total: number;
     self: boolean;
+
+    sessionType: string;
+    sessionIdNumber: string;
+
+    ui: {
+        reasonTitle: string;
+        acceptButtonText: string;
+        cancelButtonText: string;
+        resolveButtonText: string;
+        idTitle: string;
+        typeTitle: string;
+        acceptedTitle?: string;
+    }
 }
 
 

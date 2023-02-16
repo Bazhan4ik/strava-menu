@@ -5,7 +5,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/ro
 import { CustomerService } from 'projects/customer/src/services/customer.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { Subscription } from 'rxjs';
-import { DishComponent } from '../../components/dish/dish.component';
+import { CollectionComponent } from '../../components/collection/collection.component';
 import { Dish } from '../../models/dish';
 
 @Component({
@@ -13,7 +13,7 @@ import { Dish } from '../../models/dish';
     templateUrl: './full-dish.page.html',
     styleUrls: ['./full-dish.page.scss'],
     standalone: true,
-    imports: [CommonModule, MatIconModule, RouterModule, DishComponent],
+    imports: [CommonModule, MatIconModule, RouterModule, CollectionComponent],
 })
 export class FullDishPage implements OnInit, OnDestroy {
 

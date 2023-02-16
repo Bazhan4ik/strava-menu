@@ -490,7 +490,7 @@ router.get("/checkout", customerRestaurant({ }), customerSession({ dishes: { dis
     );
 });
 
-router.put("/request/cash", customerRestaurant({ }), customerSession({ payment: { money: { total: 1, }, } }, { info: { name: 1, }, avatar: 1, }), async (req, res) => {
+router.put("/request/cash", customerRestaurant({ }), customerSession({ info: { id: 1, type: 1 }, payment: { money: { total: 1, }, } }, { info: { name: 1, }, avatar: 1, }), async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
 
 
@@ -502,7 +502,7 @@ router.put("/request/cash", customerRestaurant({ }), customerSession({ payment: 
     };
 
 
-    const update = await updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest } }, { projection: { _id: 1 } });
+    const update = await updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest } }, { projection: { _id: 1, } });
 
 
     const request = {
@@ -521,6 +521,18 @@ router.put("/request/cash", customerRestaurant({ }), customerSession({ payment: 
         self: false,
         total: session.payment?.money?.total || null!,
         reason: "cash",
+        sessionType: session.info.type,
+        sessionIdNumber: session.info.id,
+
+        ui: {
+            acceptButtonText: "Accept",
+            cancelButtonText: "Cancel",
+            resolveButtonText: request.reason == "cash" ? `Collected $${session.payment?.money?.total! / 100}` : "Resolved",
+            acceptedTitle: request.reason == "cash" ? `Customer has to pay $${session.payment?.money?.total! / 100}` : null!,
+            reasonTitle: "Collect cash & confirm order",
+            typeTitle: session.info.type == "dinein" ? "Table" : "Order",
+            idTitle: "#" + session.info.id,
+        }
     });
 });
 router.put("/request/cancel", customerRestaurant({ }), customerSession({ waiterRequests: 1, }, { }), async (req, res) => {

@@ -93,7 +93,7 @@ export class EditCollectionPage implements OnInit {
         }
 
         const update = {
-            dishes: this.dishes,
+            dishes: this.dishes.map(d => { return { id: d.id, _id: d._id } }),
             name: this.name,
             description: this.description,
             image: this.imageUpdated ? this.image : null!,
@@ -132,13 +132,11 @@ export class EditCollectionPage implements OnInit {
                 name: dish.name,
                 id: dish.id,
                 _id: dish._id,
-                image: getImage(dish.image),
+                image: getImage(dish.image) || "./../../../../../../../../global-resources/images/no-image.svg",
             });
         }
 
-        if(result.collection.image) {
-            this.image = getImage(result.collection.image);
-        }
+        this.image = getImage(result.collection.image) || "./../../../../../../../../global-resources/images/no-image.svg";
 
         this.name = result.collection.name;
         this.description = result.collection.description;

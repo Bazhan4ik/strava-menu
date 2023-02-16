@@ -14,6 +14,8 @@ export class DashboardPage implements OnInit {
 
     currentPage: string;
 
+    menuOpen = false;
+
     restaurant: { name: string; };
     pages: {
         menu: boolean;
@@ -46,6 +48,10 @@ export class DashboardPage implements OnInit {
 
         this.pages = this.service.restaurant.pages;
     };
+
+    openMenu() {
+        this.menuOpen = !this.menuOpen;
+    }
 
     ngOnInit(): void {
         const url = this.router.url.split('?')[0]; 

@@ -11,6 +11,18 @@ interface WaiterRequest {
     _id: string;
     by: string;
 
+    sessionType: string;
+    sessionIdNumber: string;
+
+    ui: {
+        reasonTitle: string;
+        acceptButtonText: string;
+        cancelButtonText: string;
+        resolveButtonText: string;
+        idTitle: string;
+        typeTitle: string;
+        acceptedTitle: string;
+    }
     
     acceptedTimeout?: any;
     requestedTimeout?: any;

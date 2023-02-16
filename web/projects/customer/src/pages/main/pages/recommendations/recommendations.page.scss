@@ -7,20 +7,22 @@
 
     .collections {
         width: 100%;
+    }
+}
 
-        .collection {
-            .collection-header {
-                padding: 12px 24px;
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .dishes {
-                padding-left: 24px;
-                display: flex;
-                gap: 12px;
+@media screen and (max-width: 640px) {
+    .app {
+    
+        .collections {
+    
+            .collection {
+                .collection-header {
+                    padding: 8px 12px;
+                }
+    
+                .dishes {
+                    padding: 0 12px;
+                }
             }
         }
     }

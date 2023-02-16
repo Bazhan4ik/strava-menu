@@ -1,0 +1,63 @@
+.app {
+    .collection-header {
+        padding: 12px 24px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+    }
+
+    .dishes {
+        display: flex;
+        gap: 12px;
+        padding: 0 24px;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 6px;
+
+        /* width */
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        /* Track */
+        &::-webkit-scrollbar-track {
+            background: none;
+        }
+
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: #AAA;
+        }
+
+        &::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        /* Handle on hover */
+        &::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    }
+}
+
+
+@media screen and (max-width: 640px) {
+    .app {
+
+        .collection-header {
+            padding: 8px 12px;
+        }
+
+        .dishes {
+            padding: 0 12px;
+        }
+    }
+}

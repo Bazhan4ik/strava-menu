@@ -5,18 +5,21 @@
                 StravaMenu
             </span>
         </div>
-        <div class="account">
-            <a [href]="accountUrl" class="icon-button account">
+        <div class="buttons">
+            <a [href]="accountUrl" id="account-button" class="icon-button account">
                 <mat-icon>account_circle</mat-icon>
             </a>
-            <a [href]="staffUrl" class="button orange-button">
+            <a [href]="staffUrl" id="staff-button" class="button orange-button">
                 Staff
                 <mat-icon>chevron_right</mat-icon>
             </a>
+            <button (click)="openMenu()" class="icon-button" id="menu-button">
+                <mat-icon>menu</mat-icon>
+            </button>
         </div>
     </div>
 
-    <div class="navigation">
+    <div class="navigation" (click)="openMenu()" [class.open]="menuOpen">
         <div class="restaurant">
             <span class="global-text text normal">
                 {{ restaurant.name }}
@@ -80,6 +83,19 @@
                 </mat-icon>
                 Settings
             </a>
+
+            <div class="bottom">
+                <a class="global-link account" id="account-button-nav" [href]="accountUrl">
+                    <mat-icon>
+                        account_circle
+                    </mat-icon>
+                    Account
+                </a>
+                <a [href]="staffUrl" id="staff-button-nav" class="global-link staff">
+                    <mat-icon>arrow_forward</mat-icon>
+                    Staff
+                </a>
+            </div>
         </div>
     </div>
 

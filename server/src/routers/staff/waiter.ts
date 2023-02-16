@@ -26,6 +26,8 @@ interface WaiterRequestModified extends WaiterRequest {
     sessionId: string;
     customerId: ObjectId;
     total: number;
+    id: string;
+    type: string;
 }
 router.get("/requests", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
@@ -43,7 +45,9 @@ router.get("/requests", logged(), restaurantWorker({}, { work: { waiter: true } 
                 "waiterId": "$waiterRequests.waiterId",
                 "reason": "$waiterRequests.reason",
                 "customerId": "$customer.customerId",
-                "total": "$payment.money.total"
+                "total": "$payment.money.total",
+                "id": "$info.id",
+                "type": "$info.type",
             }
         }
     ]).toArray() as WaiterRequestModified[];
@@ -86,6 +90,18 @@ router.get("/requests", logged(), restaurantWorker({}, { work: { waiter: true } 
             sessionId: request.sessionId,
             self: request.waiterId?.equals(user._id)!,
             total: request.total,
+            sessionIdNumber: request.id,
+            sessionType: request.type,
+            
+            ui: {
+                reasonTitle: request.reason == "cash" ? "Collect cash & confirm order" : request.reason == "payment" ? "Help with payment problems" : "Other inquiry",
+                acceptButtonText: "Accept",
+                cancelButtonText: "Cancel",
+                idTitle: "#" + request.id,
+                typeTitle: request.type == "dinein" ? "Table" : "Order",
+                resolveButtonText: request.reason == "cash" ? `Collected $${request.total / 100}` : "Resolved",
+                acceptedTitle: request.acceptedTime ? request.reason == "cash" ? `Customer has to pay $${request.total / 100}` : "Request accepted" : null!,
+            }
         };
 
         result.push(r);
@@ -105,7 +121,7 @@ router.put("/requests/accept", logged({ avatar: 1, info: { name: 1 } }), restaur
     const { restaurant, user, location } = res.locals as Locals;
 
 
-    const session = await getSession(restaurant._id, { _id: id(sessionId) }, { projection: { waiterRequests: { _id: 1, active: 1, waiterId: 1 }, customer: { socketId: 1 } } });
+    const session = await getSession(restaurant._id, { _id: id(sessionId) }, { projection: { payment: { money: { total: 1 } }, waiterRequests: { _id: 1, active: 1, waiterId: 1 }, customer: { socketId: 1 } } });
 
     if(!session) {
         return res.status(404).send({ reason: "SessionNotFound" });
@@ -115,13 +131,19 @@ router.put("/requests/accept", logged({ avatar: 1, info: { name: 1 } }), restaur
         return res.status(400).send({ reason: "NoWaiterRequests" });
     }
 
+    let request: WaiterRequest = null!;
 
-    for(let request of session.waiterRequests) {
-        if(request._id.equals(requestId)) {
-            if(!request.active || request.waiterId) {
+    for(let r of session.waiterRequests) {
+        if(r._id.equals(requestId)) {
+            if(!r.active || r.waiterId) {
                 return res.status(403).send({ reason: "WaiterRequestTaken" });
             }
+            request = r;
         }
+    }
+
+    if(!request) {
+        return res.status(404).send({ reason: "WaiterRequestNotFound" });
     }
 
     const update = await updateSession(
@@ -143,7 +165,8 @@ router.put("/requests/accept", logged({ avatar: 1, info: { name: 1 } }), restaur
     res.send({
         updated: update.ok == 1,
         waiter,
-        delay
+        delay,
+        acceptedTitle: request.acceptedTime ? request.reason == "cash" ? `Customer has to pay $${session.payment?.money?.total! / 100}` : "Request accepted" : null!,
     });
 
     sendToCustomerAcceptWaiterRequest(session.customer.socketId, { waiter, time: delay, requestId: requestId });

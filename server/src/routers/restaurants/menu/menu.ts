@@ -93,11 +93,11 @@ router.put("/collections/:collectionId", logged(), restaurantWorker({}, { collec
 
     console.log(req.body);
 
-    if(!name || !description || !dishes) {
+    if(!name || (description && typeof description != "string") || !dishes) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
 
-    if(typeof name != "string" || typeof description != "string" || !Array.isArray(dishes) || (image && typeof image != "string")) {
+    if(typeof name != "string" || (description && typeof description != "string") || !Array.isArray(dishes) || (image && typeof image != "string")) {
         return res.status(422).send({ reason: "InvalidInput" });
     }
 
