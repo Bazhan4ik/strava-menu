@@ -6,6 +6,7 @@ import { firstValueFrom, Observable } from "rxjs";
 import { Session } from '../pages/main/models/session';
 import { Socket } from "ngx-socket-io";
 import { DishesSocketEvent, PaymentSocketEvent, SocketEvent, WaiterRequestSocketEvent } from '../pages/main/models/socket';
+import { Router } from '@angular/router';
 
 
 
@@ -29,7 +30,8 @@ export class CustomerService {
     constructor(
         private http: HttpClient,
         private cookieService: CookieService,
-        private socket: Socket
+        private socket: Socket,
+        private router: Router,
     ) { };
 
 
@@ -124,13 +126,27 @@ export class CustomerService {
     }
 
     async init(restaurantId: string, locationId: string, socketId: string, table: string) {
-        const result = await firstValueFrom(
-            this.http.get<{
-                restaurant: any;
-                session: Session;
-                setSessionId: string;
-            }>(this.baseUrl + "/" + restaurantId + "/session", { params: { socketId, table, location: locationId } }),
-        );
+        let result: {
+            restaurant: any;
+            session: Session;
+            setSessionId: string;
+        } = null!;
+        try {
+            result = await firstValueFrom(
+                this.http.get<any>(this.baseUrl + "/" + restaurantId + "/session", { params: { socketId, table, location: locationId } }),
+            );
+        } catch (e: any) {
+            if(e.status == 400) {
+                if(e.error.reason == "InvalidLocation") {
+                    this.router.navigate([restaurantId]);
+                    return false;
+                }
+            }   
+        }
+
+        if(!result) {
+            return false;
+        }
 
         if(result.setSessionId) {
             if(this.cookieService.get("smsid")) {

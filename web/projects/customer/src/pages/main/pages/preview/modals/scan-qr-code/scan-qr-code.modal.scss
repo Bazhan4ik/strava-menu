@@ -1,0 +1,42 @@
+.app {
+    .box {
+        width: 512px;
+        padding: 24px;
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .body {
+            .message {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+            }
+
+            .scanner {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                #camera-video {
+                    width: 324px;
+                    height: 324px;
+                    object-fit: cover;
+                    border-radius: var(--default-border-radius);
+                    border: 2px solid var(--orange);
+                }
+            }
+        }
+    }
+}

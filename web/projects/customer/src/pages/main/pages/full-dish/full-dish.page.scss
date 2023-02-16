@@ -1,7 +1,9 @@
 .app {
     .header {
         padding: 0 24px;
+        padding-top: 24px;
     };
+
     .dish {
         padding: 0 24px;
         margin-top: 12px;
@@ -113,13 +115,30 @@
 
 @media screen and (max-width: 640px) {
     .app {
-        padding: 12px;
+        // padding: 12px;
+
+        .dish {
+            .info {
+                .name-description-buy {
+                    .buy {
+                        .buttons {
+                            #add-span {
+                                #add {
+                                    font-size: 16px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 @media screen and (max-width: 500px) {
     .app {
         .header {
             padding: 0 12px;
+            padding-top: 12px;
         }
         .dish {
             margin-top: 12px;

@@ -21,10 +21,12 @@
         width: 100%;
         overflow-x: auto;
         padding-bottom: 6px;
+        scroll-behavior: smooth;
 
         /* width */
         &::-webkit-scrollbar {
             height: 4px;
+            display: none;
         }
 
         /* Track */

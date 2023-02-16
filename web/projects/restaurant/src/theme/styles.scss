@@ -35,11 +35,6 @@
         background-color: var(--default-background);
         padding: 12px;
         width: 100%;
-        max-width: 712px;
-    }
-
-    &.expand {
-        width: calc(100vw - 208px - 80px);
     }
 }
 

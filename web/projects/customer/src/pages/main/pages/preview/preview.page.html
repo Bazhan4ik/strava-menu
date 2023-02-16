@@ -10,44 +10,51 @@
         </div>
     </div>
     <div class="info" [class.red]="errors.type" *ngIf="info">
-        <div class="left">
-            <div class="buttons">
-                <button (click)="selectType('takeout')" class="button" [class.orange-button]="info.type == 'takeout'">
-                    <mat-icon>takeout_dining</mat-icon>
+        <div class="top">
+            <div class="title">
+                <span class="global-text big black bold" *ngIf="info.type == 'dinein'">
+                    Dine in
+                </span>
+                <span class="global-text big black bold" *ngIf="info.type == 'takeout'">
                     Take out
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="selectType('takeout')" class="icon-button orange square" [class.orange-button]="info.type == 'takeout'">
+                    <mat-icon>local_mall</mat-icon>
                 </button>
-                <button (click)="selectType('dinein')" class="button" [class.orange-button]="info.type == 'dinein'">
+                <button (click)="selectType('dinein')" class="icon-button orange square" [class.orange-button]="info.type == 'dinein'">
                     <mat-icon>restaurant</mat-icon>
-                    Dine-in
                 </button>
             </div>
         </div>
-        <div class="right">
+        <div class="bottom">
             <div *ngIf="info.type == 'dinein'" class="table">
-                <div class="title">
-                    <span *ngIf="info.id" class="global-text text bigger black bold">
-                        Table
-                    </span>
-                    <span *ngIf="!info.id" class="global-text text bigger black bold">
-                        Select table
-                    </span>
-                    <span *ngIf="info.id" class="global-text">
-                        #{{ info.id }}
-                    </span>
+                <div *ngIf="info.id" class="selected">
+                    <div class="title">
+                        <span class="global-text text">
+                            Food will be served to <span class="global-text black bold">table #{{ info.id }}</span>
+                        </span>
+                    </div>
+                    <button (click)="changeTable()" class="orange-button button">
+                        Change table <mat-icon>qr_code</mat-icon>
+                    </button>
                 </div>
-                <div class="buttons">
-                    <button class="button orange-button">
-                        <span *ngIf="info.id">Change</span> <span *ngIf="!info.id">Scan</span> <mat-icon>qr_code</mat-icon>
+                <div class="not-selected" *ngIf="!info.id">
+                    <div class="title">
+                        <span *ngIf="!info.id" class="global-text text">
+                            Scan your table's QR code
+                        </span>
+                    </div>
+                    <button (click)="changeTable()" class="button orange-button">
+                        Scan QR code <mat-icon>qr_code</mat-icon>
                     </button>
                 </div>
             </div>
             <div *ngIf="info.type == 'takeout'" class="takeout">
                 <div class="title">
-                    <span class="global-text bigger black bold">
-                        Takeout
-                    </span>
-                    <span *ngIf="info.id" class="global-text">
-                        #{{ info.id }}
+                    <span class="global-text">
+                        Your order ID is <span class="global-text black bold">#{{ info.id }}</span>
                     </span>
                 </div>
             </div>
@@ -56,7 +63,7 @@
     <div class="comment" *ngIf="info">
         <div class="left">
             <button (click)="setComment()" class="button orange-button">
-                <span *ngIf="info.comment">Change comment</span>
+                <span *ngIf="info.comment">Change</span>
                 <span *ngIf="!info.comment">Add comment</span>
             </button>
         </div>

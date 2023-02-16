@@ -114,6 +114,14 @@
             border-radius: var(--default-border-radius);
         }
     }
+}
 
 
+@media screen and (max-width: 640px) {
+    .app {
+        .payment {
+            width: 324px;
+            padding: 0;
+        }
+    }
 }

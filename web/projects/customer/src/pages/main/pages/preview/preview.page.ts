@@ -184,6 +184,27 @@ export class PreviewPage implements OnInit {
         this.router.navigate([this.service.restaurant.id, this.service.locationId, "p", "checkout"]);
     }
 
+    async changeTable() {
+        const { ScanQrCodeModal } = await import("./modals/scan-qr-code/scan-qr-code.modal");
+
+        const component = this.modalContainer.createComponent(ScanQrCodeModal);   
+
+
+        component.instance.leave.subscribe(async (table: string) => {
+            component.destroy();
+            if(table) {
+                
+                const update: any = await this.service.put({ table }, "session/table");
+
+                if(update.updated) {
+                    this.info.id = update.table;
+                    this.service.session.id = update.table;
+                }
+
+            }
+        });
+    }
+
 
     async ngOnInit() {
         const result: {

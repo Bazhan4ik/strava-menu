@@ -1,6 +1,6 @@
 .app {
     .box {
-        width: 512px;
+        width: 624px;
 
         .locations {
             display: grid;
@@ -36,7 +36,7 @@
     }
 }
 
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 640px) {
     .app {
         .box, .header {
             width: 98%;

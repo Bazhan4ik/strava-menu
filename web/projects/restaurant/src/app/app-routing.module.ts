@@ -17,6 +17,10 @@ const routes: Routes = [
         loadChildren: () => import("./../pages/dashboard/dashboard.module").then(m => m.DashboardModule),
         canActivate: [LoggedInGuard, RestaurantIdGuard],
         runGuardsAndResolvers: "always",
+    },
+    {
+        path: "**",
+        loadComponent: () => import("./../pages/not-found/not-found.page").then(c => c.NotFoundPage)
     }
 ];
 

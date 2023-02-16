@@ -3,6 +3,7 @@
     height: 100%;
 
     .header {
+        padding: 0 8px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -18,33 +19,51 @@
         border-top: 1px solid var(--default-border-color);
         border-bottom: 1px solid var(--default-border-color);
         display: flex;
-        gap: 24px;
+        flex-direction: column;
+        gap: 16px;
 
+        .top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-        &.red {
-            background-color: rgba(255, 0, 0, 0.158)
-        }
+            .title {
+                display: flex;
+                align-items: center;
+            }
 
-        .left {
             .buttons {
                 display: flex;
-                flex-direction: column;
-                gap: 12px;
+                align-items: center;
+                gap: 8px;
+                padding: 4px;
+                border: 1px solid var(--default-border-color);
+                border-radius: var(--default-border-radius);
             }
         }
 
-        .right {
+        .bottom {
             display: flex;
             align-items: center;
 
-            .table,
-            .takeout {
-                padding: 8px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                border-radius: var(--default-border-radius);
+            .table {
+                width: 100%;
+                .selected {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                .not-selected {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
             }
+
+        }
+
+        &.red {
+            background-color: rgba(255, 0, 0, 0.158)
         }
     }
 
@@ -55,6 +74,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        gap: 8px;
 
         .left {
             display: flex;
@@ -186,7 +207,7 @@
 
 @media screen and (max-width: 640px) {
     .app {
-        padding: 0 12px;
+        padding: 0;
 
         .dishes {
             .dish {

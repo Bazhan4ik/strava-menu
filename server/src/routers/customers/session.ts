@@ -34,6 +34,10 @@ router.get("/",
     const { restaurant, session, user } = res.locals as Locals;
     let { socketId, table: tableId, location } = req.query;
 
+    if(!restaurant.tables) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
     if(!restaurant.locations || restaurant.locations.length == 0) {
         return res.status(500).send({ reason: "InvalidError" });
     }
@@ -55,6 +59,9 @@ router.get("/",
     const getTable = () => {
         if(!tableId || typeof tableId != "string") {
             return null!;
+        }
+        if(!restaurant.tables![location as string]) {
+            return null;
         }
         for(let t of restaurant.tables![location as string]) {
             if(t._id.equals(tableId as string)) {
@@ -112,7 +119,7 @@ router.get("/",
                 }
             ],
             info: {
-                id: table?.toString(),
+                id: table?.toString()!,
                 type: "dinein",
                 location: locationId,
             },
@@ -429,6 +436,53 @@ router.put("/type", customerRestaurant({ }), customerSession({ info: { type: 1, 
     
 
     res.send({ updated: update.ok == 1, id });
+});
+router.put("/table", customerRestaurant({ locations: { id: 1, _id: 1 }, tables: 1, }), customerSession({ info: { id: 1, location: 1, type: 1 } }, { }), async (req, res) => {
+    const { session, restaurant } = res.locals as Locals;
+    const { table } = req.body;
+
+    console.log(session.info.location);
+
+    if(!restaurant.tables || !restaurant.locations) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+    if(!table || typeof table != "string" || table.length != 24) {
+        return res.status(400).send({ reason: "InvalidTable" });
+    }
+
+    const getLocation = () => {
+        for(let l of restaurant.locations!) {
+            if(l._id.equals(session.info.location)) {
+                return l.id;
+            }
+        }
+        return null!;
+    }
+    
+    const tables = restaurant.tables[getLocation().toString()];
+
+    if(!tables) {
+        return res.status(400).send({ reason: "InvalidLocation" });
+    }
+
+
+
+    let tableNumber: number = null!;
+
+    for(let t of tables) {
+        if(t._id.equals(table)) {
+            tableNumber = t.id;
+            break;
+        }
+    }
+
+    if(!tableNumber) {
+        return res.status(400).send({ reason: "InvalidTable" });
+    }
+    
+    const update = await updateSession(restaurant._id, { _id: session._id }, { $set: { "info.id": tableNumber.toString() } }, { projection: { _id: 1 } });
+
+    res.send({ updated: update.ok == 1, table: tableNumber.toString() });
 });
 
 
