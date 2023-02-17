@@ -73,12 +73,8 @@
 @media screen and (max-width: 1200px) {
     .content-page {
         margin: 0;
-        width: 100%;
         max-width: 712px;
-
-        &.expand {
-            width: calc(100vw - 24px);
-        }
+        width: 100vw;
     }
 }
 

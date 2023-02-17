@@ -82,6 +82,7 @@ router.get("/:locationId/init", logged(), restaurantWorker({ staff: { settings: 
 
     res.send({
         redirectTo: (settings.work?.manager || settings.isOwner) ? "dashboard" : "account",
+        userId: user._id,
         pages: {
             waiter: settings.work?.waiter || settings.isOwner!,
             cook: settings.work?.cook || settings.isOwner!,

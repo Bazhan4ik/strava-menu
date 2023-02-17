@@ -18,9 +18,9 @@ interface ConvertedSessionDish {
     };
 
     people: {
-        cook?: { name: string; avatar: any; };
-        waiter?: { name: string; avatar: any; };
-        customer: { name: string; avatar: any; };
+        cook?: { name: string; avatar: any; _id: string; };
+        waiter?: { name: string; avatar: any; _id: string; };
+        customer: { name: string; avatar: any; _id: string; };
     };
 
     takenInterval?: any;

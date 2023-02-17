@@ -22,7 +22,7 @@ const routes: Routes = [
         pathMatch: "full",
         canActivate: [() => inject(DOCUMENT).location.href = env.accountUrl + "/home"],
         redirectTo: "",
-    }
+    },
 ];
 
 @NgModule({

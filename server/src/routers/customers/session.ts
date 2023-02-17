@@ -514,7 +514,7 @@ router.get("/checkout", customerRestaurant({ }), customerSession({ dishes: { dis
             restaurantId: restaurant._id.toString(),
             pid: session.payment?.paymentIntentId,
             sessionId: session._id.toString(),
-            total: result.money.total,
+            total: Math.floor(result.money.total),
         }
     );
 

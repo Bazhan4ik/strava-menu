@@ -26,6 +26,10 @@ const routes: Routes = [
             {
                 path: ":dishId",
                 loadComponent: () => import("./pages/full-dish/full-dish.page").then(c => c.FullDishPage),
+            },
+            {
+                path: "**",
+                redirectTo: "",
             }
         ]
     }

@@ -117,8 +117,8 @@ router.get("/", logged(), restaurantWorker({ locations: 1, }, { customers: { ava
 
             o.dishes.push({
                 ...d!,
-                cook: userMap.get(dish.staff?.cook?.toString()!)!,
-                waiter: userMap.get(dish.staff?.waiter?.toString()!)!,
+                cook: userMap.get(dish.staff?.cook?.toString()!)! || { name: "Invalid user" },
+                waiter: userMap.get(dish.staff?.waiter?.toString()!)! || { name: "Invalid user" },
                 status: dish.status,
                 time: getRelativeDelay(order.timing.ordered!, dish.timing?.served!)!,
             });

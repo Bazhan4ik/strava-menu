@@ -2,7 +2,6 @@ import { Router } from "express";
 import { Locals } from "../../models/general.js";
 import { SessionDish } from "../../models/session.js";
 import { convertMultipleSessionsSessionDishes, convertOneSessionDish } from "../../utils/convertSessionDishes.js";
-import { updateDish } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { updateIngredientsUsage } from "../../utils/ingredients.js";
 import { logged } from "../../utils/middleware/auth.js";
@@ -18,7 +17,7 @@ const router = Router({ mergeParams: true });
 
 
 router.get("/dishes", logged(), restaurantWorker({}, { work: { cook: true } }), async (req, res) => {
-    const { restaurant, location } = res.locals as Locals;
+    const { restaurant, location, user } = res.locals as Locals;
 
 
     const sessions = await getSessions(restaurant._id, { status: "progress", "info.location": location  }, { projection: { dishes: 1, info: 1, customer: 1, timing: 1, } }).toArray();
@@ -27,7 +26,11 @@ router.get("/dishes", logged(), restaurantWorker({}, { work: { cook: true } }), 
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const convertedOrderDishes = await convertMultipleSessionsSessionDishes(restaurant._id, sessions, ["served", "removed", "cooked"]);
+    const convertedOrderDishes = await convertMultipleSessionsSessionDishes({
+        restaurantId: restaurant._id,
+        sessions,
+        skipStatuses: ["served", "removed", "cooked"]
+    });
     
     res.send(convertedOrderDishes);
 });
@@ -48,7 +51,7 @@ router.put("/take", logged({ info: { name: 1, }, avatar: { buffer: 1 } }), resta
 
     const update = await updateSession(
         restaurant._id,
-        { _id: id(sessionId) },
+        { _id: id(sessionId), dishes: { $elemMatch: { _id: id(sessionDishId), status: "ordered" } } },
         { $set: {
             "dishes.$[sessionDish].timing.taken": Date.now(),
             "dishes.$[sessionDish].staff.cook": user._id,
@@ -71,9 +74,22 @@ router.put("/take", logged({ info: { name: 1, }, avatar: { buffer: 1 } }), resta
     }
 
 
-    res.send({ updated: update.ok == 1, cook: { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer }, time: { hours: 0, minutes: 0, nextMinute: 59500 } });
+    res.send({ updated: update.ok == 1, cook: { name: `${user.info?.name?.first} ${user.info?.name?.last}`, _id: user._id, avatar: user.avatar?.buffer }, time: { hours: 0, minutes: 0, nextMinute: 59500 } });
 
-    sendDishIsTaken(restaurant._id, location, { sessionId: id(sessionId), sessionDishId: id(sessionDishId), cook: { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer } });
+    sendDishIsTaken(
+        restaurant._id,
+        location,
+        {
+            sessionId: id(sessionId),
+            sessionDishId: id(sessionDishId),
+            cook: {
+                name: `${user.info?.name?.first} ${user.info?.name?.last}`,
+                avatar: user.avatar?.buffer,
+                _id: user._id,
+            }
+        }
+    );
+
     sendToCustomerDishStatus(restaurant._id, update.session?.customer.socketId!, { sessionDishId: id(sessionDishId), status: "cooking" });
 });
 router.put("/quit", logged({}), restaurantWorker({ }, { work: { cook: true } }), async (req, res) => {
@@ -90,7 +106,7 @@ router.put("/quit", logged({}), restaurantWorker({ }, { work: { cook: true } }),
 
     const update = await updateSession(
         restaurant._id,
-        { _id: id(sessionId) },
+        { _id: id(sessionId), dishes: { $elemMatch: { _id: id(sessionDishId), status: "cooking" } } },
         { $set: {
             "dishes.$[sessionDish].timing.taken": null,
             "dishes.$[sessionDish].staff.cook": null,
@@ -119,7 +135,7 @@ router.put("/quit", logged({}), restaurantWorker({ }, { work: { cook: true } }),
     sendToCustomerDishStatus(restaurant._id, update.session?.customer.socketId!, { sessionDishId: id(sessionDishId), status: "ordered" });
 });
 router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), async (req, res) => {
-    const { restaurant, location } = res.locals as Locals;
+    const { restaurant, location, user } = res.locals as Locals;
     const { sessionId, sessionDishId } = req.body;
 
 
@@ -132,7 +148,7 @@ router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), a
 
     const update = await updateSession(
         restaurant._id,
-        { _id: id(sessionId) },
+        { _id: id(sessionId), dishes: { $elemMatch: { _id: id(sessionDishId), status: "cooking" } } },
         { $set: {
             "dishes.$[sessionDish].timing.cooked": Date.now(),
             "dishes.$[sessionDish].status": "cooked",

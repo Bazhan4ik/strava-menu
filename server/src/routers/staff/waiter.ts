@@ -317,7 +317,7 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
 });
 
 router.get("/dishes", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
-    const { restaurant, location } = res.locals as Locals;
+    const { restaurant, user, location } = res.locals as Locals;
 
 
     const sessions = await getSessions(restaurant._id, { status: "progress", "info.location": location  }, { projection: { dishes: 1, customer: 1, info: 1, timing: 1, } }).toArray();
@@ -326,7 +326,11 @@ router.get("/dishes", logged(), restaurantWorker({}, { work: { waiter: true } })
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const convertedOrderDishes = await convertMultipleSessionsSessionDishes(restaurant._id, sessions, ["ordered", "served", "removed", "cooking"]);
+    const convertedOrderDishes = await convertMultipleSessionsSessionDishes({
+        restaurantId: restaurant._id,
+        sessions,
+        skipStatuses: ["ordered", "served", "removed", "cooking"]
+    });
     
     res.send(convertedOrderDishes);
 });

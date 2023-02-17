@@ -2,7 +2,7 @@ import { ConvertedSessionDish } from "./order-dishes";
 
 declare namespace CookDishesData {
     type add = ConvertedSessionDish[];
-    type take = { sessionId: string; sessionDishId: string; cook: { name: string; avatar: any; } };
+    type take = { sessionId: string; sessionDishId: string; cook: { name: string; avatar: any; _id: string; } };
     type quit = { sessionId: string; sessionDishId: string; };
     type done = { sessionId: string; sessionDishId: string; };
 }

@@ -3,8 +3,10 @@ import { Component, Output, EventEmitter, Input, OnInit, OnDestroy, } from '@ang
 import { MatIconModule } from '@angular/material/icon';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { ConvertedSessionDish } from 'projects/staff/src/models/order-dishes';
+import { CookDishesData } from 'projects/staff/src/models/socket-cook-dishes';
 import { SocketService } from 'projects/staff/src/services/socket.service';
 import { StaffService } from 'projects/staff/src/services/staff.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-cook-dish',
@@ -17,6 +19,9 @@ export class CookDishModal implements OnInit, OnDestroy {
 
     customerAvatar = "./../../../../../../../global-resources/images/plain-avatar.jpg";
     cookAvatar = "./../../../../../../../global-resources/images/plain-avatar.jpg";
+    userId: string;
+
+    subscription: Subscription;
 
     constructor(
         private service: StaffService,
@@ -69,14 +74,26 @@ export class CookDishModal implements OnInit, OnDestroy {
 
 
     ngOnInit() {
+        this.subscription = this.socket.$cookDishes.subscribe(res => {
+            if(res.types.includes("dishes/done")) {
+                const { sessionDishId } = res.data as CookDishesData.done;
+                if(this.sessionDish._id == sessionDishId) {
+                    this.close();
+                }
+            }
+        });
+
+        this.userId = this.service.userId;
+        
         if(this.sessionDish.people.customer.avatar) {
             this.customerAvatar = getImage(this.sessionDish.people.customer.avatar);
         }
         if(this.sessionDish.people.cook?.avatar) {
             this.cookAvatar = getImage(this.sessionDish.people.cook.avatar);
         }
+
     }
     ngOnDestroy() {
-
+        this.subscription?.unsubscribe();
     }
 }

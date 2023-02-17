@@ -89,12 +89,23 @@ export class FullDishPage implements OnInit, OnDestroy {
         if(!dishId) {
             return this.router.navigate([this.service.restaurant.id, this.service.locationId]);
         }
-        
 
-        const result: {
+        let result: {
             dish: any;
             collection: any[];
-        } = await this.service.get({ c: collectionId || undefined! }, "dishes", dishId!);
+        } = null!;
+
+        try {
+            result = await this.service.get({ c: collectionId || undefined! }, "dishes", dishId!);
+        } catch (e: any) {
+            if(e.status == 404) {
+                if(e.error.reason == "DishNotFound") {
+                    this.router.navigate([this.service.restaurant.id, this.service.locationId]);
+                    return;
+                }
+            }
+        }
+
 
         if(result.dish.images) {
             this.image = getImage(result.dish.images[0]?.buffer);

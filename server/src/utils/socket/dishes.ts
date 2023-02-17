@@ -16,7 +16,7 @@ function sendToStaffNewOrder(restaurantId: ObjectId, locationId: ObjectId, data:
 }
 
 
-function sendDishIsTaken(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; sessionDishId: ObjectId; cook: { name: string; avatar: any; } }) {
+function sendDishIsTaken(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; sessionDishId: ObjectId; cook: { name: string; _id: ObjectId, avatar: any; } }) {
     io
         .to(restaurantId.toString())
         .to(`${restaurantId.toString()}/${locationId.toString()}`)

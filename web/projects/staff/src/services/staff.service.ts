@@ -17,6 +17,7 @@ export class StaffService {
     } };
     locations: any[];
     locationId: string;
+    userId: string;
 
     constructor(
         private http: HttpClient,

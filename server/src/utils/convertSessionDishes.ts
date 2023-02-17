@@ -48,13 +48,13 @@ async function convertSessionDishes(data: {
             dishesMap.set(d._id.toString(), d);
         }
 
-        const usersMap = new Map<string, { name: string; avatar: any; }>();
+        const usersMap = new Map<string, { name: string; avatar: any; _id: ObjectId; }>();
 
         for(let user of users) {
-            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer });
+            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, _id: user._id, avatar: user.avatar?.buffer });
         }
 
-        usersMap.set("noid", { name: `Anonymous`, avatar: null! });
+        usersMap.set("noid", { name: `Anonymous`, avatar: null!, _id: null!, });
 
 
         return { usersMap, dishesMap };
@@ -77,6 +77,8 @@ async function convertSessionDishes(data: {
         if(!dish) {
             return null!;
         }
+
+
 
         result.push({
             _id: sessionDish._id,
@@ -110,8 +112,14 @@ async function convertSessionDishes(data: {
 
 
 
-async function convertMultipleSessionsSessionDishes(restaurantId: ObjectId, sessions: Session[], skipStatuses: SessionDishStatus[]) {
+async function convertMultipleSessionsSessionDishes(data: {
+    restaurantId: ObjectId;
+    sessions: Session[];
+    skipStatuses: SessionDishStatus[];
+}) {
     
+    const { skipStatuses, sessions, restaurantId } = data;
+
     const getIds = () => {
         const dishIds: ObjectId[] = [];
         const userIds: ObjectId[] = [];
@@ -149,13 +157,13 @@ async function convertMultipleSessionsSessionDishes(restaurantId: ObjectId, sess
             dishesMap.set(dish._id.toString(), { name: dish.info.name, image: dish.library?.preview });
         }
 
-        const usersMap = new Map<string, { name: string; avatar: any; }>();
+        const usersMap = new Map<string, { name: string; avatar: any; _id: ObjectId; }>();
 
         for(let user of users) {
-            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer });
+            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, _id: user._id, avatar: user.avatar?.buffer });
         }
 
-        usersMap.set("noid", { name: `Anonymous`, avatar: null! });
+        usersMap.set("noid", { name: `Anonymous`, avatar: null!, _id: null!, });
 
 
         return { dishesMap, usersMap };
@@ -182,6 +190,7 @@ async function convertMultipleSessionsSessionDishes(restaurantId: ObjectId, sess
             if(!d) {
                 return null!;
             }
+
 
             result.push({
                 _id: dish._id,
@@ -228,13 +237,13 @@ async function convertOneSessionDish(data: {
     const users = await getUsers({ _id: { $in: [customerId, sessionDish.staff?.cook!, sessionDish.staff?.waiter!] } }, { projection: { info: { name: 1 }, avatar: 1 } }).toArray();
 
     const convertToMap = () => {
-        const usersMap = new Map<string, { name: string; avatar: any; }>();
+        const usersMap = new Map<string, { name: string; avatar: any; _id: ObjectId; }>();
 
         for(let user of users) {
-            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer });
+            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer, _id: user._id });
         }
 
-        usersMap.set("noid", { name: `Anonymous`, avatar: null! });
+        usersMap.set("noid", { name: `Anonymous`, avatar: null!, _id: null!, });
 
 
         return usersMap;

@@ -35,6 +35,7 @@ export class LocationIdGuard implements CanActivate {
         this.service.restaurant.pages = result.pages;
         this.service.restaurant.redirectTo = result.redirectTo;
         this.service.locationId = locationId;
+        this.service.userId = result.userId;
 
         return true;
     }
