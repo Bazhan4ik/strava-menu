@@ -720,7 +720,7 @@ async function createPaymentIntent(data: {
     if(pid) {
 
         try {
-            const paymentIntent = await stripe.paymentIntents.update(pid, { amount: total });
+            const paymentIntent = await stripe.paymentIntents.update(pid, { amount: Math.floor(total) });
 
 
             return paymentIntent;
@@ -737,7 +737,7 @@ async function createPaymentIntent(data: {
     } else {
         try {
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: total,
+                amount: Math.floor(total),
                 on_behalf_of: stripeAccountId,
                 currency: "cad",
                 customer: stripeCustomerId || undefined,
