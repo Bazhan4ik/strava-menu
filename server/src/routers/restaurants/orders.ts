@@ -116,7 +116,9 @@ router.get("/", logged(), restaurantWorker({ locations: 1, }, { customers: { ava
             const d = dishMap.get(dish.dishId.toString());
 
             o.dishes.push({
-                ...d!,
+                name: d?.name || dish.info.name!,
+                image: d?.image,
+                price: d?.price || dish.info.price!,
                 cook: userMap.get(dish.staff?.cook?.toString()!)! || { name: "Invalid user" },
                 waiter: userMap.get(dish.staff?.waiter?.toString()!)! || { name: "Invalid user" },
                 status: dish.status,

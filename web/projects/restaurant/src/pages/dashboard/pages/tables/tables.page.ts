@@ -60,7 +60,24 @@ export class TablesPage implements OnInit {
     }
 
 
-    printAll() {
+    printAll(locationId: string) {
+
+        const tables = [];
+        let locationName: string;
+
+        for(let i of this.downloadUrls) {
+            if(i.locationId == locationId) {
+                tables.push(i);
+            }
+        }
+        for(let i of this.locations) {
+            if(i.locationId == locationId) {
+                locationName = i.locationName;
+                break;
+            }
+        }
+
+
         const popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
         if (popupWin) {
             popupWin.document.open();
@@ -102,8 +119,9 @@ export class TablesPage implements OnInit {
                         </style>
                     </head>
                     <body onload="window.print();window.close()">
+                        <h3>${locationName!}</h3>
                         <div class="tables">
-                            ${this.downloadUrls.map(a => (`
+                            ${tables.map(a => (`
                                 <div class="table">
                                     <div class="title">
                                         Table #${a.tableId}

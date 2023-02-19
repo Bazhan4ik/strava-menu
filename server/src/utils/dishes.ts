@@ -55,10 +55,22 @@ async function updateDish(restaurantId: ObjectId, filter: Filter<Dish>, update: 
     }
 }
 
+async function deleteDish(restaurantId: ObjectId, dishId: ObjectId) {
+    try {
+        
+        return await client.db(dishesDBName).collection(restaurantId.toString()).deleteOne({ _id: dishId });
+
+    } catch (e) {
+        console.error("at deleteDish()");
+        throw e;
+    }
+}
+
 
 export {
     addDish,
     getDishes,
     getDish,
     updateDish,
+    deleteDish,
 }

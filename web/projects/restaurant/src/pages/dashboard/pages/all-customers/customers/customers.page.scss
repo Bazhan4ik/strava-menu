@@ -38,3 +38,36 @@
         }
     }
 }
+
+@media screen and (max-width: 736px) {
+
+    .app {
+        .content {
+            .list {
+                .customer {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .profile {
+                        .avatar {
+                            display: none;
+                        }
+
+                        .name {
+                            .global-text {
+                                font-size: 15px;
+                            }
+                        }
+                    }
+                    .total, .visit {
+                        .global-text {
+                            font-size: 13px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

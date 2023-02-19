@@ -2,6 +2,11 @@
     .content {
         .list {
             .location {
+
+                &:not(:first-of-type) {
+                    margin-top: 24px;
+                }
+
                 .top {
                     display: flex;
                     align-items: center;
@@ -18,7 +23,8 @@
                     gap: 12px;
 
                     .add {
-                        width: 196px;
+                        min-height: 150px;
+                        width: 124px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -35,6 +41,39 @@
                                 font-size: 26px;
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 736px) {
+
+    .app {
+        .content {
+            .list {
+                .location {
+                    .tables {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr 1fr;
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@media screen and (max-width: 550px) {
+    .app {
+        .content {
+            .list {
+                .location {
+                    .tables {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
                     }
                 }
             }

@@ -1,0 +1,47 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Ingredients
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="ingredients && ingredients.length > 0" class="list">
+            <a routerLink="{{ ingredient.id }}" *ngFor="let ingredient of ingredients" class="ingredient">
+                <div class="name">
+                    <span class="global-text big black bold">
+                        {{ ingredient.name }}
+                    </span>
+                </div>
+                <div class="amount">
+                    <span class="global-text">
+                        {{ ingredient.amount }} grams
+                    </span>
+                </div>
+                <div class="price" *ngIf="ingredient.price">
+                    <span class="global-text">
+                        ${{ ingredient.price * ingredient.amount / 10000 }}
+                    </span>
+                </div>
+                <div *ngIf="!ingredient.price" class="set-price">
+                    <span class="global-text red">
+                        ! price not set
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div *ngIf="ingredients && ingredients.length == 0" class="no-ingredients">
+            <span class="global-text big black bold">
+                No ingredients
+            </span>
+        </div>
+
+        <div *ngIf="!ingredients" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

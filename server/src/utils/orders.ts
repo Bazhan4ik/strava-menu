@@ -1,4 +1,4 @@
-import { Filter, FindOptions, ObjectId } from "mongodb";
+import { Filter, FindOptions, ObjectId, UpdateFilter, UpdateOptions } from "mongodb";
 import { ordersDBName } from "../config.js";
 import { Session } from "../models/session.js";
 import { client } from "../setup/mongodb.js";
@@ -42,7 +42,20 @@ function getOrders(restaurantId: ObjectId, filter: Filter<Session>, options: Fin
 }
 
 
+async function updateOrders(restaurantId: ObjectId, filter: Filter<Session>, update: UpdateFilter<Session>, options: UpdateOptions) {
+    try {
+        
+        return await client.db(ordersDBName).collection<Session>(restaurantId.toString()).updateMany(filter, update, options);
+
+    } catch (e) {
+        console.error("at updateOrders()");
+        throw e;
+    }
+}
+
+
 export {
     addOrder,
     getOrders,
+    updateOrders,
 }

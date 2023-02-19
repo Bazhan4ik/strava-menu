@@ -4,6 +4,7 @@ import { WorkerSettings } from "../models/worker.js";
 import { logged } from "../utils/middleware/auth.js";
 import { restaurantWorker } from "../utils/middleware/restaurant.js";
 import { CustomersRouter } from "./restaurants/customers.js";
+import { IngredientsRouter } from "./restaurants/ingredients.js";
 import { LocationsRouter } from "./restaurants/locations.js";
 import { MenuRouter } from "./restaurants/menu/menu.js";
 import { OrdersRouter } from "./restaurants/orders.js";
@@ -16,6 +17,7 @@ import { TablesRouter } from "./restaurants/tables.js";
 const router = Router({ mergeParams: true });
 
 
+router.use("/ingredients", IngredientsRouter);
 router.use("/customers", CustomersRouter);
 router.use("/locations", LocationsRouter);
 router.use("/settings", SettingsRouter);

@@ -9,7 +9,8 @@ interface Restaurant {
     
     stripe?: {
         stripeAccountId?: string;
-
+        card: "enabled" | "disabled" | "pending" | "rejected" | "restricted";
+        payouts: "pending" | "rejected" | "restricted";
     }
 
     info: {
@@ -35,13 +36,12 @@ interface Restaurant {
     };
 
     ingredients: {
-        prices: IngredientPrice[];
-        current: IngredientsUsage[];
-        history: IngredientsUsage[];
+        prices: Ingredients.Price[];
+        current: Ingredients.Usage[];
+        history: Ingredients.Usage[];
     };
     
     blacklist?: (ObjectId | string)[];
-    settings?: RestaurantSettings;
     collections: Collection[];
     locations?: Location[];
     customers?: Customer[];
@@ -51,26 +51,17 @@ interface Restaurant {
 }
 
 
-interface RestaurantSettings {
-    customers: {
+
+interface LocationSettings {
+    customers?: {
+        maxDishes: number; // 0 is unlimited
         allowOrderingOnline: boolean;
-        maxDishes: number;
         allowDineIn: boolean;
         allowTakeOut: boolean;
-        maxCustomers: number;
-        minPrice: number;
     },
-    dishes: {
-
-    },
-    staff: {
-        
-    }
-
-    money?: {
-        card: "enabled" | "disabled" | "rejected" | "restricted" | "pending";
-        cash: "enabled" | "disabled";
-        payouts: "enabled" | "restricted" | "rejected" | "pending";
+    methods?: {
+        card: boolean;
+        cash: boolean;
     }
 }
 
@@ -87,6 +78,8 @@ interface Location {
     name: string;
     _id: ObjectId;
     id: string;
+
+    settings: LocationSettings;
 
     latlng: [number, number];
 }
@@ -106,7 +99,6 @@ interface Collection {
 interface Table {
     id: number;
     _id: ObjectId;
-    orders: ObjectId[];
 }
 
 interface Customer {
@@ -115,22 +107,23 @@ interface Customer {
     last: number;
 }
 
-interface IngredientPrice {
-    id: string;
-    price: number;
-}
-
-interface IngredientsUsage {
-    id: string;
-    amount: number;
-    price?: number;
+declare namespace Ingredients {
+    interface Usage {
+        id: string;
+        amount: number;
+        price?: number;
+    }
+    interface Price {
+        id: string;
+        price: number;
+    }
 }
 
 export {
-    IngredientPrice,
-    IngredientsUsage,
     Restaurant,
     Collection,
     Location,
     Table,
+    Ingredients,
+    LocationSettings,
 }

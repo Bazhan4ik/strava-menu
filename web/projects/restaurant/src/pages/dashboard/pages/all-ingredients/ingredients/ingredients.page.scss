@@ -1,0 +1,21 @@
+.app {
+    .content {
+        .list {
+            .ingredient { 
+                display: grid;
+                grid-template-columns: 50% 25% 25%;
+                padding: 8px;
+                border-radius: var(--default-border-radius);
+                text-decoration: none;
+
+                .name, .amount, .price, .set-price {
+                    display: flex;
+                }
+
+                &:hover {
+                    background-color: var(--default-on-background);
+                }
+            }
+        }
+    }
+}

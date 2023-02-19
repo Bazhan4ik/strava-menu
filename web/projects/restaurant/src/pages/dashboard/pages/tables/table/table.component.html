@@ -3,14 +3,6 @@
         <div class="qr-code">
             <qrcode (qrCodeURL)="setDownloadUrl($event)" [qrdata]="qrurl" [margin]="2" [elementType]="'img'" [errorCorrectionLevel]="'M'"></qrcode>
         </div>
-        <div class="orders">
-            <span class="global-text">
-                Orders:
-                <span class="global-text bold black">
-                    {{ table.orders }}
-                </span>
-            </span>
-        </div>
     </div>
     <div class="bottom">
         <div class="id">

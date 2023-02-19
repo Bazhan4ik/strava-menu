@@ -8,6 +8,28 @@
             }
         }
     }
+    .locations-methods {
+        .body {
+            .location {
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .values {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    & > div {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                    }
+                }
+            }
+        }
+    }
     .bank-account {
         .body {
             .currency {

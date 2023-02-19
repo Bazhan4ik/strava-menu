@@ -19,7 +19,7 @@ const routes: Routes = [
             {
                 path: "payments",
                 loadChildren: () => import("./components/payments/payments.module").then(m => m.PaymentsModule)
-            }
+            },
         ]
     }
 ];

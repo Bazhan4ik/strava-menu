@@ -1,0 +1,21 @@
+.app {
+    .content {
+        .ingredient {
+            display: flex;
+            justify-content: space-between;
+
+            .name-price {
+                .price {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    input {
+                        width: 82px;
+                        height: 22px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -42,11 +42,20 @@ router.get("/general", logged(), restaurantWorker({ info: { name: 1, description
     });
 });
 
-
+interface LocationPayments {
+    id: string;
+    name: string;
+    card: boolean;
+    cash: boolean;
+}
 router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 1 }, locations: 1 }, { settings: { payments: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
 
     if(!restaurant.stripe?.stripeAccountId) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    if(!restaurant.locations) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
@@ -72,6 +81,16 @@ router.get("/payments", logged(), restaurantWorker({ stripe: { stripeAccountId: 
         address: null,
         dob: false,
         name: false,
+        locationsPayments: [],
+    }
+
+    for(let l of restaurant.locations) {
+        response.locationsPayments.push({
+            id: l.id,
+            name: l.name,
+            cash: l.settings.methods?.cash,
+            card: l.settings.methods?.card,
+        });
     }
 
 

@@ -27,8 +27,8 @@
                         </span>
                     </div>
                     <div class="buttons">                        
-                        <div class="default-checkbox">
-                            <input id="checkbox-{{ dishIndex }}" (change)="onChange($event, dish)" [checked]="ids.includes(dish._id)" type="checkbox" aria-hidden="true" />
+                        <div class="global-checkbox">
+                            <input id="checkbox-{{ dishIndex }}" (change)="onChange($event, dish)" [checked]="ids.includes(dish._id)" type="checkbox" />
                             <label for="checkbox-{{ dishIndex }}"></label>
                         </div>
                     </div>

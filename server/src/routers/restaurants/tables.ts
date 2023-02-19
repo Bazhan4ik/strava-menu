@@ -35,7 +35,7 @@ router.get("/", logged(), restaurantWorker({ tables: 1, locations: { name: 1, id
         result.push({
             locationId,
             locationName: getLocationName(locationId),
-            tables: restaurant.tables[locationId].map(t => { return { ...t, orders: t.orders.length } }),
+            tables: restaurant.tables[locationId].map(t => { return { ...t } }),
         });
     }
 
@@ -60,7 +60,6 @@ router.post("/", logged(), restaurantWorker({ tables: 1 }, { customers: { tables
     const table: Table = {
         id: restaurant.tables[locationId].length + 1,
         _id: id(),
-        orders: [],
     };
 
     const $push: any = { };

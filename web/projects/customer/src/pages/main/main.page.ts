@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { env } from 'environment/environment';
 import { CustomerService } from '../../services/customer.service';
@@ -26,7 +26,9 @@ export class MainPage implements OnInit {
     constructor(
         private service: CustomerService,
         private router: Router,
+        private renderer: Renderer2,
     ) {
+
         this.router.events.subscribe(ev => {
             if(ev instanceof NavigationEnd) {
                 this.showPreview = ev.url.split("?")[0].split("/")[3] != "p" && ev.url.split("?")[0].split("/")[3] != "tracking";
@@ -82,6 +84,18 @@ export class MainPage implements OnInit {
         if(this.service.session.waiterRequest) {
             this.openWaiterRequest();
         }
+
+
+
+
+
+
+
+        // const link = this.renderer.createElement('link');
+        // link.setAttribute('rel', 'stylesheet');
+        // link.setAttribute('type', 'text/css');
+        // link.setAttribute('href', 'https://api.mydomain.com:3000/themes/default.css');
+        // this.renderer.appendChild(document.head, link);
     }
 
 }

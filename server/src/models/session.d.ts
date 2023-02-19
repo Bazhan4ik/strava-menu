@@ -47,6 +47,8 @@ interface SessionDish {
     }
     
     info: {
+        name?: string;
+        price?: number;
         comment: string; // comment the customer left for the dish
         id?: string; // for staff to track the dish easier
     }

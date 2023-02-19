@@ -15,6 +15,13 @@ interface BankAccount {
     status: string;
 }
 
+interface LocationPayments {
+    id: string;
+    name: string;
+    card: boolean;
+    cash: boolean;
+}
+
 
 @Component({
     selector: 'app-payments',
@@ -29,6 +36,8 @@ export class PaymentsPage implements OnInit {
     isNameRequired: boolean;
 
     savedLocations: any[];
+
+    locationsPayments: LocationPayments[];
 
     loaded = false;
 
@@ -70,6 +79,16 @@ export class PaymentsPage implements OnInit {
         }
     }
 
+    async onLocationMethodChange(locationId: string, ev: any, t: string) {
+        const value = ev.target.checked;
+
+        const update: any = await this.service.put({ type: t, value }, "locations", locationId, "methods");
+
+        if(!update.updated) {
+            ev.target.checked = !value;
+        }
+    }
+
 
     async ngOnInit() {
         const result: {
@@ -78,6 +97,7 @@ export class PaymentsPage implements OnInit {
             address: Location;
             bankAccount: BankAccount;
             locations: any[];
+            locationsPayments: LocationPayments[]
         } = await this.service.get("settings/payments");
 
 
@@ -89,6 +109,8 @@ export class PaymentsPage implements OnInit {
         this.bankAccount = result.bankAccount;
 
         this.loaded = true;
+
+        this.locationsPayments = result.locationsPayments;
 
         console.log(result);
     }

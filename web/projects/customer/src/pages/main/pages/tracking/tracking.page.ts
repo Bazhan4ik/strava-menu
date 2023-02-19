@@ -60,9 +60,16 @@ export class TrackingPage implements OnInit, OnDestroy {
             for(let dish of result) {
                 dish.convertedImage = getImage(dish.image.buffer) || "./../../../../../../../global-resources/images/no-image.svg";
             }
+
+            
+            this.dishes = result;
+        } else {
+            this.ngOnDestroy();
+            setTimeout(() => {
+                this.ngOnInit();
+            }, 1000);
         }
 
-        this.dishes = result;
     }
     ngOnDestroy(): void {
         this.subscription?.unsubscribe();

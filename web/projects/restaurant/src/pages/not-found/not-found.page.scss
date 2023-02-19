@@ -1,0 +1,17 @@
+.app {
+    padding-top: 20vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .icon {
+        mat-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 64px;
+            color: var(--gray);
+        }
+    }
+
+    
+}

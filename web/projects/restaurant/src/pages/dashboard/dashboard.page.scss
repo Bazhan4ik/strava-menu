@@ -58,6 +58,7 @@
         left: 0;
         border-right: 1px solid var(--default-border-color);
         width: 208px;
+        z-index: 1000;
 
         .restaurant {
             padding-left: 42px;
@@ -172,7 +173,7 @@
                 .bottom {
                     display: inline-block;
                     position: absolute;
-                    bottom: 100px;
+                    bottom: 200px;
                     left: 0;
 
                     #account-button-nav {

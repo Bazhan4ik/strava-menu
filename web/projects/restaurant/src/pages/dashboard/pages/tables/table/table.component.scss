@@ -5,11 +5,12 @@
 
     .top {
         display: flex;
-        justify-content: space-between;
+        align-items: center;
+        justify-content: center;
         
         .qr-code {
-            width: 72px;
-            height: 72px;
+            width: 86px;
+            height: 86px;
         }
     }
 

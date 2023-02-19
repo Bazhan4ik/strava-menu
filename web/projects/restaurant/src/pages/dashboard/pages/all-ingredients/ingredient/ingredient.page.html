@@ -1,0 +1,59 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." class="icon-button">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Ingredient
+            </span>
+        </div>
+        <div class="buttons">
+            <button *ngIf="showSave" (click)="save()" class="orange-button button">
+                Save
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="ingredient" class="ingredient">
+            <div class="name-price">
+                <div class="name">
+                    <span class="global-text big black bold">
+                        {{ ingredient.name }}
+                    </span>
+                </div>
+                <div class="price">
+                    <span class="global-text sign">
+                        $
+                    </span>
+                    <input [(ngModel)]="price" type="number" (input)="onInput()" class="global-input">
+                    <span class="global-text">
+                        per 100 grams
+                    </span>
+                </div>
+            </div>
+            <div class="spendings">
+                <div class="amount">
+                    <span class="global-text">
+                        This month:
+                        <span class="global-text black bold">
+                            {{ ingredient.amount }} grams
+                        </span>
+                    </span>
+                </div>
+                <div class="price" *ngIf="ingredient.price">
+                    <span class="global-text">
+                        ${{ ingredient.amount / 100 * ingredient.price / 100 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!ingredient" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

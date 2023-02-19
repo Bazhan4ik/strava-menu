@@ -21,7 +21,12 @@ function restaurantWorker(projection: any = {}, ...settings: WorkerSettings[]) {
             }
 
             if(locationId && projection.locations != 1) {
-                projection.locations = { id: 1, _id: 1 };
+                if(projection.locations) {
+                    projection.locations.id = 1;
+                    projection.locations._id = 1;
+                } else {
+                    projection.locations = { id: 1, _id: 1, };
+                }
             }
         }
 

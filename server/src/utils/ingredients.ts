@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { ingredients } from "../../resources/data/ingredients.js";
 import { Ingredient } from "../models/dish.js";
-import { IngredientsUsage } from "../models/restaurant.js";
+import { Ingredients } from "../models/restaurant.js";
 import { getDish } from "./dishes.js";
 import { updateRestaurant } from "./restaurant.js";
 
@@ -65,8 +65,8 @@ async function updateIngredientsUsage(restaurantId: ObjectId, dishId: ObjectId) 
 }
 
 
-function getEmptyIngredientsUsage(): IngredientsUsage[] {
-    const result: IngredientsUsage[] = [];
+function getEmptyIngredients(): Ingredients.Usage[] {
+    const result: Ingredients.Usage[] = [];
 
     for(let category of Object.keys(ingredients)) {
         for(let ingredient of ingredients[category]) {
@@ -85,5 +85,5 @@ function getEmptyIngredientsUsage(): IngredientsUsage[] {
 export {
     getIngredients,
     updateIngredientsUsage,
-    getEmptyIngredientsUsage,
+    getEmptyIngredients,
 }

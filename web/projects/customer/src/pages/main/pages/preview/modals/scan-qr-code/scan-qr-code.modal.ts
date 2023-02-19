@@ -50,12 +50,12 @@ export class ScanQrCodeModal implements OnInit, AfterViewInit {
         }
     }
 
-    close() {
-        this.leave.emit();
+    close(data?: any) {
+        this.leave.emit(data);
+        this.stream.getTracks().forEach(t => t.stop());
     }
 
     onUrlScanned(url: string) {
-        console.log(url);
         const u = new URL(url);
 
         const table = u.searchParams.get("table");
@@ -64,7 +64,7 @@ export class ScanQrCodeModal implements OnInit, AfterViewInit {
             this.message = "Invalid QR code";
             this.scanQRCode();
         } else {
-            this.leave.emit(table);
+            this.close(table);
         }
     }
 

@@ -38,6 +38,12 @@
                 </mat-icon>
                 Menu
             </a>
+            <a class="global-link" [class.disabled]="!pages.menu" routerLink="ingredients" [class.active]="currentPage == 'ingredients'">
+                <mat-icon>
+                    inventory
+                </mat-icon>
+                Ingredients
+            </a>
             <a class="global-link" [class.disabled]="!pages.locations" routerLink="locations" [class.active]="currentPage == 'locations'">
                 <mat-icon>
                     place

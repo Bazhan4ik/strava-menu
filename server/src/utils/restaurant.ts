@@ -1,4 +1,4 @@
-import { Filter, FindOneAndUpdateOptions, FindOptions, UpdateFilter } from "mongodb";
+import { AnyBulkWriteOperation, Filter, FindOneAndUpdateOptions, FindOptions, UpdateFilter } from "mongodb";
 import { dishesDBName, mainDBName, ordersDBName, sessionsDBName } from "../config.js";
 import { Restaurant } from "../models/restaurant.js";
 import { WorkerSettings } from "../models/worker.js";
@@ -24,7 +24,6 @@ async function createRestaurant(newRestaurant: Restaurant) {
         throw e;
     }
 }
-
 
 async function getRestaurants(filter: Filter<Restaurant>, options: FindOptions): Promise<Restaurant[]> {
     try {
@@ -65,6 +64,16 @@ async function updateRestaurant(filter: Filter<Restaurant>, update: UpdateFilter
     }
 }
 
+async function bulkRestaurant(operations: AnyBulkWriteOperation<Restaurant>[]) {
+    try {
+        
+        return await client.db(mainDBName).collection<Restaurant>("restaurants").bulkWrite(operations);
+
+    } catch (e) {
+        console.error("at bulkRestaurant()");
+        throw e;
+    }
+}
 
 function compareWorkerSettings(
     workerSettings: WorkerSettings,
@@ -97,4 +106,5 @@ export {
     compareWorkerSettings,
     getRestaurant,
     updateRestaurant,
+    bulkRestaurant,
 }

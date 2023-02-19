@@ -106,6 +106,7 @@ export class PreviewPage implements OnInit {
                     for(let i in this.dishes) {
                         if(this.dishes[i]._id == dish._id) {
                             this.dishes.splice(+i, 1);
+                            this.subtotal -= dish.price;
                             break;
                         }
                     }

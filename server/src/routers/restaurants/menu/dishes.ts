@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { Dish } from "../../../models/dish.js";
 import { Locals } from "../../../models/general.js";
 import { Collection } from "../../../models/restaurant.js";
-import { addDish, getDish, getDishes, updateDish } from "../../../utils/dishes.js";
+import { addDish, deleteDish, getDish, getDishes, updateDish } from "../../../utils/dishes.js";
 import { id } from "../../../utils/id.js";
 import { logged } from "../../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../../utils/middleware/restaurant.js";
@@ -12,6 +12,7 @@ import { bufferFromString } from "../../../utils/bufferFromString.js";
 import { getIngredients } from "../../../utils/ingredients.js";
 import { getTags } from "../../../utils/tags.js";
 import { updateRestaurant } from "../../../utils/restaurant.js";
+import { updateOrders } from "../../../utils/orders.js";
 
 
 
@@ -23,7 +24,6 @@ const router = Router({ mergeParams: true });
 router.post("/", logged(), restaurantWorker({}, { dishes: { adding: true } }), async (req, res) => {
     const { name, price, description, tags, ingredients, image } = req.body;
     const { restaurant, user } = res.locals as Locals;
-    console.log(req.body);
 
     if(!name || !price) {
         return res.status(422).send({ reason: "InvalidInput" });
@@ -92,10 +92,6 @@ router.post("/", logged(), restaurantWorker({}, { dishes: { adding: true } }), a
             };
         }
     }
-
-
-    console.log(newDish);
-
 
 
     const result = await addDish(restaurant._id, user._id, newDish);
@@ -303,7 +299,43 @@ router.put("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }
     
     res.send({ updated: update.ok == 1 });
 });
+router.delete("/:dishId", logged(), restaurantWorker({ }, { dishes: { removing: true } }), async (req, res) => {
+    const { dishId } = req.params; // OBJECT ID HERE
+    const { restaurant } = res.locals as Locals;
 
+    if(!dishId || dishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidDishId" });
+    }
+
+    const dish = await getDish(restaurant._id, { _id: id(dishId) }, { projection: { info: { name: 1, price: 1 } } });
+
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+
+    const ordersUpdate = await updateOrders(
+        restaurant._id,
+        { dishes: { $elemMatch: { dishId: id(dishId) } } },
+        { $set: {
+            "dishes.$[dish].info.price": dish.info.price,
+            "dishes.$[dish].info.name": dish.info.name,
+        } },
+        { arrayFilters: [ { "dish.dishId": id(dishId) } ] }
+    );
+
+    const collectionsUpdate = await updateRestaurant(
+        { _id: restaurant._id, collections: { $elemMatch: { dishes: { $in: [id(dishId)] } } } },
+        { $pull: { "collections.$[collectionWithTheDish].dishes": id(dishId) } },
+        { projection: { _id: 1 }, arrayFilters: [ { "collectionWithTheDish.dishes": { $in: [id(dishId)] } } ] },
+    );
+
+    console.log("collections updated: ", collectionsUpdate.ok == 1);
+    console.log("orders      updated: ", ordersUpdate.modifiedCount > 0);
+
+    const deleted = await deleteDish(restaurant._id, id(dishId));
+
+    res.send({ updated: deleted.deletedCount > 0 });
+});
 
 
 

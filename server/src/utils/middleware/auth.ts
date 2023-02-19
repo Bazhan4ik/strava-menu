@@ -46,8 +46,6 @@ function logged(projection: any = { _id: 1, }) {
                 });
             }
 
-            console.log(req.path);
-
             if(u.status == "restricted" && req.path != "/email-verification") {
                 return res.status(403).send({ reason: "RestrictedAccount" });
             }

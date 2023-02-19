@@ -9,7 +9,8 @@
     <div class="content">
         <div *ngIf="orders && orders.length > 0" class="list">
             <div *ngFor="let order of orders" class="order">
-                <a type="button" routerLink="{{ order._id }}" class="order-info">
+                <a type="button" class="order-info">
+                <!-- <a type="button" routerLink="{{ order._id }}" class="order-info"> -->
                     <div class="customer">
                         <div class="avatar">
                             <img [src]="order.customer.avatar" class="global-avatar outline" alt="">

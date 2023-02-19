@@ -20,6 +20,48 @@
             <app-dob (leave)="onDobEdit($event)"></app-dob>
         </div>
     </div>
+    <div class="locations-methods block" *ngIf="loaded && bankAccount && locationsPayments && locationsPayments.length > 0">
+        <div class="header">
+            <div class="title">
+                <span class="global-subtitle">
+                    Locations
+                </span>
+            </div>
+        </div>
+        <div class="body">
+            <div *ngFor="let location of locationsPayments" class="location">
+                <div class="title">
+                    <a class="name">
+                        <a routerLink="../../locations/{{ location.id }}" class="global-link">
+                            <span class="global-text big black bold">
+                                {{ location.name }}
+                            </span>
+                        </a>
+                    </a>
+                </div>
+                <div class="values">
+                    <div class="cash">
+                        <span class="global-text black">
+                            Cash
+                        </span>
+                        <div class="global-checkbox">
+                            <input (change)="onLocationMethodChange(location.id, $event, 'cash')" [checked]="location.cash" type="checkbox" id="cash-checkbox" aria-hidden="true">
+                            <label for="cash-checkbox"></label>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <span class="global-text black">
+                            Card
+                        </span>
+                        <div class="global-checkbox">
+                            <input (change)="onLocationMethodChange(location.id, $event, 'card')" [checked]="location.card" type="checkbox" id="card-checkbox" aria-hidden="true">
+                            <label for="card-checkbox"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div *ngIf="loaded && bankAccount" class="bank-account block">
         <div class="header">
             <div class="title">

@@ -5,10 +5,17 @@
                 Settings
             </span>
         </div>
+        <div class="buttons">
+            <button (click)="openMenu()" class="icon-button">
+                <mat-icon>
+                    menu
+                </mat-icon>
+            </button>
+        </div>
     </div>
 
     <div class="content">
-        <div class="navigation">
+        <div class="navigation" (click)="openMenu()" [class.open]="menuOpened">
             <a class="link" routerLink="general" [class.active]="currentPage == 'general'">
                 General
             </a>

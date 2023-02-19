@@ -8,6 +8,7 @@ import { NavigationEnd, Router } from '@angular/router';
 })
 export class SettingsPage implements OnInit {
     currentPage = "general";
+    menuOpened = false;
 
     constructor(
         private router: Router,
@@ -22,6 +23,9 @@ export class SettingsPage implements OnInit {
         });
     }
 
+    openMenu() {
+        this.menuOpened = !this.menuOpened;
+    }
 
     ngOnInit() {
         this.currentPage = this.router.url.split('?')[0].split('/')[3] || "general";

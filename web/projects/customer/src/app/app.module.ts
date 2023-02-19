@@ -19,7 +19,7 @@ import { env } from 'environment/environment';
         AppRoutingModule,
         IonicModule.forRoot(),
         HttpClientModule,
-        NgxStripeModule.forRoot("pk_test_51KNlK6LbfOFI72xW4xnsuE6JQRte49N0HFiLw9mfQn8JF1JuImLOr2QJZewBZwXiPRNgsS6ebeiOisn3Gebp0zLT00i143bkrp"),
+        NgxStripeModule.forRoot(env.stripeKey),
         SocketIoModule.forRoot({ url: env.apiUrl, })
     ],
     providers: [

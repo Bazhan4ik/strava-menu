@@ -11,7 +11,7 @@ import { addUser, getUser, updateUser } from "../utils/users.js";
 import { Locals } from "../models/general.js";
 import { DEFAULT_COLLECTIONS } from "../../resources/data/collections.js";
 import { stripe } from "../setup/stripe.js";
-import { getEmptyIngredientsUsage } from "../utils/ingredients.js";
+import { getEmptyIngredients } from "../utils/ingredients.js";
 
 
 const router = Router();
@@ -260,7 +260,7 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
             created: Date.now(),
         },
         ingredients: {
-            current: getEmptyIngredientsUsage(),
+            current: getEmptyIngredients(),
             history: [],
             prices:  [],
         },
@@ -270,7 +270,10 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
         collections: [
             ...DEFAULT_COLLECTIONS,
         ],
-        stripe: {},
+        stripe: {
+            card: "pending",
+            payouts: "pending",
+        },
         staff: [{ userId: user._id, locations: [], settings: { isOwner: true }, joined: Date.now(), }]
     }
 

@@ -10,11 +10,16 @@
         <div class="options">
             <form class="form" [formGroup]="form" (ngSubmit)="submit()">
                 <div class="email">
-                    <input type="email" class="global-input" placeholder="Email address" formControlName="email">
+                    <div class="label">
+                        <span class="global-text big">
+                            Email address
+                        </span>
+                    </div>
+                    <input type="email" class="global-input" formControlName="email">
                 </div>
                 <div class="password">
                     <div class="label">
-                        <span class="global-text">
+                        <span class="global-text big">
                             Password
                         </span>
                     </div>

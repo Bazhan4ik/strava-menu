@@ -48,7 +48,8 @@ export class EditDishPage implements OnInit {
 
     timeout: any;
 
-
+    disable = false;
+    
     dish: Dish;
 
 
@@ -102,10 +103,6 @@ export class EditDishPage implements OnInit {
         }, 500);
     }
 
-    onTagAdded() {
-        this.autocomplete = [];
-    }
-
     async setImage() {
         const { ImageModal } = await import("../shared-components/image/image.modal");
 
@@ -122,14 +119,11 @@ export class EditDishPage implements OnInit {
     }
 
     async save() {
-        console.log(this.form.value);
-        console.log(this.ingredients);
-        console.log(this.imageChanged, this.image);
-
         if(!this.form.valid || this.form.value.price < 1) {
             return;
         }
 
+        this.disable = true;
 
         const body = {
             ...this.form.value,
@@ -154,6 +148,19 @@ export class EditDishPage implements OnInit {
 
     }
 
+    async remove() {
+        this.disable = true;
+
+        const result: any = await this.service.delete("menu/dishes", this.dish._id);
+
+        if(result.updated) {
+            return this.router.navigate([this.service.restaurant.id, "menu", "dishes"]);
+        }
+
+        this.disable = false;
+
+        return;
+    }
 
 
     async ngOnInit() {

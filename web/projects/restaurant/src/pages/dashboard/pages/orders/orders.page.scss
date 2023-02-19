@@ -106,3 +106,37 @@
         }
     }
 }
+
+
+@media screen and (max-width: 736px) {
+
+    .app {
+        .content {
+            .list {
+                .order {
+                    .order-info {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        
+                        .info {
+                            display: none;
+                        }
+                    }
+                    .dishes {
+                        .dish {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+
+                            .staff {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

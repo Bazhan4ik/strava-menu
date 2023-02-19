@@ -61,6 +61,7 @@ apiApp.use("/restaurants/:restaurantId", RestaurantsRouter);
 apiApp.use("/customer/:restaurantId", CustomerRouter);
 apiApp.use("/webhooks", WebhookRouter);
 apiApp.use("/staff/:restaurantId", StaffRouter);
+apiApp.use("/themes", express.static(path.join(process.cwd(), "web/themes/css")));
 
 
 publicApp.get("**", (req, res) => {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsPage } from './settings.page';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { SettingsPage } from './settings.page';
     ],
     imports: [
         CommonModule,
-        SettingsRoutingModule
+        SettingsRoutingModule,
+        MatIconModule,
     ]
 })
 export class SettingsModule { }

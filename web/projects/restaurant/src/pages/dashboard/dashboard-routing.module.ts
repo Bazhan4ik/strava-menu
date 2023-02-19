@@ -78,6 +78,10 @@ const routes: Routes = [
             {
                 path: "locations/add",
                 loadChildren: () => import("./pages/all-locations/add-location/add-location.module").then(m => m.AddLocationModule),
+            },
+            {
+                path: "locations/:locationId",
+                loadChildren: () => import("./pages/all-locations/location/location.module").then(m => m.LocationModule),
             }
 
 
@@ -122,6 +126,19 @@ const routes: Routes = [
             {
                 path: "tables",
                 loadChildren: () => import("./pages/tables/tables.module").then(m => m.TablesModule),
+            }
+
+
+            ,
+
+
+            {
+                path: "ingredients",
+                loadChildren: () => import("./pages/all-ingredients/ingredients/ingredients.module").then(m => m.IngredientsModule),
+            },
+            {
+                path: "ingredients/:ingredientId",
+                loadChildren: () => import("./pages/all-ingredients/ingredient/ingredient.module").then(m => m.IngredientModule),
             }
         ]
     },
