@@ -22,7 +22,7 @@
         <div class="full-address" *ngIf="place">
 
             <div class="top">
-                <div class="city">
+                <div class="state">
                     <div class="label">
                         <span class="global-text">
                             Province
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <div class="map" >
+            <div class="map">
                 <google-map [options]="mapOptions" [height]="'100%'" [width]="'100%'">
                     <map-marker [position]="placeLocation" [options]="markerOptions"></map-marker>
                 </google-map>

@@ -12,7 +12,7 @@ export class AddLocationPage implements AfterViewInit {
 
     options: any = {
         types: [],
-        componentRestrictions: { country: 'US' },
+        componentRestrictions: { country: 'CA' },
     };
 
     autocompleteInput: string;

@@ -1,0 +1,36 @@
+.app {
+    .content {
+        .location {
+            display: flex;
+
+            .name {
+                padding-right: 32px;
+            }
+        }
+
+        .settings {
+
+            & > div {    
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid var(--default-border-color);
+                
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .values {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    
+                    & > div {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                    }
+                }
+            }
+        }
+    }
+}

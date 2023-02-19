@@ -1,0 +1,110 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." type="button" class="icon-button">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Location
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="location" class="location">
+            <div class="name">
+                <span class="global-text big black bold">
+                    {{ location.name }}
+                </span>
+            </div>
+            <div class="address">
+                <div class="state">
+                    <span class="global-text big">
+                        {{ location.state }}
+                    </span>
+                </div>
+                <div class="city">
+                    <span class="global-text big">
+                        {{ location.city }}
+                    </span>
+                </div>
+                <div class="line">
+                    <span class="global-text big">
+                        {{ location.line1 }}
+                    </span>
+                </div>
+                <div class="line">
+                    <span class="global-text big">
+                        {{ location.line2 }}
+                    </span>
+                </div>
+                <div class="postal-code">
+                    <span class="global-text">
+                        {{ location.postalCode }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="location" class="settings">
+            <div class="payments">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Payment methods
+                    </span>
+                </div>
+                <div class="values">
+                    <div class="cash">
+                        <span class="global-text black">
+                            Cash
+                        </span>
+                        <div class="global-checkbox">
+                            <input (change)="onMethodChange($event, 'cash')" [checked]="location.settings.methods.cash" type="checkbox" id="cash-checkbox" aria-hidden="true">
+                            <label for="cash-checkbox"></label>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <span class="global-text black">
+                            Card
+                        </span>
+                        <div class="global-checkbox">
+                            <input (change)="onMethodChange($event, 'card')" [checked]="location.settings.methods.card" type="checkbox" id="card-checkbox" aria-hidden="true">
+                            <label for="card-checkbox"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dinein">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Dine in
+                    </span>
+                </div>
+                <div class="values">
+                    <ion-toggle [checked]="location.settings.customers.allowDineIn" (ionChange)="onCustomersChange($event, 'allowDineIn')" mode="ios" color="orange"></ion-toggle>
+                </div>
+            </div>
+            <div class="takeout">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Take out
+                    </span>
+                </div>
+                <div class="values">
+                    <ion-toggle [checked]="location.settings.customers.allowTakeOut" (ionChange)="onCustomersChange($event, 'allowTakeOut')" mode="ios" color="orange"></ion-toggle>
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="!location" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button (click)="remove()" class="button red-button">
+            Remove
+        </button>
+    </div>
+</div>
