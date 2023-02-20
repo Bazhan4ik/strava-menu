@@ -1,10 +1,11 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { env } from 'environment/environment';
 import { LocationIdGuard } from '../guards/location-id.guard';
 import { RestaurantIdGuard } from '../guards/restaurant-id.guard';
 import { SessionGuard } from '../guards/session.guard';
+import { CustomRouteReuseStrategy } from '../other/custom-route-reuse-strategy';
 
 const routes: Routes = [
     {
@@ -26,7 +27,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: "enabled" })],
+    providers: [
+        {
+            provide: RouteReuseStrategy,
+            useClass: CustomRouteReuseStrategy,
+        }
+    ],
+    exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -15,14 +15,14 @@
     <div class="not-payment">
         <div *ngIf="dishes && dishes.length > 0" class="dishes">
             <div *ngFor="let dish of dishes" class="dish">
-                <div class="name">
-                    <span class="global-text big black bold">
+                <div class="name-container">
+                    <span class="global-text big name black bold">
                         {{ dish.name }}
                     </span>
                     <span class="x">
                         x
                     </span>
-                    <span class="amount">
+                    <span class="global-text amount">
                         {{ dish.amount }}
                     </span>
                 </div>

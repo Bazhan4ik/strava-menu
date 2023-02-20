@@ -17,6 +17,8 @@ export class MainPage implements OnInit {
 
     showPreview: boolean;
 
+    showTracking: boolean;
+
     showPopover: boolean;
     popoverPosition: {
         x: number;
@@ -80,6 +82,7 @@ export class MainPage implements OnInit {
 
     async ngOnInit() {
         this.restaurant = this.service.restaurant;
+        this.showTracking = this.service.showTracking;
         
         if(this.service.session.waiterRequest) {
             this.openWaiterRequest();

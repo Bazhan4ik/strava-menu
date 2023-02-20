@@ -4,31 +4,60 @@
             <a routerLink=".." class="icon-button">
                 <mat-icon>arrow_back</mat-icon>
             </a>
-            <span class="global-subtitle">
+            <span class="global-subtitle" *ngIf="logged">
                 Tracking
+            </span>
+            <span *ngIf="!logged" class="global-subtitle">
+                Order placed <mat-icon>done</mat-icon>
             </span>
         </div>
     </div>
     <div class="content">
-        <div class="dish" *ngFor="let dish of dishes">
-            <div class="image">
-                <img [src]="dish.convertedImage" alt="">
-            </div>
-            <div class="name-status">
-                <div class="name">
-                    <span class="global-text big black bold">
-                        {{ dish.name }}
-                    </span>
+        <div class="dishes" *ngIf="logged && loaded">
+            <div class="dish" *ngFor="let dish of dishes">
+                <div class="image">
+                    <img [ngSrc]="dish.imageUrl" width="160" height="160" alt="">
                 </div>
-                <div class="status">
-                    <span *ngIf="dish.status != 'ordered'" [class.orange]="dish.status == 'cooked'" [class.green]="dish.status == 'served'" [class.purple]="dish.status == 'cooking'">
-                        {{ dish.status }}
-                    </span>
-                    <span *ngIf="dish.status == 'ordered'" class="gray">
-                        waiting
-                    </span>
+                <div class="name-status">
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ dish.name }}
+                        </span>
+                    </div>
+                    <div class="status">
+                        <span *ngIf="dish.status != 'ordered'" [class.orange]="dish.status == 'cooked'" [class.green]="dish.status == 'served'" [class.purple]="dish.status == 'cooking'">
+                            {{ dish.status }}
+                        </span>
+                        <span *ngIf="dish.status == 'ordered'" class="gray">
+                            waiting
+                        </span>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="account" *ngIf="!logged && loaded">
+            <div class="title">
+                <span class="global-subtitle">
+                    While you're waiting...
+                </span>
+            </div>
+            <div class="text">
+                <span class="global-text">
+                    Create a StravaMenu account and stay organized with all past orders in one place.
+                </span>
+            </div>
+            <div class="buttons">
+                <a [href]="registerUrl" class="orange-button button">
+                    Register
+                    <mat-icon>arrow_forward</mat-icon>
+                </a>
+            </div>
+        </div>
+        <div *ngIf="!loaded" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </div>
 </div>

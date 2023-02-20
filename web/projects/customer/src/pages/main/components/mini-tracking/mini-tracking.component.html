@@ -14,7 +14,7 @@
     <div class="dishes">
         <div *ngFor="let dish of dishes" class="dish">
             <div class="image">
-                <img [src]="dish.image" alt="">
+                <img [ngSrc]="dish.imageUrl" *ngIf="dish.imageUrl" width="160" height="160">
             </div>
             <div class="name-status">
                 <div class="name">

@@ -3,20 +3,37 @@
     height: 100%;
 
     .header {
-        padding: 0 8px;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .title {
-            display: flex;
-            align-items: center;
+        
+        .back-button {
+            
         }
+        .text {
+
+            display: flex;
+            flex-direction: column;
+            .title {
+                display: flex;
+                align-items: center;
+            }
+    
+            .address {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                
+                mat-icon {
+                    height: 16px;
+                    width: 16px;
+                    font-size: 16px;
+                }
+            }
+        }
+
     }
 
     .info {
-        padding: 24px 12px;
-        border-top: 1px solid var(--default-border-color);
+        padding: 24px 0;
         border-bottom: 1px solid var(--default-border-color);
         display: flex;
         flex-direction: column;
@@ -68,7 +85,7 @@
     }
 
     .comment {
-        padding: 24px 12px;
+        padding: 24px 0;
         border-bottom: 1px solid var(--default-border-color);
 
         display: flex;
@@ -103,7 +120,7 @@
     }
 
     .dishes {
-        padding: 24px 12px;
+        padding: 24px 0;
 
         .dish {
             width: 100%;
@@ -128,8 +145,21 @@
                     display: flex;
                     flex-direction: column;
 
+
                     span {
                         margin: 0;
+                    }
+
+                    .name {
+                        padding-right: 12px;
+                        
+                        span.global-text {
+                            display: -webkit-box;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            -webkit-line-clamp: 1;
+                            -webkit-box-orient: vertical;
+                        }
                     }
 
                     .price {
@@ -185,7 +215,7 @@
     }
 
     .subtotal {
-        padding: 24px 12px;
+        padding: 24px 0;
         border-top: 1px solid var(--default-border-color);
         display: flex;
         align-items: center;
@@ -207,7 +237,7 @@
 
 @media screen and (max-width: 640px) {
     .app {
-        padding: 0;
+        padding: 12px;
 
         .dishes {
             .dish {

@@ -79,7 +79,7 @@ export class AddCollectionsModal implements OnInit {
         for(let c of result) {
             this.collections.push({
                 ...c,
-                image: getImage(c.image),
+                image: getImage(c.image) || "./../../../../../../../../../global-resources/images/no-image.svg",
             });
         }
 

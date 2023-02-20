@@ -83,6 +83,11 @@ router.get("/", logged(), restaurantWorker({ locations: 1, }, { customers: { ava
             });
         }
 
+        userMap.set("noid", {
+            name: "Anonymous customer",
+            avatar: null!,
+        });
+
         return { dishMap, userMap };
     }
     const getLocationName = (lid: ObjectId) => {
@@ -100,7 +105,7 @@ router.get("/", logged(), restaurantWorker({ locations: 1, }, { customers: { ava
     for(let order of orders) {
         const o: Order = {
             customer: {
-                ...userMap.get((order.customer.customerId || order.customer.onBehalf)!.toString())!,
+                ...userMap.get((order.customer.customerId || order.customer.onBehalf || "noid")!.toString())!,
                 staff: !!order.customer.onBehalf,
             },
             date: convertTime(order.timing.ordered, { day: "2-digit", hour: "numeric", month: "short" }),

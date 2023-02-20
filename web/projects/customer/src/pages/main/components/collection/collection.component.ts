@@ -28,7 +28,6 @@ export class CollectionComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        console.log(this.list.nativeElement);
     }
 
 }

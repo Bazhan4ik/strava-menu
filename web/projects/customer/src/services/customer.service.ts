@@ -17,8 +17,9 @@ export class CustomerService {
 
     baseUrl = env.apiUrl + "/customer";
 
-    restaurant: { name: string; id: string; };
+    restaurant: { name: string; id: string; _id: string; };
     locationId: string;
+    showTracking: boolean;
 
     session: Session;
 
@@ -76,7 +77,7 @@ export class CustomerService {
 
         return this.payments;
     }
-    
+
 
     socketId(): Promise<string> {
         
@@ -130,7 +131,9 @@ export class CustomerService {
             restaurant: any;
             session: Session;
             setSessionId: string;
+            showTracking: boolean;
         } = null!;
+
         try {
             result = await firstValueFrom(
                 this.http.get<any>(this.baseUrl + "/" + restaurantId + "/session", { params: { socketId, table, location: locationId } }),
@@ -155,6 +158,7 @@ export class CustomerService {
             this.cookieService.set("smsid", result.setSessionId, 7, "/");
         }
 
+        this.showTracking = result.showTracking;
         this.session = result.session;
         this.restaurant = result.restaurant;
 

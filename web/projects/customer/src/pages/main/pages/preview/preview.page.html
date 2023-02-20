@@ -1,12 +1,24 @@
 <div class="app">
     <div class="header">
-        <div class="title">
+        <div class="back-button">
             <a class="icon-button" type="button" routerLink="..">
                 <mat-icon>arrow_back</mat-icon>
             </a>
-            <span class="global-subtitle">
-                Your order
-            </span>
+        </div>
+        <div class="text">
+            <div class="title">
+                <span class="global-subtitle">
+                    Your order
+                </span>
+            </div>
+            <div class="address">
+                <mat-icon>
+                    place
+                </mat-icon>
+                <span class="global-text">
+                    {{ address }}
+                </span>
+            </div>
         </div>
     </div>
     <div class="info" [class.red]="errors.type" *ngIf="info">
@@ -20,10 +32,10 @@
                 </span>
             </div>
             <div class="buttons">
-                <button (click)="selectType('takeout')" class="icon-button orange square" [class.orange-button]="info.type == 'takeout'">
+                <button *ngIf="settings.allowTakeOut" (click)="selectType('takeout')" class="icon-button orange square" [class.orange-button]="info.type == 'takeout'">
                     <mat-icon>local_mall</mat-icon>
                 </button>
-                <button (click)="selectType('dinein')" class="icon-button orange square" [class.orange-button]="info.type == 'dinein'">
+                <button *ngIf="settings.allowDineIn" (click)="selectType('dinein')" class="icon-button orange square" [class.orange-button]="info.type == 'dinein'">
                     <mat-icon>restaurant</mat-icon>
                 </button>
             </div>

@@ -12,6 +12,7 @@ import { sendToWaiterCancelWaiterRequest, sendToWaiterWaiterRequest } from "../.
 import { joinCustomer } from "../../utils/socket/socket.js";
 import { convertTime, getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
+import { Location, LocationSettings } from "../../models/restaurant.js";
 
 
 const router = Router({ mergeParams: true });
@@ -20,7 +21,7 @@ const router = Router({ mergeParams: true });
 
 
 router.get("/",
-        customerRestaurant({ info: { name: 1, id : 1 }, tables: 1, locations: { _id: 1, id: 1 } }),
+        customerRestaurant({ info: { name: 1, id : 1 }, tables: 1, locations: { _id: 1, id: 1, settings: { customers: 1, } } }),
         customerSession({
             info: 1,
             waiterRequests: 1,
@@ -32,7 +33,7 @@ router.get("/",
         }, {}, false),
         async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
-    let { socketId, table: tableId, location } = req.query;
+    let { socketId, table: tableId, location: locationId } = req.query;
 
     if(!restaurant.tables) {
         return res.status(500).send({ reason: "InvalidError" });
@@ -42,15 +43,15 @@ router.get("/",
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    if(!location || typeof location != "string") {
+    if(!locationId || typeof locationId != "string") {
         return res.status(400).send({ reason: "LocationNotProvided" });
     }
 
-    const getLocationId = () => {
+    const getLocation = () => {
 
         for(let l of restaurant.locations!) {
-            if(l.id == location) {
-                return l._id;
+            if(l.id == locationId) {
+                return l;
             }
         }
 
@@ -60,10 +61,10 @@ router.get("/",
         if(!tableId || typeof tableId != "string") {
             return null!;
         }
-        if(!restaurant.tables![location as string]) {
+        if(!restaurant.tables![locationId as string]) {
             return null;
         }
-        for(let t of restaurant.tables![location as string]) {
+        for(let t of restaurant.tables![locationId as string]) {
             if(t._id.equals(tableId as string)) {
                 return t.id;
             }
@@ -71,19 +72,19 @@ router.get("/",
         return null!;
     }
 
-    const locationId = getLocationId();
+    const location = getLocation();
     const table = getTable();
 
     console.log(table);
 
-    if(!locationId) {
+    if(!location) {
         return res.status(400).send({ reason: "InvalidLocation" });
     }
 
     if(typeof socketId != "string") {
         socketId = undefined;
     } else {
-        joinCustomer(socketId as string, restaurant._id, locationId);
+        joinCustomer(socketId as string, restaurant._id, location._id);
     }
 
 
@@ -93,7 +94,9 @@ router.get("/",
         restaurant: {
             name: restaurant?.info.name,
             id: restaurant?.info.id,
+            _id: restaurant._id,
         },
+        showTracking: !!user,
     }
     
 
@@ -119,9 +122,9 @@ router.get("/",
                 }
             ],
             info: {
-                id: table?.toString()!,
-                type: "dinein",
-                location: locationId,
+                id: location.settings.customers?.allowDineIn ? table?.toString()! : Math.floor(Math.random() * 9000 + 1000).toString(),
+                type: location.settings.customers?.allowDineIn ? "dinein" : "takeout",
+                location: location._id,
             },
             status: "ordering",
             dishes: [],
@@ -131,7 +134,7 @@ router.get("/",
         response.session = {
             dishes: [],
             id: table?.toString()!,
-            type: "dinein",
+            type: location.settings.customers?.allowDineIn ? "dinein" : "takeout",
         };
 
         response.setSessionId = newSessionId;
@@ -155,7 +158,7 @@ router.get("/",
                         };
 
                         waiter = {
-                            name: `${user.info?.name?.first} ${user.info?.name?.last}`,
+                            name: `${user?.info?.name?.first} ${user?.info?.name?.last}`,
                             avatar: user.avatar?.buffer,
                         };
                     }
@@ -179,11 +182,11 @@ router.get("/",
 
         const $set: any = {
             "customer.socketId": socketId,
-            "info.location": locationId,
+            "info.location": location._id,
         };
 
         if(table) {
-            $set["info.id"] = table.toString();
+            $set["info.id"] = location.settings.customers?.allowDineIn ? table?.toString()! : Math.floor(Math.random() * 9000 + 1000).toString();
         }
         
         updateSession(
@@ -198,7 +201,7 @@ router.get("/",
 
 
     if(user) {
-        updateSessions(restaurant._id, { "customer.customerId": user._id }, { $set: { "customer.socketId": socketId } }, { noResponse: true });
+        updateSessions(restaurant._id, { $or: [ { _id: session?._id }, { "customer.customerId": user._id } ], }, { $set: { "customer.socketId": socketId } }, { noResponse: true });
     }
 });
 
@@ -267,7 +270,7 @@ router.post("/dish", customerRestaurant({  }), customerSession({ info: { type: 1
         const rand = Math.floor(Math.random() * 900 + 100).toString();
 
         // either order type first letter (T | D) and 1 number of order id or first letter of last name of the customer
-        const orderIndicator = session.info.id ? session.info.type[0].toUpperCase() + session.info.id[0] : user.info?.name?.last[0];
+        const orderIndicator = session.info.id ? session.info.type[0].toUpperCase() + session.info.id[0] : user?.info?.name?.last[0] || Math.floor(Math.random() * 90 + 10);
 
         return `${orderIndicator}-${rand}`;
     }
@@ -353,11 +356,28 @@ router.delete("/dish/:orderDishId", customerRestaurant({}), customerSession({ },
 });
 
 
-router.get("/preview", customerRestaurant({ }), customerSession({ dishes: 1, info: 1 }, { }), async (req, res) => {
+router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1: 1, settings: { customers: 1, } } }), customerSession({ dishes: 1, info: 1 }, { }), async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
 
     const dishesId: ObjectId[] = [];
 
+    if(!restaurant.locations) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+
+    let location: Location = null!;
+    for(let l of restaurant.locations) {
+        if(session.info.location.equals(l._id)) {
+            location = l;
+            break;
+        }
+    }
+
+    if(!location) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+    
 
     for(let dish of session.dishes) {
         dishesId.push(dish.dishId);
@@ -382,7 +402,10 @@ router.get("/preview", customerRestaurant({ }), customerSession({ dishes: 1, inf
         const dish = findDish(d.dishId);
 
         if(!dish) {
-            return res.status(500).send({ reason: "InvalidDishes" });
+
+            updateSession(restaurant._id, { _id: session._id }, { $pull: { dishes: { dishId: d.dishId } } }, { noResponse: true });
+
+            continue
         }
 
         convertedDishes.push({
@@ -405,6 +428,10 @@ router.get("/preview", customerRestaurant({ }), customerSession({ dishes: 1, inf
         dishes: convertedDishes,
         subtotal,
         info: session.info,
+        address: `${location.city}, ${location.line1}`,
+        settings: {
+            ...location.settings.customers
+        }
     });
 });
 
@@ -530,7 +557,7 @@ router.get("/checkout", customerRestaurant({ }), customerSession({ dishes: { dis
         money,
         dishes,
         clientSecret: paymentIntent.client_secret,
-        email: user.info?.email,
+        email: user?.info?.email,
     });
 
 
@@ -567,10 +594,13 @@ router.put("/request/cash", customerRestaurant({ }), customerSession({ info: { i
 
     res.send({ updated: update.ok == 1, request });
 
+
+    let username = user ? `${user?.info?.name?.first} ${user.info?.name?.last}` : "Anonymous customer";
+
     sendToWaiterWaiterRequest(restaurant._id, session.info.location, {
         _id: newRequest._id,
         sessionId: session._id,
-        customer: { name: `${user.info?.name?.first} ${user.info?.name?.last}`, avatar: user.avatar?.buffer },
+        customer: { name: username, avatar: user?.avatar?.buffer },
         requestedTime: getDelay(newRequest.requestedTime),
         self: false,
         total: session.payment?.money?.total || null!,

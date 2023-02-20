@@ -78,17 +78,15 @@ router.post("/", logged(), restaurantWorker({}, { dishes: { adding: true } }), a
             const resolution = image.resolution;
 
             const preview = await sharp(buffer).jpeg({ quality: 60 }).toBuffer();
+            const blur = await sharp(buffer).jpeg({ quality: 20 }).blur(40).toBuffer();
+            const original = await sharp(buffer).resize(1000, 1000, { fit: "cover" }).jpeg().toBuffer();
 
             newDish.library = {
-                preview: preview,
+                preview: preview as any,
+                blur: blur as any,
                 modified: Date.now(),
                 userId: user._id,
-                list: [
-                    {
-                        buffer: buffer,
-                        resolution,
-                    },
-                ]
+                original: original as any,
             };
         }
     }

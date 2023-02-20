@@ -29,7 +29,7 @@
 <div (click)="closePopover()" *ngIf="showPopover" class="popover-app">
     <div class="box" (click)="$event.stopPropagation()" [style.top]="popoverPosition.y + 'px'"
         [style.left]="popoverPosition.x + 'px'">
-        <button (click)="goTracking()">
+        <button (click)="goTracking()" *ngIf="showTracking">
             <mat-icon>
                 visibility
             </mat-icon>

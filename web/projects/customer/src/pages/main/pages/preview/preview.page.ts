@@ -22,6 +22,11 @@ interface OrderInfo {
     type: "dinein" | "takeout";
     comment: string;
 }
+interface Settings {
+    allowOrderingOnline: boolean;
+    allowDineIn: boolean;
+    allowTakeOut: boolean;
+}
 
 
 
@@ -37,6 +42,8 @@ export class PreviewPage implements OnInit {
     subtotal: number;
     dishes: Dish[] = [];
     info: OrderInfo;
+    settings: Settings;
+    address: string;
 
 
     errors = {
@@ -212,6 +219,8 @@ export class PreviewPage implements OnInit {
             dishes: Dish[];
             info: OrderInfo;
             subtotal: number;
+            address: string;
+            settings: Settings;
         } = await this.service.get({ }, "session/preview");
 
         if(!result) {
@@ -220,6 +229,9 @@ export class PreviewPage implements OnInit {
 
         this.info = result.info;
         this.subtotal = result.subtotal;
+        this.settings = result.settings;
+        this.address = result.address;
+        
 
         for(let dish of result.dishes) {
             this.dishes.push({

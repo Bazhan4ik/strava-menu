@@ -16,6 +16,7 @@
     .not-payment {
         padding-bottom: 24px;
         border-bottom: 1px solid var(--default-border-color);
+
         .dishes {
             width: 324px;
             margin-top: 24px;
@@ -26,6 +27,27 @@
                 justify-content: space-between;
                 height: 42px;
                 border-bottom: 1px solid var(--default-border-color);
+
+                .name-container {
+                    display: flex;
+                    align-items: center;
+                    padding-right: 16px;
+
+                    span.name {
+                        margin: 0;
+                        display: -webkit-box;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        -webkit-line-clamp: 1;
+                        -webkit-box-orient: vertical;
+                        margin-right: 6px;
+                    }
+
+                    .amount {
+                        margin: 0;
+                        margin-left: 6px;
+                    }
+                }
             }
         }
 
@@ -119,9 +141,11 @@
 
 @media screen and (max-width: 640px) {
     .app {
+        padding: 12px;
+
         .payment {
-            width: 324px;
-            padding: 0;
+            padding: 12px;
+            width: 100%;
         }
     }
 }

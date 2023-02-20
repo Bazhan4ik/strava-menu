@@ -291,6 +291,7 @@ router.post("/payments/bank-account", logged(), restaurantWorker({ stripe: { str
         return res.status(422).send({ reason: "InvalidInput" });
     }
 
+    let bankAccount: any;
 
     try {
         const token = await stripe.tokens.create({
@@ -304,13 +305,19 @@ router.post("/payments/bank-account", logged(), restaurantWorker({ stripe: { str
         });
 
         const account = await stripe.accounts.createExternalAccount(restaurant.stripe.stripeAccountId, { external_account: token.id });
+
+        bankAccount = {
+            last4: account.last4,
+            status: account.status,
+            currency: account.currency,
+        }
     } catch (e) {
         console.log(e);
         return res.status(500).send({ reason: "InvalidError" });
     }
 
 
-    res.send({ updated: true });
+    res.send({ updated: true, bankAccount });
 
 });
 

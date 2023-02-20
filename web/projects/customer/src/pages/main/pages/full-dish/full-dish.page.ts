@@ -1,8 +1,10 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, Injector, OnDestroy, OnInit, ViewChild, ViewContainerRef, } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
+import { DishesService } from 'projects/customer/src/services/dishes.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { Subscription } from 'rxjs';
 import { CollectionComponent } from '../../components/collection/collection.component';
@@ -13,11 +15,12 @@ import { Dish } from '../../models/dish';
     templateUrl: './full-dish.page.html',
     styleUrls: ['./full-dish.page.scss'],
     standalone: true,
-    imports: [CommonModule, MatIconModule, RouterModule, CollectionComponent],
+    imports: [CommonModule, MatIconModule, RouterModule, CollectionComponent, NgOptimizedImage],
 })
 export class FullDishPage implements OnInit, OnDestroy {
 
     image: string;
+    imageUrl: string;
 
     dish: Dish;
 
@@ -32,6 +35,7 @@ export class FullDishPage implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private injector: Injector,
+        private dishesService: DishesService,
     ) {
         this.subscription = this.router.events.subscribe(ev => {
             if(ev instanceof NavigationEnd) {
@@ -83,47 +87,36 @@ export class FullDishPage implements OnInit, OnDestroy {
 
 
     async ngOnInit() {
+
         const dishId = this.route.snapshot.paramMap.get("dishId");
         const collectionId = this.route.snapshot.queryParamMap.get("c"); // collection id where the dish was redirected from. used to show more dishes from that collection
 
+        this.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/dishes/" + dishId + "/image";
+
         if(!dishId) {
-            return this.router.navigate([this.service.restaurant.id, this.service.locationId]);
+            return this.router.navigate([this.service.restaurant.id, "recommendations"]);
         }
 
-        let result: {
-            dish: any;
-            collection: any[];
-        } = null!;
-
-        try {
-            result = await this.service.get({ c: collectionId || undefined! }, "dishes", dishId!);
-        } catch (e: any) {
-            if(e.status == 404) {
-                if(e.error.reason == "DishNotFound") {
-                    this.router.navigate([this.service.restaurant.id, this.service.locationId]);
-                    return;
+        if(this.dishesService.dishes) {
+            for(let id of Object.keys(this.dishesService.dishes)) {
+                if(this.dishesService.dishes[id].id == dishId) {
+                    this.dish = this.dishesService.dishes[id];
+                    break;
                 }
             }
         }
 
 
-        if(result.dish.images) {
-            this.image = getImage(result.dish.images[0]?.buffer);
-        } else {
-            this.image = "./../../../../../../../global-resources/images/no-image.svg";
-        }
-
-        console.log(result);
-
-        for(let dish of this.service.session.dishes) {
-            if(dish.dishId == result.dish._id) {
-                this.amount++;
-            }
-        }
+        const result: {
+            dish: Dish;
+        } = await this.service.get({ collection: collectionId || undefined!, }, "dishes", dishId);
 
         this.dish = result.dish;
+        
 
-        this.collection = result.collection;
+        console.log(result)
+
+
 
 
         return;

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
+import { CustomRouteReuseStrategy } from '../../other/custom-route-reuse-strategy';
 import { MainPage } from './main.page';
 
 const routes: Routes = [
@@ -9,7 +10,8 @@ const routes: Routes = [
         children: [
             {
                 path: "",
-                loadComponent: () => import("./pages/recommendations/recommendations.page").then(c => c.RecommendationsPage)
+                loadComponent: () => import("./pages/recommendations/recommendations.page").then(c => c.RecommendationsPage),
+                data: { routeReuse: true }
             },
             {
                 path: "p",

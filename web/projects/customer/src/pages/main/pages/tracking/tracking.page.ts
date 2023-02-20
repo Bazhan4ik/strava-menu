@@ -1,18 +1,18 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { Subscription } from 'rxjs';
 import { DishesEvent } from '../../models/socket';
 
 
 interface Dish {
     name: string;
-    image: { buffer: any; resolution: number; };
     status: string;
-    convertedImage: string;
+    imageUrl: string;
+    dishId: string;
     _id: string;
 }
 
@@ -22,13 +22,15 @@ interface Dish {
     templateUrl: './tracking.page.html',
     styleUrls: ['./tracking.page.scss'],
     standalone: true,
-    imports: [CommonModule, MatIconModule, RouterModule],
+    imports: [CommonModule, MatIconModule, RouterModule, NgOptimizedImage],
 })
 export class TrackingPage implements OnInit, OnDestroy {
     subscription: Subscription;
 
     dishes: Dish[];
-
+    loaded = false;
+    logged: boolean;
+    registerUrl = env.accountUrl + "/register";
 
     constructor(
         private service: CustomerService,
@@ -50,19 +52,19 @@ export class TrackingPage implements OnInit, OnDestroy {
         });
 
 
-        const result: Dish[] = await this.service.get({}, "tracking");
+        const result: { dishes: Dish[]; logged: boolean; } = await this.service.get({}, "tracking");
 
-        console.log(result);
 
         if(result) {
+            this.logged = result.logged;
             this.dishes = [];
 
-            for(let dish of result) {
-                dish.convertedImage = getImage(dish.image.buffer) || "./../../../../../../../global-resources/images/no-image.svg";
+            for(let dish of result.dishes) {
+                dish.imageUrl = `${env.apiUrl}/customer/${this.service.restaurant._id}/dishes/${dish.dishId}/image`;
             }
 
             
-            this.dishes = result;
+            this.dishes = result.dishes;
         } else {
             this.ngOnDestroy();
             setTimeout(() => {
@@ -70,6 +72,7 @@ export class TrackingPage implements OnInit, OnDestroy {
             }, 1000);
         }
 
+        this.loaded = true;
     }
     ngOnDestroy(): void {
         this.subscription?.unsubscribe();

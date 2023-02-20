@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { env } from 'environment/environment';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -58,7 +59,7 @@ export class LoginPage implements OnInit {
     }
 
     ngOnInit(): void {
-
+        this.mainLink = env.publicUrl;
 
         this.form = new FormGroup({
             email: new FormControl("", Validators.required),

@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Binary, ObjectId } from "mongodb";
 
 interface Ingredient {
     id: string;
@@ -19,13 +19,12 @@ interface Dish {
     };
 
     library?: {
-        preview: Buffer;
+        original: Binary;
+        preview: Binary;
+        blur: Binary;
+
         modified: number;
         userId: ObjectId;
-        list: {
-            resolution: number;
-            buffer: Buffer;
-        }[];
     };
 }
 

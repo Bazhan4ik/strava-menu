@@ -51,7 +51,8 @@ async function convertSessionDishes(data: {
         const usersMap = new Map<string, { name: string; avatar: any; _id: ObjectId; }>();
 
         for(let user of users) {
-            usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, _id: user._id, avatar: user.avatar?.buffer });
+            let username = user ? `${user.info?.name?.first} ${user.info?.name?.last}` : "Anonymous customer";
+            usersMap.set(user._id.toString(), { name: username, _id: user._id, avatar: user.avatar?.buffer });
         }
 
         usersMap.set("noid", { name: `Anonymous`, avatar: null!, _id: null!, });
@@ -62,7 +63,7 @@ async function convertSessionDishes(data: {
 
     const { usersMap, dishesMap } = convertToMap();
 
-    const customer = usersMap.get(customerId.toString());
+    const customer = usersMap.get((customerId || "noid").toString());
 
     const result: ConvertedSessionDish[] = [];
 
@@ -127,7 +128,7 @@ async function convertMultipleSessionsSessionDishes(data: {
         for(let session of sessions) {
 
             if(session.customer.customerId) {
-                userIds.push(session.customer.customerId);
+                userIds.push(session.customer?.customerId);
             }
 
             for(let dish of session.dishes) {
@@ -163,7 +164,7 @@ async function convertMultipleSessionsSessionDishes(data: {
             usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}`, _id: user._id, avatar: user.avatar?.buffer });
         }
 
-        usersMap.set("noid", { name: `Anonymous`, avatar: null!, _id: null!, });
+        usersMap.set("noid", { name: `Anonymous customer`, avatar: null!, _id: null!, });
 
 
         return { dishesMap, usersMap };
@@ -277,7 +278,7 @@ async function convertOneSessionDish(data: {
         people: {
             cook: people.get(sessionDish.staff?.cook?.toString()!),
             waiter: people.get(sessionDish.staff?.waiter?.toString()!),
-            customer: people.get(customerId.toString())!,
+            customer: people.get((customerId || "noid").toString())!,
         },
 
         dish: {

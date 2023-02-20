@@ -2,7 +2,7 @@ import { Dish } from "./dish";
 
 interface Collection {
     title: string;
-    dishes: Dish[];
+    dishes: string[];
     id: string;
     redirectable: boolean;
 }

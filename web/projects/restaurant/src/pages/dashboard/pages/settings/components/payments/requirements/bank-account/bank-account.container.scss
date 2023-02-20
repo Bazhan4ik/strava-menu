@@ -16,18 +16,20 @@
         }
 
         .b-i {
+            padding-right: 24px;
             margin-top: 24px;
-            display: flex;
+            display: grid;
             gap: 24px;
+            grid-template-columns: 65% 35%;
 
             .branch {
                 input {
-                    width: 324px;
+                    width: 100%;
                 }
             }
             .institution {
                 input {
-                    width: 196px;
+                    width: 100%;
                 }
             }
         }

@@ -29,6 +29,7 @@ export class AddDishPage implements OnInit {
     ingredientsFound: Ingredient[] = [];
     ingredients: { id: string; title: string; amount: number; }[] = [];
 
+    loading = false;
 
     constructor(
         private service: RestaurantService,
@@ -110,6 +111,8 @@ export class AddDishPage implements OnInit {
         if(!this.form.valid || this.form.value.price < 1) {
             return;
         }
+
+        this.loading = true;
         
         const result: any = await this.service.post({
             ...this.form.value,
@@ -123,7 +126,9 @@ export class AddDishPage implements OnInit {
         
         if(result.updated) {
             this.router.navigate([this.service.restaurant.id, "menu"]);
+            return;
         }
+        this.loading = false;
     }
 
     async ngOnInit() {

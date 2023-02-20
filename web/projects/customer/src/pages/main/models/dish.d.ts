@@ -1,12 +1,16 @@
 interface Dish {
-    name: string;
+    info: {
+        name: string;
+        description: string;
+        price: number;
+    }
     _id: string;
     id: string;
-    price: number;
-    description: string;
-    image: {
-        buffer: any;
-        resolution: number;
+    updateImage: boolean;
+    library: {
+        list: { resolution: number; buffer: any; }[];
+        preview: any;
+        blur: any;
     }
 }
 

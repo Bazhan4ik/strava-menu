@@ -1,16 +1,18 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { DishesEvent } from '../../models/socket';
 
 
 interface Dish {
     name: string;
     status: string;
-    image: any;
+    imageUrl: any;
     _id: string;
+    dishId: string;
 }
 
 
@@ -19,7 +21,7 @@ interface Dish {
     templateUrl: './mini-tracking.component.html',
     styleUrls: ['./mini-tracking.component.scss'],
     standalone: true,
-    imports: [CommonModule, MatIconModule]
+    imports: [CommonModule, MatIconModule, RouterModule, NgOptimizedImage]
 })
 export class MiniTrackingComponent implements OnInit, OnDestroy {
 
@@ -34,7 +36,6 @@ export class MiniTrackingComponent implements OnInit, OnDestroy {
     ngOnInit() {
 
         this.service.$dishes.subscribe(data => {
-            console.log(data);
             if(data.types.includes("dishes/status")) {
                 for(let dish of this.dishes) {
                     const { sessionDishId, status } = data.data as DishesEvent.status;
@@ -47,7 +48,7 @@ export class MiniTrackingComponent implements OnInit, OnDestroy {
         });
 
         for(let dish of this.dishes) {
-            dish.image = getImage(dish.image) || "./../../../../../../../global-resources/images/no-image.svg";
+            dish.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/dishes/" + dish.dishId + "/image";
         }
     }
     ngOnDestroy() {

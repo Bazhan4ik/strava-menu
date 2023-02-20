@@ -130,6 +130,8 @@ export class CheckoutPage implements OnInit {
         if(result.email) {
             this.showEmailInput = false;
             this.email = result.email;
+        } else {
+            this.showEmailInput = true;
         }
 
         setTimeout(() => {
