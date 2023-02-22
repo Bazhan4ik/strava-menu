@@ -273,6 +273,7 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
         stripe: {
             card: "pending",
             payouts: "pending",
+            account: "unverified",
         },
         staff: [{ userId: user._id, locations: [], settings: { isOwner: true }, joined: Date.now(), }]
     }

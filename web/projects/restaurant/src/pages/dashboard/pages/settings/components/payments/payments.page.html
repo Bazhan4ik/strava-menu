@@ -45,8 +45,8 @@
                             Cash
                         </span>
                         <div class="global-checkbox">
-                            <input (change)="onLocationMethodChange(location.id, $event, 'cash')" [checked]="location.cash" type="checkbox" id="cash-checkbox" aria-hidden="true">
-                            <label for="cash-checkbox"></label>
+                            <input (change)="onLocationMethodChange(location.id, $event, 'cash')" [checked]="location.cash" type="checkbox" id="cash-checkbox-{{ location.id }}" aria-hidden="true">
+                            <label for="cash-checkbox-{{ location.id }}"></label>
                         </div>
                     </div>
                     <div class="card">
@@ -54,8 +54,8 @@
                             Card
                         </span>
                         <div class="global-checkbox">
-                            <input (change)="onLocationMethodChange(location.id, $event, 'card')" [checked]="location.card" type="checkbox" id="card-checkbox" aria-hidden="true">
-                            <label for="card-checkbox"></label>
+                            <input (change)="onLocationMethodChange(location.id, $event, 'card')" [checked]="location.card" type="checkbox" id="card-checkbox-{{ location.id }}" aria-hidden="true">
+                            <label for="card-checkbox-{{ location.id }}"></label>
                         </div>
                     </div>
                 </div>

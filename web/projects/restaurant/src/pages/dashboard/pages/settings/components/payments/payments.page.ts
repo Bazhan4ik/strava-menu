@@ -85,6 +85,13 @@ export class PaymentsPage implements OnInit {
         try {
             const update: any = await this.service.put({ type: t, value }, "locations", locationId, "methods");
     
+            for(let i of this.locationsPayments) {
+                if(i.id == locationId) {
+                    i[t as "card" | "cash"] = value;
+                    break;
+                }
+            }
+
             if(!update.updated) {
                 ev.target.checked = !value;
             }
