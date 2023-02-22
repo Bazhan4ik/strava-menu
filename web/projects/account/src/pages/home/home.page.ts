@@ -51,16 +51,24 @@ export class HomePage implements OnInit {
 
     async ngOnInit() {
         
-        const result: User = await this.service.get<User>("");
-        
+        try {
+            const result: User = await this.service.get<User>("");
+            
+    
+            console.log(result);
+    
+            for(let restaurant of result.restaurants) {
+                restaurant.redirectUrl = `${ env.restaurantUrl }/${ restaurant.redirectTo == 'staff' ? 'staff' : 'dashboard' }/${restaurant.id}`;
+            }
+    
+            this.user = result;
+        } catch(e: any) {
+            if(e.status == 404) {
+                this.service.logout();
 
-        console.log(result);
-
-        for(let restaurant of result.restaurants) {
-            restaurant.redirectUrl = `${ env.restaurantUrl }/${ restaurant.redirectTo == 'staff' ? 'staff' : 'dashboard' }/${restaurant.id}`;
+            }
         }
-
-        this.user = result;
+        
 
 
     }

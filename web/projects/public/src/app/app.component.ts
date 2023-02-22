@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
 import { env } from 'environment/environment';
 
 @Component({
@@ -10,6 +11,12 @@ export class AppComponent implements OnInit {
 
     loginLink: string;
     registerLink: string;
+
+    constructor(
+        private iconRegistry: MatIconRegistry,
+    ) {
+        this.iconRegistry.setDefaultFontSetClass('material-icons-outlined');
+    }
 
     ngOnInit(): void {
         this.loginLink = `${env.accountUrl}/login`;
