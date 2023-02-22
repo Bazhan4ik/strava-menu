@@ -77,3 +77,13 @@
         }
     }
 }
+
+@media (pointer:none), (pointer:coarse) {
+    .app {
+        .collection-header {
+            .buttons {
+                display: none;
+            }
+        }
+    }
+}

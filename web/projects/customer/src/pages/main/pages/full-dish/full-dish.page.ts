@@ -106,13 +106,21 @@ export class FullDishPage implements OnInit, OnDestroy {
             }
         }
 
+        console.log(this.service.session.dishes);
 
+        
+        
         const result: {
             dish: Dish;
         } = await this.service.get({ collection: collectionId || undefined!, }, "dishes", dishId);
-
+        
         this.dish = result.dish;
         
+        for(let i of this.service.session.dishes) {
+            if(i.dishId == this.dish._id) {
+                this.amount++;
+            }
+        }
 
         console.log(result)
 
