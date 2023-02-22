@@ -1,5 +1,7 @@
 import express, { Router } from "express";
 import Stripe from "stripe";
+import { id } from "../utils/id.js";
+import { updateRestaurant } from "../utils/restaurant.js";
 import { confirmSession } from "../utils/sessions.js";
 
 const router = Router({ mergeParams: true });
@@ -40,6 +42,36 @@ router.post("/stripe", express.raw({ type: 'application/json' }), async (req, re
 
 
     res.send({ received: true });
+});
+router.post("/stripe/accounts", express.raw({ type: 'application/json' }), async (req, res) => {
+    const event: Stripe.Event = req.body;
+
+    if(event.type == "account.updated") {
+        const account = event.data.object as Stripe.Account;
+
+
+        console.log('Charges enabled: ' + account.charges_enabled);
+        console.log('Payouts enabled: ' + account.payouts_enabled);
+
+
+        if(!account.metadata?.restaurantId) {
+            return res.sendStatus(400);
+        }
+
+        console.log(account.individual?.verification);
+        console.log(account.individual?.requirements);
+
+
+        const update = await updateRestaurant(
+            { _id: id(account.metadata.restaurantId) },
+            { $set: { "stripe.card": account.charges_enabled ? "enabled" : "disabled", "stripe.payouts": account.payouts_enabled ? "enabled" : "disabled" } },
+            { projection: { _id: 1 } }
+        );
+        
+    }
+
+
+    res.send({});
 });
 
 

@@ -82,11 +82,18 @@ export class PaymentsPage implements OnInit {
     async onLocationMethodChange(locationId: string, ev: any, t: string) {
         const value = ev.target.checked;
 
-        const update: any = await this.service.put({ type: t, value }, "locations", locationId, "methods");
-
-        if(!update.updated) {
-            ev.target.checked = !value;
+        try {
+            const update: any = await this.service.put({ type: t, value }, "locations", locationId, "methods");
+    
+            if(!update.updated) {
+                ev.target.checked = !value;
+            }
+        } catch (e: any) {
+            if(e.status == 403) {
+                console.error("ACCOUNT NOT VERIFIED");
+            }
         }
+
     }
 
 

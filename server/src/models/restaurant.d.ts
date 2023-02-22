@@ -11,6 +11,7 @@ interface Restaurant {
         stripeAccountId?: string;
         card: "enabled" | "disabled" | "pending" | "rejected" | "restricted";
         payouts: "pending" | "rejected" | "restricted";
+        account: "unverified" | "verified" | "pending";
     }
 
     info: {

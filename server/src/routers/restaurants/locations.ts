@@ -12,7 +12,7 @@ const router = Router({ mergeParams: true });
 
 
 
-router.post("/", logged(), restaurantWorker({ settings: { payments: 1 } }, { locations: { adding: true } }), async (req, res) => {
+router.post("/", logged(), restaurantWorker({  stripe: { card: 1 } }, { locations: { adding: true } }), async (req, res) => {
     const { city, state, addressLine1, addressLine2, postalCode, latlng, name } = req.body;
     const { restaurant } = res.locals as Locals;
 
@@ -118,7 +118,7 @@ router.get("/:locationId", logged(), restaurantWorker({ locations: 1 }, { locati
     res.send(location);
 });
 
-router.put("/:locationId/methods", logged(), restaurantWorker({ locations: { id: 1, settings: { methods: 1 } } }, { locations: { adding: true } }), async (req, res) => {
+router.put("/:locationId/methods", logged(), restaurantWorker({ stripe: { card: 1 }, locations: { id: 1, settings: { methods: 1 } } }, { locations: { adding: true } }), async (req, res) => {
     const { locationId } = req.params;
     const { restaurant } = res.locals as Locals;
     const { value, type } = req.body;
@@ -129,8 +129,15 @@ router.put("/:locationId/methods", logged(), restaurantWorker({ locations: { id:
     if(typeof value != "boolean" || !["cash", "card"].includes(type)) {
         return res.status(422).send({ reason: "InvalidInput" });
     }
+    if(!restaurant.stripe || !restaurant.stripe.card) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
     if(!restaurant.locations || restaurant.locations.length == 0) {
         return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    if(type == "card" && value === true && restaurant.stripe?.card != "enabled") {
+        return res.status(403).send({ reason: "NotVerified" });
     }
 
 
