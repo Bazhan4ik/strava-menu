@@ -40,6 +40,10 @@ export class CheckoutPage implements OnInit {
         locale: "en-CA",
     };
 
+    payWithCash: boolean;
+    payWithCard: boolean;
+
+
     loading = true;
 
     constructor(
@@ -76,7 +80,6 @@ export class CheckoutPage implements OnInit {
         }
     }
 
-
     async cash() {
         const result: any = await this.service.put({ }, "session/request/cash");
 
@@ -106,6 +109,8 @@ export class CheckoutPage implements OnInit {
             dishes: Dish[];
             clientSecret: string;
             email: string,
+            payWithCash: boolean;
+            payWithCard: boolean;
         } = null!;
 
 
@@ -121,6 +126,9 @@ export class CheckoutPage implements OnInit {
             }
             return;
         }
+
+        this.payWithCard = result.payWithCard;
+        this.payWithCash = result.payWithCash;
 
         
         this.money = result.money;

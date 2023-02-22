@@ -83,13 +83,13 @@
         <div></div>
     </div>
 
-    <div *ngIf="elementsOptions.clientSecret" class="request">
+    <div *ngIf="payWithCash" class="request">
         <button class="orange-button button" (click)="cash()">
             PAY WITH CASH
         </button>
     </div>
 
-    <div class="payment">
+    <div class="payment" *ngIf="payWithCard">
         <ng-container *ngIf="elementsOptions.clientSecret">
             <div class="email" *ngIf="showEmailInput">
                 <div class="label">
