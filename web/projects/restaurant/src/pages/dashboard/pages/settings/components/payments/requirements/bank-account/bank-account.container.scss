@@ -9,9 +9,10 @@
 
         .number {
             margin-top: 24px;
+            max-width: 324px;
 
             input {
-                width: 324px;
+                width: 100%;
             }
         }
 
@@ -36,9 +37,10 @@
 
         .name {
             margin-top: 24px;
+            max-width: 324px;
 
             input {
-                width: 324px;    
+                width: 100%
             }
         }
     }

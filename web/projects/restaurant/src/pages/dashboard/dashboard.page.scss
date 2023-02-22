@@ -4,10 +4,10 @@
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 200px;
     background-color: var(--default-on-background);
+    padding-bottom: 200px;
     
-
+    
     .header {
         height: 52px;
         background-color: var(--default-background);
@@ -21,28 +21,28 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 42px;
-
+        
         .title {
             display: flex;
             align-items: center;
             height: 100%;
         }
-
+        
         .buttons {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
 
-
+            
             #menu-button {
                 display: none;
             }
-
+            
             a.account {
                 height: 36px;
                 width: 36px;
-
+                
                 mat-icon {
                     width: 26px;
                     height: 26px;
@@ -51,7 +51,7 @@
             }
         }
     }
-
+    
     .navigation {
         background-color: var(--default-background);
         height: 100%;
@@ -61,20 +61,20 @@
         border-right: 1px solid var(--default-border-color);
         width: 208px;
         z-index: 1000;
-
+        
         .restaurant {
             padding-left: 42px;
             margin-top: 6px;
             border-bottom: 1px solid var(--default-border-color);
             padding-bottom: 6px;
             margin-right: 12px;
-
+            
             .text {
                 font-weight: 600;
                 color: var(--text-color-black);
             }
         }
-
+        
         .links {
             width: 100%;
             display: flex;
@@ -83,14 +83,14 @@
             padding-right: 12px;
             position: relative;
             height: 100%;
-
+            
             
             .bottom {
                 display: none;
                 width: 100%;
                 padding-right: 12px;
             }
-
+            
             a {
                 width: 100%;
                 margin-top: 6px;
@@ -102,7 +102,7 @@
                 cursor: pointer;
                 border-top-right-radius: 6px;
                 border-bottom-right-radius: 6px;
-
+                
                 mat-icon {
                     margin: 0 12px;
                     height: 18px;
@@ -110,29 +110,29 @@
                     font-size: 20px;
                     color: var(--gray-dark)
                 }
-
+                
                 &:hover {
                     text-decoration: none;
                     background-color: var(--gray-light);
                 }
-
+                
                 &.active {
                     border-left: 3px solid var(--orange-dark);
                     color: var(--orange-dark);
                     background-color: var(--orange-lighter);
-
+                    
                     mat-icon {
                         color: var(--orange-dark);
                     }
                 }
-
+                
                 &.disabled {
                     pointer-events: none;
                     cursor: not-allowed;
                     background-color: var(--default-on-background);
                 }
             }
-
+            
             .border {
                 margin-top: 6px;
                 width: 100%;
@@ -140,12 +140,13 @@
             }
         }
     }
-
+    
     .content {
-
         display: flex;
         justify-content: center;
-
+        min-height: 100vh;
+        width: 100%;
+        
         padding-top: 104px;
     }
 }

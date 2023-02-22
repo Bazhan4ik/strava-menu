@@ -9,9 +9,10 @@
         display: flex;
         flex-direction: column;
         margin-top: 24px;
+        max-width: 324px;
 
         .global-input {
-            width: 324px;
+            width: 100%;
         }
     }
 }

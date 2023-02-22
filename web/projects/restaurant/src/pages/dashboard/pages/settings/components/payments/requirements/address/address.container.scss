@@ -19,21 +19,39 @@
             align-items: center;
             height: 42px;
             gap: 12px;
+
             
             border: 1px solid var(--default-border-color);
             border-radius: var(--default-small-radius);
             position: relative;
+
+            z-index: 100;
+
+            .left {
+                display: flex;
+                align-items: center;
+
+                .global-text {
+                    display: -webkit-box;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                }
+            }
 
             .right {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
 
-                display: -webkit-box;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                -webkit-line-clamp: 1;
-                -webkit-box-orient: vertical;
+                .text {
+                    display: -webkit-box;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                }
             }
 
             .selected {
