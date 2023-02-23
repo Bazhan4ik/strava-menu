@@ -5,14 +5,16 @@
     background-color: var(--white);
     height: 32px;
     width: 100%;
-    border-radius: var(--input-border-radius);
-    -webkit-border-radius: var(--input-border-radius);
     outline: 1px solid var(--gray);
     border: none;
     color: var(--black);
     padding: 6px 10px;
     font-size: 16px;
-
+    
+    border-radius: var(--input-border-radius);
+    -webkit-border-radius: var(--input-border-radius);
+    -webkit-border-radius: var(--input-border-radius);
+    -moz-border-radius: var(--input-border-radius);
     
     &:focus {
         border: 0;
