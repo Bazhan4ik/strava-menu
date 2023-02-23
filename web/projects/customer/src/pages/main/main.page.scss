@@ -20,6 +20,7 @@
     .box {
         width: 624px;
         height: 100%;
+        padding-bottom: -50px;
 
         .header {
             padding: 24px;
@@ -59,6 +60,8 @@
             min-height: 100%;
             padding-bottom: 200px;
             background-color: var(--customer-box-background);
+            border-bottom-left-radius: var(--default-border-radius);
+            border-bottom-right-radius: var(--default-border-radius);
         }
     }
     
