@@ -31,18 +31,15 @@
                 .label {
                     margin-top: 24px;
                     margin-bottom: 4px;
+
+                    input {
+                        width: 100%;
+                        border-radius: 12px;
+                    }
                 }
             }
     
-            .name {
-                display: flex;
-                margin-top: 24px;
-                gap: 24px;
-    
-                input {
-                    width: 100%;
-                }
-            }
+
     
             .password {
                 .label {
