@@ -258,7 +258,7 @@ router.get("/tracking", customerRestaurant({}), customerSession({}, {}), async (
 
     const sessions = await getSessions(
         restaurant._id,
-        { "customer.customerId": user._id, status: "progress" },
+        { "customer.customerId": user?._id, status: "progress" },
         { projection: { dishes: { dishId: 1, status: 1, _id: 1 } } }
     ).toArray();
 
