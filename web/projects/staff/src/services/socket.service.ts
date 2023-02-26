@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { CookDishesEvent } from '../models/socket-cook-dishes';
 import { WaiterDishesEvent } from '../models/socket-waiter-dishes';
 import { WaiterRequestEvent } from '../models/waiter-request-socket';
+import { StaffService } from './staff.service';
 
 
 @Injectable({
@@ -19,6 +20,7 @@ export class SocketService {
 
     constructor(
         private socket: Socket,
+        private service: StaffService,
     ) { };
 
 
@@ -67,15 +69,19 @@ export class SocketService {
 
 
     socketId() {
-        return new Promise<string>(res => {
+
+
+        return new Observable<string>(subs => {
             if(this.socket.ioSocket.id) {
-                res(this.socket.ioSocket.id);
-                return;
+                subs.next(this.socket.ioSocket.id);
             }
 
             this.socket.on("connect", () => {
-                res(this.socket.ioSocket.id);
-                return;
+                subs.next(this.socket.ioSocket.id);
+
+                if(this.service.locationId) {
+                    this.service.init(this.socket.ioSocket.id, this.service.locationId);
+                }
             });
         });
     }

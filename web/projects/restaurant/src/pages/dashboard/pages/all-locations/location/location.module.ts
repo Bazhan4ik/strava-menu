@@ -5,6 +5,7 @@ import { LocationRoutingModule } from './location-routing.module';
 import { LocationPage } from './location.page';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { IonicModule } from '@ionic/angular';
         LocationRoutingModule,
         MatIconModule,
         IonicModule,
+        FormsModule,
     ]
 })
 export class LocationModule { }

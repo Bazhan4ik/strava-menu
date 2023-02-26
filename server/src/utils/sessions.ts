@@ -4,6 +4,8 @@ import { Session } from "../models/session.js";
 import { client } from "../setup/mongodb.js";
 import { convertSessionDishes } from "./convertSessionDishes.js";
 import { id } from "./id.js";
+import { restaurantWorker } from "./middleware/restaurant.js";
+import { updateOrders } from "./orders.js";
 import { sendToCustomerPaymentSucceeded } from "./socket/customer.js";
 import { sendToStaffNewOrder } from "./socket/dishes.js";
 import { getDelay } from "./time.js";
@@ -62,39 +64,6 @@ async function updateSessions(restaurantId: ObjectId, filter: Filter<Session>, u
 }
 
 
-async function confirmSession(restaurantId: string, sessionId: string, method: "cash" | "card") {
-    try {
-        const result = await client.db(sessionsDBName).collection<Session>(restaurantId).findOneAndUpdate(
-            { _id: id(sessionId) },
-            { $set: {
-                status: "progress",
-                "payment.method": method,
-                "timing.ordered": Date.now()
-            } },
-            { projection: { dishes: 1, customer: { customerId: 1, }, info: { location: 1, comment: 1, } } }
-        );
-
-        const convertedOrderDishes = await convertSessionDishes({
-            restaurantId: id(restaurantId),
-            sessionId: id(sessionId),
-            ordered: getDelay(Date.now()),
-            sessionDishes: result.value?.dishes!,
-            skip: [],
-            customerId: result.value?.customer.customerId!,
-            comment: result.value?.info.comment,
-        });
-
-        sendToStaffNewOrder(id(restaurantId), result.value?.info.location!, convertedOrderDishes);
-        sendToCustomerPaymentSucceeded(id(restaurantId), result.value?.info.location!, id(sessionId));
-
-        return result.ok == 1;
-    } catch (e) {
-        console.error("at confirmSession()");
-        throw e;
-    }
-}
-
-
 function getSessions(restaurantId: ObjectId, filter: Filter<Session>, options: FindOptions<Session>) {
     try {
         return client.db(sessionsDBName).collection<Session>(restaurantId.toString()).find(filter, options);
@@ -122,6 +91,87 @@ function removeSession(restaurantId: ObjectId, sessionId: ObjectId) {
         throw e;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * 
+ * Called on "payment-intent.succeeded" or "setup-intent.succeeded"
+ * Confirm Session
+ * 
+ * Sets status to "confirm" sends data to kitchen
+ * 
+ */
+async function confirmSession(data: {
+    restaurantId: string;
+    sessionId: string;
+    payed: boolean;
+    paymentMethodId?: string;
+}) {
+    try {
+        const { restaurantId, sessionId, payed, paymentMethodId } = data;
+
+        const session = await getSession(
+            id(restaurantId),
+            { _id: id(sessionId) },
+            { projection: { payment: { payed: 1, }, status: 1 } }
+        );
+
+        if(!session) {
+
+            const update = await updateOrders(
+                id(restaurantId),
+                { _id: id(sessionId) },
+                { $set: { "payment.payed": true, "payment.paymentMethodId": paymentMethodId } },
+                { noResponse: true }
+            );
+
+            return false;
+        }
+        
+
+        const result = await client.db(sessionsDBName).collection<Session>(restaurantId).findOneAndUpdate(
+            { _id: id(sessionId) },
+            { $set: {
+                status: "progress",
+                "payment.method": "card",
+                "payment.payed": payed,
+                "timing.ordered": Date.now(),
+            } },
+            { projection: { dishes: 1, customer: { customerId: 1, }, info: { location: 1, comment: 1, } } }
+        );
+
+        const convertedOrderDishes = await convertSessionDishes({
+            restaurantId: id(restaurantId),
+            sessionId: id(sessionId),
+            ordered: getDelay(Date.now()),
+            sessionDishes: result.value?.dishes!,
+            skip: [],
+            customerId: result.value?.customer.customerId!,
+            comment: result.value?.info.comment,
+        });
+
+        sendToStaffNewOrder(id(restaurantId), result.value?.info.location!, convertedOrderDishes);
+        sendToCustomerPaymentSucceeded(id(restaurantId), result.value?.info.location!, id(sessionId));
+
+        return result.ok == 1;
+    } catch (e) {
+        console.error("at confirmSession()");
+        throw e;
+    }
+}
+
+
+
+
 
 
 export {

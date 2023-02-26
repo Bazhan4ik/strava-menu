@@ -16,6 +16,19 @@ interface Dish {
     amount: number;
     price: number;
 }
+interface PaymentData {
+    clientSecret: string;
+    setup: boolean;
+    payment: boolean;
+    tips: boolean;
+    paymentMethods: PaymentMethod[];
+}
+
+interface PaymentMethod {
+    id: string;
+    last4: string;
+    brand: string;
+}
 
 @Component({
     selector: 'app-checkout',
@@ -31,6 +44,8 @@ export class CheckoutPage implements OnInit {
         total: number;
         subtotal: number;
         hst: number;
+        service: number;
+        tip: number;
     }
 
     email: string;
@@ -40,8 +55,13 @@ export class CheckoutPage implements OnInit {
         locale: "en-CA",
     };
 
+    paymentData: PaymentData;
+
     payWithCash: boolean;
     payWithCard: boolean;
+
+    paymentMethods: PaymentMethod[];
+    selectedPaymentMethod?: PaymentMethod;
 
 
     loading = true;
@@ -56,7 +76,7 @@ export class CheckoutPage implements OnInit {
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
 
 
-    async pay() {
+    async confirm() {
         this.loading = true;
         
         this.service.$payments.subscribe(async data => {
@@ -65,19 +85,42 @@ export class CheckoutPage implements OnInit {
             }
         });
 
+        if(this.paymentData.payment) {
+
+            if(this.selectedPaymentMethod) {
+                const result = await firstValueFrom(
+                    this.stripeService.confirmCardPayment(this.paymentData.clientSecret, { payment_method: this.selectedPaymentMethod.id })
+                )
+
+                return;
+            }
+
+            const result = await firstValueFrom(
+                this.stripeService.confirmPayment({
+                    elements: this.paymentElement.elements,
+                    redirect: 'if_required',
+                    confirmParams: {
+                        receipt_email: this.email,
+                    }
+                })
+            );
+    
+            if(result.error) {
+                this.loading = false;
+                console.error(" ON EEEEEEEEEEEERORRORORROORORO ");
+            }
+
+            return;
+        }
+
+
         const result = await firstValueFrom(
-            this.stripeService.confirmPayment({
+            this.stripeService.confirmSetup({
                 elements: this.paymentElement.elements,
                 redirect: 'if_required',
-                confirmParams: {
-                    receipt_email: this.email,
-                }
             })
-        )
+        );        
 
-        if(result.error) {
-            console.error(" ON EEEEEEEEEEEERORRORORROORORO ");
-        }
     }
 
     async cash() {
@@ -102,15 +145,40 @@ export class CheckoutPage implements OnInit {
 
     }
 
+    selectPaymentMethod(method: PaymentMethod) {
+        this.selectedPaymentMethod = method;
+    }
+
+    async removeTip() {
+        const old = this.money.tip;
+        this.money.tip = null!;
+
+        const update: any = await this.service.delete("session/tip");
+        
+        if(!update.updated) {
+            this.money.tip = old;
+        }
+    }
+    async addTip(amount: number) {
+        this.money.total -= this.money.tip;
+        this.money.tip = this.money.subtotal * amount / 100;
+        this.money.total += this.money.tip;
+
+        const update: any = await this.service.put({ amount }, "session/tip");
+
+        if(!update.updated) {
+            this.money.tip = null!;
+        }
+    }
 
     async ngOnInit() {
         let result: {
             money: any;
             dishes: Dish[];
-            clientSecret: string;
             email: string,
             payWithCash: boolean;
             payWithCard: boolean;
+            paymentData: PaymentData
         } = null!;
 
 
@@ -129,11 +197,11 @@ export class CheckoutPage implements OnInit {
 
         this.payWithCard = result.payWithCard;
         this.payWithCash = result.payWithCash;
-
+        this.paymentData = result.paymentData;
         
         this.money = result.money;
         this.dishes = result.dishes;
-        this.elementsOptions.clientSecret = result.clientSecret;
+        this.elementsOptions.clientSecret = result.paymentData.clientSecret;
 
         if(result.email) {
             this.showEmailInput = false;
@@ -141,6 +209,7 @@ export class CheckoutPage implements OnInit {
         } else {
             this.showEmailInput = true;
         }
+
 
         setTimeout(() => {
             this.loading = false;

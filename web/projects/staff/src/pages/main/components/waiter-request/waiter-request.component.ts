@@ -28,6 +28,7 @@ export class WaiterRequestComponent implements OnInit, OnDestroy {
             return;
         }
 
+        this.request.ui.acceptedTitle = update.acceptedTitle;
         this.request.acceptedTime = update.delay;
         this.request.waiter = update.waiter;
         this.request.self = true;

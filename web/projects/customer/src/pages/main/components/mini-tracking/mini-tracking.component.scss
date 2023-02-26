@@ -47,6 +47,10 @@
                             background-color: var(--green);
                             color: rgb(245, 245, 245);
                         }
+                        &.red {
+                            background-color: var(--red);
+                            color: rgb(245, 245, 245);
+                        }
                     }
                 }
             }

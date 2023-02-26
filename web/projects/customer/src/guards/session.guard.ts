@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { CustomerService } from '../services/customer.service';
 
 @Injectable({
@@ -23,7 +23,9 @@ export class SessionGuard implements CanActivate {
         const locatioId = route.paramMap.get("locationId");
         const restaurant = route.paramMap.get("restaurantId");
         const table = route.queryParamMap.get("table");
-        const socketId = await this.service.socketId();
+        const socketId = await firstValueFrom(
+            this.service.socketId()
+        );
 
 
         const result = await this.service.init(restaurant!, locatioId!, socketId!, table!);

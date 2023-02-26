@@ -92,6 +92,46 @@
                     <ion-toggle [checked]="location.settings.customers.allowTakeOut" (ionChange)="onCustomersChange($event, 'allowTakeOut')" mode="ios" color="orange"></ion-toggle>
                 </div>
             </div>
+            <div class="tips">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Tips
+                    </span>
+                </div>
+                <div class="values">
+                    <ion-toggle [checked]="location.settings.tips" (ionChange)="onTipsChange($event)" mode="ios" color="orange"></ion-toggle>
+                </div>
+            </div>
+            <div class="service-fee" *ngIf="!location.settings.serviceFee">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Enable service fees
+                    </span>
+                </div>
+                <div class="values">
+                    <ion-toggle [checked]="false" (ionChange)="onServiceFeeEnabled($event)" mode="ios" color="orange"></ion-toggle>
+                </div>
+            </div>
+            <div class="service-fee" *ngIf="location.settings.serviceFee">
+                <div class="title">
+                    <button class="icon-button" (click)="onServiceFeeDisabled()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <span class="global-text big black bold">
+                        Service fees
+                    </span>
+                </div>
+                <div class="value">
+                    <button class="icon-button" (click)="onServiceFeeTypeUpdated()">
+                        <mat-icon *ngIf="location.settings.serviceFee.type == 1">attach_money</mat-icon>
+                        <mat-icon *ngIf="location.settings.serviceFee.type == 2">percent</mat-icon>
+                    </button>
+                    <input type="number" [(ngModel)]="location.settings.serviceFee.amount" class="global-input">
+                    <button class="icon-button orange" (click)="onServiceFeeUpdated()">
+                        <mat-icon>done</mat-icon>
+                    </button>
+                </div>
+            </div>
         </div>
         
         <div *ngIf="!location" class="global-loading height-124">

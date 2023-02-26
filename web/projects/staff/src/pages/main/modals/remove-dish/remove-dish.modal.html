@@ -1,0 +1,43 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <button (click)="close()" class="icon-button">
+                <mat-icon>close</mat-icon>
+            </button>
+            <span class="global-subtitle">
+                Hello
+            </span>
+        </div>
+        <div class="body">
+            <div class="info">
+                <span class="global-text">
+                    You're about to delete and refund the dish.
+                </span>
+            </div>
+            <div class="reason">
+                <select class="global-input" name="refund-reason" [(ngModel)]="reason">
+                    <option value="not-selected">
+                        Select reason
+                    </option>
+                    <option value="ingredients">
+                        Insufficient ingredients
+                    </option>
+                    <option value="scam">
+                        Customer is the reason
+                    </option>
+                    <option value="other">
+                        Other
+                    </option>
+                </select>
+            </div>
+            <div class="buttons">
+                <button (click)="close()" class="button">
+                    Cancel
+                </button>
+                <button (click)="submit()" [disabled]="reason == 'not-selected'" class="red-button button">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

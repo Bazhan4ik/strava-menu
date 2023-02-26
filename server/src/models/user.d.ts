@@ -14,6 +14,7 @@ interface User {
     orders?: { restaurantId: ObjectId; orderId: ObjectId; }[];
 
     stripeCustomerId?: string;
+    hasPaymentMethod?: boolean;
 
     avatar?: {
         buffer: Buffer;

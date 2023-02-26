@@ -64,6 +64,11 @@ interface LocationSettings {
         card: boolean;
         cash: boolean;
     }
+    serviceFee: {
+        amount: number;
+        type: 1 | 2; // 1 - $ amount, 2 - % amount
+    } | null;
+    tips: boolean;
 }
 
 interface Location {

@@ -9,13 +9,13 @@
                 </button>
             </div>
             <div class="buttons">
-                <button *ngIf="sessionDish.status == 'cooking' && userId == sessionDish.people.cook?._id" (click)="quit()" class="button">
+                <button [disabled]="disableButtons" *ngIf="sessionDish.status == 'cooking' && userId == sessionDish.people.cook?._id" (click)="quit()" class="button">
                     Quit
                 </button>
-                <button *ngIf="sessionDish.status == 'cooking' && userId == sessionDish.people.cook?._id" (click)="done()" class="orange-button button">
+                <button [disabled]="disableButtons" *ngIf="sessionDish.status == 'cooking' && userId == sessionDish.people.cook?._id" (click)="done()" class="orange-button button">
                     Done
                 </button>
-                <button *ngIf="sessionDish.status == 'ordered'" (click)="take()" class="orange-button button">
+                <button [disabled]="disableButtons" *ngIf="sessionDish.status == 'ordered'" (click)="take()" class="orange-button button">
                     Take
                 </button>
                 <button *ngIf="sessionDish.status == 'cooking' && userId != sessionDish.people.cook?._id" disabled class="button orange-button">
@@ -105,6 +105,15 @@
                     </div>
                 </div>
             </div>
+            <div class="remove">
+                <button (click)="remove()" class="button small">
+                    <mat-icon>delete</mat-icon>
+                    Remove
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+
+<ng-container #modalContainer></ng-container>

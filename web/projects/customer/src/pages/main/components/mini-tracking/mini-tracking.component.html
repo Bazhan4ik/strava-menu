@@ -23,7 +23,12 @@
                     </span>
                 </div>
                 <div class="status">
-                    <span *ngIf="dish.status != 'ordered'" [class.orange]="dish.status == 'cooked'" [class.green]="dish.status == 'served'" [class.purple]="dish.status == 'cooking'">
+                    <span *ngIf="dish.status != 'ordered'" 
+                          [class.red]="dish.status == 'removed'"
+                          [class.orange]="dish.status == 'cooked'" 
+                          [class.green]="dish.status == 'served'" 
+                          [class.red]="dish.status == 'removed'" 
+                          [class.purple]="dish.status == 'cooking'">
                         {{ dish.status }}
                     </span>
                     <span *ngIf="dish.status == 'ordered'" class="gray">

@@ -46,6 +46,7 @@ router.get("/", logged(), restaurantWorker({ locations: 1, }, { customers: { ava
 
     const orders = await getOrders(restaurant._id, { }, { limit: 10 }).toArray();
 
+    console.log(orders);
 
     const result: Order[] = [];
 

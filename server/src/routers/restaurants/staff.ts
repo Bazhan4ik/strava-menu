@@ -79,6 +79,7 @@ router.get("/", logged(), restaurantWorker({ staff: 1, locations: { _id: 1, id: 
 });
 
 
+
 router.get("/add/find", logged(), restaurantWorker({}, { staff: { hiring: true } }), async (req, res) => {
     const { text } = req.query;
 
@@ -416,7 +417,9 @@ function checkNewManagerSettings(hiringManagerSettings: WorkerSettings, newManag
         !hiringManagerSettings.staff ||
         !hiringManagerSettings.settings ||
         !hiringManagerSettings.collections ||
-        !hiringManagerSettings.locations
+        !hiringManagerSettings.locations ||
+        !hiringManagerSettings.cook ||
+        !hiringManagerSettings.waiter 
 
         ||
 
@@ -427,14 +430,16 @@ function checkNewManagerSettings(hiringManagerSettings: WorkerSettings, newManag
         !newManagerSettings.staff ||
         !newManagerSettings.settings ||
         !newManagerSettings.locations ||
-        !newManagerSettings.collections
+        !newManagerSettings.collections ||
+        !newManagerSettings.waiter ||
+        !newManagerSettings.cook
     ) {
         return "invalid";
     }
 
 
 
-    // checking if manager that hires a new manager assigned more power to new manager which is he not allowed to do
+    // checking if manager that hires a new manager assigned more power to the new manager
 
     // dishes
     if (newManagerSettings.dishes.available && !hiringManagerSettings.dishes.available) {
@@ -520,7 +525,9 @@ function updateOtherProperties(settings: WorkerSettings) {
         !settings.dishes || 
         !settings.collections || 
         !settings.staff || 
-        !settings.customers
+        !settings.customers ||
+        !settings.cook ||
+        !settings.waiter
     ) {
         return null;
     }

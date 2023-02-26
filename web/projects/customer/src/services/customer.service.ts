@@ -79,20 +79,25 @@ export class CustomerService {
     }
 
 
-    socketId(): Promise<string> {
-        
-        return new Promise<string>(res => {
+    socketId(): Observable<string> {
+
+        return new Observable<string>(subs => {
             if(this.socket.ioSocket.id) {
-                res(this.socket.ioSocket.id);
+                subs.next(this.socket.ioSocket.id);
                 return;
             }
 
             this.socket.connect();
 
             this.socket.on("connect", (sid: any) => {
-                res(this.socket.ioSocket.id);
+                subs.next(this.socket.ioSocket.id);
+
+                if(this.session) {
+                    this.init(this.restaurant.id, this.locationId, this.socket.ioSocket.id, undefined!);
+                }
+
             });
-        });
+        })
     }
     
 

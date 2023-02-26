@@ -31,6 +31,28 @@
                     }
                 }
             }
+
+            .service-fee {
+                .title {
+                    display: flex;
+                    align-items: center;
+                }
+                
+                .value {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    button.icon-button:not(.orange) {
+                        border-radius: var(--default-border-radius);
+                        border: 2px solid var(--default-border-color);
+                    }
+
+                    .global-input {
+                        width: 64px;
+                    }
+                }
+            }
         }
     }
 }

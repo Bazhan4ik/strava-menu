@@ -14,6 +14,7 @@ import { convertTime, getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
 import { Location, LocationSettings } from "../../models/restaurant.js";
 import Stripe from "stripe";
+import { stringify } from "querystring";
 
 
 const router = Router({ mergeParams: true });
@@ -75,8 +76,6 @@ router.get("/",
 
         const location = getLocation();
         const table = getTable();
-
-        console.log(table);
 
         if (!location) {
             return res.status(400).send({ reason: "InvalidLocation" });
@@ -514,8 +513,86 @@ router.put("/table", customerRestaurant({ locations: { id: 1, _id: 1 }, tables: 
 });
 
 
+router.put("/tip", customerRestaurant({ locations: { _id: 1, id: 1, settings: { tips: 1, } } }), customerSession({ info: { location: 1 }, payment: { money: { subtotal: 1 } } }, {}), async (req, res) => {
+    const { session, restaurant } = res.locals as Locals;
+    const { amount } = req.body;
+
+    if(typeof amount != "number") {
+        return res.status(400).send({ reason: "InvalidInput" });
+    }
+
+    if(!restaurant.locations) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    if(!session.payment?.money?.subtotal || !session.info.location) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const getLocation = () => {
+        for (let l of restaurant.locations!) {
+            if (l._id.equals(session.info.location)) {
+                return l;
+            }
+        }
+        return null!;
+    }
+
+    const location: Location = getLocation();
+
+    if(!location) {
+        return res.status(400).send({ reason: "LocationNotFound" });
+    }
+
+    if(!location.settings.tips) {
+        return res.status(403).send({ reason: "TipsDisabled" });
+    }
+
+    const update = await updateSession(
+        restaurant._id,
+        { _id: session._id },
+        { $set: { "payment.money.tip": session.payment.money.subtotal * amount / 100 } },
+        { projection: { _id: 1 } }
+    );
+
+    res.send({ updated: update.ok == 1 });
+});
+router.delete("/tip", customerRestaurant({}), customerSession({}, {}), async (req, res) => {
+    const { session, restaurant } = res.locals as Locals;
 
 
+    const update = await updateSession(
+        restaurant._id,
+        { _id: session._id },
+        { $set: { "payment.money.tip": null! } },
+        { projection: { _id: 1 } }
+    );
+
+
+    res.send({ updated: update.ok == 1 });
+});
+
+
+
+class AmountAndDishes {
+    money!: { subtotal: number; hst: number; total: number; service: number; };
+    dishes!: { name: string; amount: number; price: number; }[];
+}
+class ErrorResult {
+    status!: number;
+    reason!: string;
+}
+class SuccessfulPaymentDataResult {
+    paymentIntentId!: string;
+    paymentIntentClientSecret!: string;
+    setupIntentClientSecret?: string;
+    setupIntent?: string;
+    paymentMethods?: {
+        last4: string;
+        id: string;
+        brand: string;
+    }[];
+}
 router.get("/checkout",
     customerRestaurant({
         stripe: { stripeAccountId: 1, },
@@ -529,80 +606,171 @@ router.get("/checkout",
         },
         {
             stripeCustomerId: 1,
-            info: { email: 1, }
+            hasPaymentMethod: 1,
+            info: { email: 1, },
         }
     ), async (req, res) => {
 
         const { session, restaurant, user } = res.locals as Locals;
 
-        if (!restaurant.locations) {
-            return res.status(500).send({ reason: "InvalidError" });
-        }
-
-        if (!restaurant.stripe || !restaurant.stripe.stripeAccountId) {
-            return res.status(500).send({ reason: "InvalidError" });
-        }
-
-        let location: Location = null!;
-
-        for (let l of restaurant.locations) {
-            if (l._id.equals(session.info.location)) {
-                location = l;
-                break;
+        const findError = () => {
+            if (!restaurant.locations) {
+                return { status: 500, reason: "InvalidError" };
             }
-        }
-
-        if (!location) {
-            return res.status(404).send({ reason: "LocationNotFound" });
-        }
-
-
-        const result = await calculateAmount(restaurant._id, session.dishes);
-
-        if (!result) {
-            return res.status(500).send({ reason: "InvalidDishes" });
-        }
-
-
-        if (!result || !result.money.total) {
-            return res.status(403).send({ reason: "InvalidAmount" });
-        }
-
-        let paymentIntent: Stripe.PaymentIntent = null!;
-
-        if (location.settings.methods?.card) {
-            try {
-                paymentIntent = await createPaymentIntent(
-                    {
-                        stripeAccountId: restaurant.stripe.stripeAccountId,
-                        stripeCustomerId: user?.stripeCustomerId,
-                        restaurantId: restaurant._id.toString(),
-                        pid: session.payment?.paymentIntentId,
-                        sessionId: session._id.toString(),
-                        total: Math.floor(result.money.total),
-                    }
-                );
-            } catch (e: any) {
-                console.log(e);
-                if (e.raw.code == "payment_intent_unexpected_state") {
-                    paymentIntent = await createPaymentIntent(
-                        {
-                            stripeAccountId: restaurant.stripe.stripeAccountId,
-                            stripeCustomerId: user?.stripeCustomerId,
-                            restaurantId: restaurant._id.toString(),
-                            sessionId: session._id.toString(),
-                            total: Math.floor(result.money.total),
-                        }
-                    );
-                } else {
-                    return res.status(403).send({ reason: "PaymentState" });
+            if (!restaurant.stripe || !restaurant.stripe.stripeAccountId) {
+                return { status: 500, reason: "InvalidError" };
+            }
+            for (let l of restaurant.locations) {
+                if (l._id.equals(session.info.location)) {
+                    location = l;
+                    break;
                 }
             }
+            if (!location) {
+                return { status: 404, reason: "LocationNotFound" };
+            }
+        }
+        const convertDishesAndCalculateMoney = async () => {
+            if(session.dishes.length == 0) {
+                return { status: 500, reason: "InvalidDishes" };
+            }
+            const result = await calculateAmount(restaurant._id, session.dishes, session.payment?.money?.tip, location.settings.serviceFee!);
+
+            if (!result) {
+                return { status: 500, reason: "InvalidDishes" };
+            }
+            if (!result || !result.money.total) {
+                return { status: 403, reason: "InvalidAmount" };
+            }
+            return result;
+        }
+        const customerPaymentData = async (): Promise<SuccessfulPaymentDataResult | ErrorResult> => {
+
+            const waitFor = [];
+
+            // create payment intent
+            // if customer has account list his payment methods
+            // if no payment methods create setup intent
+
+            // if customer has no accounts return payment intent client secret
+            // if customer logged in return payment methods 
+
+            // if customer want not to pay with the given methods create setup intent on other endpoint
+
+            waitFor.push(createPaymentIntent(
+                {
+                    stripeAccountId: restaurant.stripe!.stripeAccountId!,
+                    stripeCustomerId: user?.stripeCustomerId,
+                    restaurantId: restaurant._id.toString(),
+                    pid: session.payment?.paymentIntentId,
+                    sessionId: session._id.toString(),
+                    total: Math.floor(money.total),
+                },
+            ));
+
+            if (!user) {
+
+                // customer not logged in, create/update payment intent
+
+                const result = await Promise.all(waitFor); // [0] paymentIntent
+
+                const paymentIntent = result[0];
+
+                return { paymentIntentClientSecret: paymentIntent.client_secret!, paymentIntentId: paymentIntent.id };
+            }
+
+            if (user.hasPaymentMethod) {
+
+                // list saved payment methods
+
+                waitFor.push(
+                    stripe.paymentMethods.list({ customer: user.stripeCustomerId, type: "card" })
+                );
+
+                const result = await Promise.all(waitFor); // [0] paymentIntent [1] paymentMethods
+
+                const paymentIntent = result[0] as Stripe.PaymentIntent;
+                const paymentMethods = result[1] as Stripe.ApiList<Stripe.PaymentMethod>;
+
+                const convertedPaymentMethods: SuccessfulPaymentDataResult["paymentMethods"] = [];
+
+                for (let pm of paymentMethods.data) {
+                    convertedPaymentMethods.push({
+                        id: pm.id,
+                        last4: pm.card?.last4!,
+                        brand: pm.card?.brand!,
+                    });
+                }
+
+
+                return { paymentMethods: convertedPaymentMethods, paymentIntentClientSecret: paymentIntent.client_secret!, paymentIntentId: paymentIntent.id, };
+            }
+
+            // create setup intent
+
+            if(session.payment?.setupIntentId) {
+                waitFor.push(
+                    stripe.setupIntents.retrieve(session.payment.setupIntentId)
+                );
+            } else {
+                waitFor.push(
+                    stripe.setupIntents.create({
+                        customer: user.stripeCustomerId,
+                        payment_method_types: ["card"],
+                        metadata: {
+                            restaurantId: restaurant._id.toString(),
+                            sessionId: session._id.toString(),
+                            userId: user._id.toString(),
+                        }
+                    })
+                );
+            }
+
+            const result = await Promise.all(waitFor); // [0] paymentIntent [1] setupIntent
+
+            const paymentIntent = result[0] as Stripe.PaymentIntent;
+            const setupIntent = result[1] as Stripe.SetupIntent;
+
+
+            setupIntent.client_secret;
+            paymentIntent.client_secret;
+
+            return {
+                paymentIntentClientSecret: paymentIntent.client_secret!,
+                setupIntentClientSecret: setupIntent.client_secret!,
+                paymentIntentId: paymentIntent.id,
+                setupIntent: setupIntent.id,
+            }
+
         }
 
 
+        let location: Location = null!;
+        let money: AmountAndDishes["money"] = null!;
+        let dishes: AmountAndDishes["dishes"] = null!;
+        let paymentData: SuccessfulPaymentDataResult = null!;
 
-        const { money, dishes } = result;
+        const error = findError();
+        if (error) {
+            return res.status(error.status).send({ reason: error.reason });
+        }
+
+        const calcres = await convertDishesAndCalculateMoney();
+        if (calcres instanceof ErrorResult || (typeof (calcres as any).status == "number")) {
+            return res.status((calcres as ErrorResult).status || 500).send({ reason: (calcres as ErrorResult).reason || "InvalidError" })
+        } else {
+            money = (calcres as any).money;
+            dishes = (calcres as any).dishes;
+        }
+
+        if(location.settings.methods?.card) {
+            const result = await customerPaymentData();
+            if(result instanceof ErrorResult) {
+                return res.status(result.status).send({ reason: result.reason });
+            }
+            paymentData = result;
+        }
+
 
 
         res.send({
@@ -610,8 +778,17 @@ router.get("/checkout",
             dishes,
             payWithCard: location.settings.methods?.card,
             payWithCash: location.settings.methods?.cash,
-            clientSecret: paymentIntent?.client_secret,
             email: user?.info?.email,
+            paymentData: {
+                tips: location.settings.tips,
+                paymentMethods: paymentData.paymentMethods,
+                // setup: !!paymentData?.setupIntentClientSecret,
+                setup: false,
+                // payment: !paymentData?.setupIntent && !!paymentData?.paymentIntentId,
+                payment: true,
+                // clientSecret: paymentData?.setupIntentClientSecret || paymentData?.paymentIntentClientSecret,
+                clientSecret: paymentData?.paymentIntentClientSecret,
+            }
         });
 
 
@@ -619,7 +796,8 @@ router.get("/checkout",
             { _id: session._id, },
             {
                 $set: {
-                    "payment.paymentIntentId": paymentIntent?.id,
+                    "payment.paymentIntentId": paymentData?.paymentIntentId,
+                    "payment.setupIntentId": paymentData?.setupIntent,
                     "payment.money": money,
                 }
             },
@@ -732,7 +910,7 @@ export {
 
 
 
-async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[]) {
+async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: number = 0, serviceFee?: { amount: number; type: 1 | 2 }) {
     const dishesId: ObjectId[] = [];
 
 
@@ -783,7 +961,8 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[]) {
     }
 
     const hst = subtotal * 0.13;
-    const total = hst + subtotal;
+    const service = serviceFee ? serviceFee?.type == 1 ? serviceFee.amount : subtotal * serviceFee.amount / 100 : null!;
+    const total = hst + subtotal + (service || 0) + tip;
 
 
     return {
@@ -791,6 +970,8 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[]) {
             subtotal,
             hst,
             total,
+            service,
+            tip,
         },
         dishes: Array.from(map.values()),
     };
@@ -809,7 +990,6 @@ async function createPaymentIntent(data: {
 
         try {
             const paymentIntent = await stripe.paymentIntents.update(pid, { amount: Math.floor(total) });
-
 
             return paymentIntent;
         } catch (e: any) {
@@ -833,6 +1013,8 @@ async function createPaymentIntent(data: {
                     restaurantId
                 }
             });
+
+
 
             return paymentIntent;
         } catch (e) {

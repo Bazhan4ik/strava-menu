@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { env } from 'environment/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { firstValueFrom } from 'rxjs';
-import { JWT } from '../models/general';
 
 @Injectable({
     providedIn: 'root'

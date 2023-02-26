@@ -28,6 +28,7 @@
                         "assets": [
                             "projects/public/src/favicon.ico",
                             "projects/public/src/assets",
+                            "projects/public/src/resources",
                             {
                                 "glob": "**/*.svg",
                                 "input": "node_modules/ionicons/dist/ionicons/svg",

@@ -43,13 +43,20 @@ interface WorkerSettings {
         hiring?: boolean;
     }
 
-
     customers?: {
         available?: boolean;
 
         blacklisting?: boolean;
         tables?: boolean;
     };
+
+    cook?: {
+        refunding?: boolean;
+    }
+
+    waiter?: {
+        refunding?: boolean;
+    }
 
 
     isOwner?: boolean;

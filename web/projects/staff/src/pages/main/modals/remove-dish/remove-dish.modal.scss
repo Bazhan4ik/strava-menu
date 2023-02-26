@@ -1,0 +1,29 @@
+.app {
+    .box {
+        background-color: var(--default-background);
+        max-width: 496px;
+        width: 100vw;
+        border-radius: var(--default-border-radius);
+
+        .header {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .body {
+            padding: 12px;
+
+            .reason {
+                margin-top: 12px;
+            }
+
+            .buttons {
+                margin-top: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+    }
+}

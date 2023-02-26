@@ -310,6 +310,13 @@ router.get("/tracking", customerRestaurant({}), customerSession({}, {}), async (
     });
 });
 
+router.post("/socketId", customerRestaurant({}), customerSession({}, {}), async (req, res) => {
+    const { user, restaurant, session } = res.locals as Locals;
+    const { socketId } = req.body;
+
+    
+    
+});
 
 
 

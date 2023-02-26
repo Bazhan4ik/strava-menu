@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { SocketService } from '../services/socket.service';
 import { StaffService } from '../services/staff.service';
 
@@ -22,20 +22,16 @@ export class LocationIdGuard implements CanActivate {
             return false;
         }
 
-        const socketId = await this.socket.socketId();
+        const socketId = await firstValueFrom(
+            this.socket.socketId()
+        );
 
-        const result: any = await this.service.addLocationAndJoinRooms(socketId, locationId);
+        // const result: any = await this.service.addLocationAndJoinRooms(socketId, locationId);
+        const result: any = await this.service.init(socketId, locationId);
 
         if(!result) {
             return false;
         }
-
-        console.log("LOCATION SET");
-
-        this.service.restaurant.pages = result.pages;
-        this.service.restaurant.redirectTo = result.redirectTo;
-        this.service.locationId = locationId;
-        this.service.userId = result.userId;
 
         return true;
     }

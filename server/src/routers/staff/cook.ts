@@ -1,14 +1,23 @@
 import { Router } from "express";
+import { getDecorators } from "typescript";
+import { dishesDBName } from "../../config.js";
 import { Locals } from "../../models/general.js";
-import { SessionDish } from "../../models/session.js";
+import { SessionDish, WaiterRequest } from "../../models/session.js";
+import { stripe } from "../../setup/stripe.js";
 import { convertMultipleSessionsSessionDishes, convertOneSessionDish } from "../../utils/convertSessionDishes.js";
+import { getDish } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { updateIngredientsUsage } from "../../utils/ingredients.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
-import { getSessions, updateSession } from "../../utils/sessions.js";
+import { addOrder } from "../../utils/orders.js";
+import { updateRestaurant } from "../../utils/restaurant.js";
+import { getSession, getSessions, updateSession } from "../../utils/sessions.js";
 import { sendToCustomerDishStatus } from "../../utils/socket/customer.js";
 import { sendDishIsDone, sendDishIsQuitted, sendDishIsTaken } from "../../utils/socket/dishes.js";
+import { sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
+import { getDelay } from "../../utils/time.js";
+import { getUser } from "../../utils/users.js";
 
 
 
@@ -148,7 +157,7 @@ router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), a
 
     const update = await updateSession(
         restaurant._id,
-        { _id: id(sessionId), dishes: { $elemMatch: { _id: id(sessionDishId), status: "cooking" } } },
+        { _id: id(sessionId), dishes: { $elemMatch: { _id: id(sessionDishId), status: "cooking", "staff.cook": user._id } } },
         { $set: {
             "dishes.$[sessionDish].timing.cooked": Date.now(),
             "dishes.$[sessionDish].status": "cooked",
@@ -201,6 +210,225 @@ router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), a
     sendToCustomerDishStatus(restaurant._id, update.session?.customer.socketId!, { sessionDishId: id(sessionDishId), status: "cooked" });
 
     updateIngredientsUsage(restaurant._id, sessionDish.dishId);
+});
+
+router.put("/remove", logged(), restaurantWorker({ customers: { userId: 1, }, stripe: { stripeAccountId: 1 } }, { work: { cook: true }, cook: { refunding: true } }), async (req, res) => {
+    const { sessionId, sessionDishId, reason } = req.body;
+    const { location, restaurant, user } = res.locals as Locals;
+
+
+    if(!restaurant.stripe?.stripeAccountId) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+    if(!sessionId || !sessionDishId || !reason) {
+        return res.status(400).send({ reason: "InvalidInput" });
+    }
+
+    if(typeof reason != "string" || typeof sessionId != "string" || typeof sessionDishId != "string" || sessionId.length != 24 || sessionDishId.length != 24) {
+        return res.status(422).send({ reason: "InvalidInput" });
+    }
+
+    if(!["other", "scam", "ingredients"].includes(reason)) {
+        return res.status(400).send({ reason: "InvalidReason" });
+    }
+
+
+
+    const session = await getSession(
+        restaurant._id,
+        { _id: id(sessionId) },
+        { projection: {
+            dishes: { removed: 1, status: 1, _id: 1, dishId: 1, },
+            info: {
+                type: 1,
+                id: 1,
+            },
+            waiterRequests: { active: 1 },
+            payment: 1,
+            timing: { ordered: 1 },
+            customer: { customerId: 1, socketId: 1, },
+        } }
+    );
+
+
+    if(!session) {
+        return res.status(404).send({ reason: "SessionNotFound" });
+    }
+
+    let dish: SessionDish = null!;
+    for(let d of session.dishes) {
+        if(d._id.equals(sessionDishId)) {
+            dish = d;
+            break;
+        }
+    }
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+
+    if(dish.status == "removed" || dish.removed) {
+        return res.status(403).send({ reason: "Removed" });
+    }
+
+    if(dish.status != "ordered") {
+        return res.status(403).send({ reason: "Status" });
+    }
+
+    const update = await updateSession(
+        restaurant._id,
+        { _id: id(sessionId) },
+        { $set: {
+            "dishes.$[dish].status": "removed",
+            "dishes.$[dish].removed": {
+                time: Date.now(),
+                userId: user._id,
+                reason: reason
+            },
+        } },
+        {
+            arrayFilters: [ { "dish._id": id(sessionDishId) } ],
+            projection: {
+                _id: 1,
+                dishes: { status: 1, _id: 1, }
+            }
+        }
+    );
+
+
+    if(update.ok == 0 || !update.session) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    let dishesDoneAmount = 0;
+    for(let d of update.session.dishes) {
+        if(d._id.equals(sessionDishId)) {
+            if(d.status != "removed") {
+                return res.status(500).send({ reason: "InvalidError" });
+            }
+        }
+        if(d.status == "removed" || d.status == "served") {
+            dishesDoneAmount++;
+        }
+    }
+    for(let request of session.waiterRequests) {
+        if(request.active) {
+            dishesDoneAmount--; // so the session status is not done yet.
+            break;
+        }
+    }
+
+    if(dishesDoneAmount == session.dishes.length && session.payment?.method != "cash") { // method has to be not cash because if it is cash then waiter request should be created and waiter has to go and refund. then /requests/resolve will do the job
+        updateSession(restaurant._id, { _id: session._id, }, { $set: { "status": "done" } }, { projection: { _id: 1 } });
+
+        addOrder(restaurant, session._id);
+    }
+
+    const d = await getDish(restaurant._id, { _id: dish.dishId }, { projection: { info: { price: 1 } } });
+
+    if(session.payment?.method == "cash") {
+
+        // send message to customer
+        sendToCustomerDishStatus(restaurant._id, session.customer.socketId, { sessionDishId: id(sessionDishId), status: "removed" }); // send dish status to the customer
+        
+
+
+        // send waiter request to waiter (cash refund)
+        const newRequest: WaiterRequest = {
+            _id: id(),
+            active: true,
+            reason: "refund",
+            amount: d?.info.price,
+            requestedTime: Date.now(),
+        };
+    
+        updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest } }, { noResponse: true, projection: { _id: 1, } });
+
+        const customer = await getUser({ _id: session.customer.customerId! }, { projection: { info: { name: 1, }, avatar: { buffer: 1 } } });
+
+        sendToWaiterWaiterRequest(restaurant._id, location, {
+            _id: newRequest._id,
+            sessionId: session._id,
+            customer: { name: `${ customer.info?.name?.first } ${customer.info?.name?.last }`, avatar: customer?.avatar?.buffer },
+            requestedTime: getDelay(newRequest.requestedTime),
+            self: false,
+            reason: "cash",
+            sessionType: session.info.type,
+            sessionIdNumber: session.info.id,
+    
+            ui: {
+                acceptButtonText: "Accept",
+                cancelButtonText: "Cancel",
+                resolveButtonText: "Refunded",
+                acceptedTitle: `Refunded $${d?.info.price} to the customer`,
+                reasonTitle: "Refund money",
+                typeTitle: session.info.type == "dinein" ? "Table" : "Take out",
+                idTitle: "#" + session.info.id,
+            }
+        });
+
+        return res.send({ updated: true });
+    }
+
+    try {
+
+        if(!d) {
+            return res.status(400).send({ reason: "DishRemoved" });
+        }
+
+        const refund = await stripe.refunds.create({
+            payment_intent: session.payment?.paymentIntentId!,
+            amount: d.info.price,
+            reverse_transfer: true,
+        });
+        
+    } catch (e) {
+        // send message to the customer
+        sendToCustomerDishStatus(restaurant._id, session.customer.socketId, { sessionDishId: id(sessionDishId), status: "removed" }); // send dish status to the customer
+
+
+        // send waiter request to waiter (cash refund)
+        const newRequest: WaiterRequest = {
+            _id: id(),
+            active: true,
+            reason: "refund",
+            amount: d?.info.price,
+            requestedTime: Date.now(),
+        };
+
+        updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest } }, { noResponse: true, projection: { _id: 1, } });
+
+        const customer = await getUser({ _id: session.customer.customerId! }, { projection: { info: { name: 1, }, avatar: { buffer: 1 } } });
+
+        sendToWaiterWaiterRequest(restaurant._id, location, {
+            _id: newRequest._id,
+            sessionId: session._id,
+            customer: { name: `${ customer.info?.name?.first } ${customer.info?.name?.last }`, avatar: customer?.avatar?.buffer },
+            requestedTime: getDelay(newRequest.requestedTime),
+            self: false,
+            reason: "cash",
+            sessionType: session.info.type,
+            sessionIdNumber: session.info.id,
+    
+            ui: {
+                acceptButtonText: "Accept",
+                cancelButtonText: "Cancel",
+                resolveButtonText: "Refunded",
+                acceptedTitle: `Refunded $${d?.info.price} to the customer`,
+                reasonTitle: "Refund money",
+                typeTitle: session.info.type == "dinein" ? "Table" : "Take out",
+                idTitle: "#" + session.info.id,
+            }
+        });
+        
+
+        console.log(e);
+
+        return res.send({ updated: true, });
+    }
+
+    // send message to customer
+    sendToCustomerDishStatus(restaurant._id, session.customer.socketId, { sessionDishId: id(sessionDishId), status: "removed" }); // send dish status to the customer
+    return res.send({ updated: true });
 });
 
 

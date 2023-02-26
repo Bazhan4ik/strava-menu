@@ -52,7 +52,9 @@ router.post("/", logged(), restaurantWorker({  stripe: { card: 1 } }, { location
                 methods: {
                     card: restaurant.stripe?.card == "enabled",
                     cash: true,
-                }
+                },
+                serviceFee: null,
+                tips: true,
             },
 
             id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase(),
@@ -224,6 +226,95 @@ router.put("/:locationId/customers", logged(), restaurantWorker({ locations: { i
     res.send({ updated: update.ok == 1 });
 });
 
+router.put("/:locationId/service-fee", logged(), restaurantWorker({ locations: { id: 1, settings: { serviceFee: 1 } } }, { locations: { adding: true } }), async (req, res) => {
+    const { locationId } = req.params;
+    const { restaurant } = res.locals as Locals;
+    const { enabled, amount, type } = req.body;
+
+    if(!type) {
+        return res.status(400).send({ reason: "InvalidInput" });
+    }
+    if(typeof enabled != "boolean" || ![1, 2].includes(type) || typeof amount != "number") {
+        return res.status(422).send({ reason: "InvalidInput" });
+    }
+    if(!restaurant.locations || restaurant.locations.length == 0) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+
+    let location: Location = null!;
+
+    for(let l of restaurant.locations) {
+        if(l.id == locationId) {
+            location = l;
+            break;
+        }
+    }
+
+    if(!location) {
+        return res.status(404).send({ reason: "LocationNotFound" });
+    }
+
+    const serviceFee = {
+        amount: type == 1 ? amount * 100 : amount,
+        type,
+    }
+
+    const $set: any = {};
+
+    $set[`locations.$[location].settings.serviceFee`] = enabled ? serviceFee : null;
+
+    const update = await updateRestaurant(
+        { _id: restaurant._id },
+        { $set },
+        { arrayFilters: [ { "location.id": locationId } ], projection: { _id: 1 } }
+    );
+
+    res.send({ updated: update.ok == 1, old: location.settings.serviceFee });
+});
+
+router.put("/:locationId/tips", logged(), restaurantWorker({ locations: { id: 1, settings: { tips: 1 } } }, { locations: { adding: true } }), async (req, res) => {
+    const { locationId } = req.params;
+    const { restaurant } = res.locals as Locals;
+    const { value } = req.body;
+
+
+    if(typeof value != "boolean") {
+        return res.status(422).send({ reason: "InvalidInput" });
+    }
+    if(!restaurant.locations || restaurant.locations.length == 0) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+
+    let location: Location = null!;
+
+    for(let l of restaurant.locations) {
+        if(l.id == locationId) {
+            location = l;
+            break;
+        }
+    }
+
+    if(!location) {
+        return res.status(404).send({ reason: "LocationNotFound" });
+    }
+
+    if(location.settings.tips == value) {
+        return res.send({ updated: true });
+    }
+
+    const update = await updateRestaurant(
+        { _id: restaurant._id },
+        { $set: { "locations.$[location].settings.tips": value } },
+        { arrayFilters: [ { "location.id": locationId } ], projection: { _id: 1 } }
+    );
+
+    res.send({ updated: update.ok == 1, });
+});
+
+
+
 router.delete("/:locationId", logged(), restaurantWorker({ }, { locations: { removing: true } }), async (req, res) => {
     const { locationId } = req.params;
     const { restaurant } = res.locals as Locals;
@@ -237,6 +328,8 @@ router.delete("/:locationId", logged(), restaurantWorker({ }, { locations: { rem
 
     res.send({ updated: update.ok == 1 });
 });
+
+
 
 export {
     router as LocationsRouter,

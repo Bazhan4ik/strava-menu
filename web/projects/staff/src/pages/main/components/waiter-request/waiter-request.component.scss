@@ -3,6 +3,8 @@
     border-radius: var(--default-border-radius);
     border: 2px solid var(--green);
     box-shadow: var(--default-box-shadow);
+    min-width: 324px;
+    min-height: 134px;
 
     &.orange {
         border: 2px solid var(--orange);

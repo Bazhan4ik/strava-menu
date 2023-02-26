@@ -33,7 +33,7 @@ type SessionDishStatus = "ordered" | "cooking" | "cooked" | "served" | "removed"
  * @type other - other reason for the request
  * 
  */
-type WaiterRequestReason = "cash" | "payment" | "other";
+type WaiterRequestReason = "cash" | "payment" | "refund" | "other";
 
 
 interface SessionDish {
@@ -63,17 +63,22 @@ interface SessionDish {
     removed?: {
         time: number; // when was removed
         userId: ObjectId; // who removed
-        reason: "ingredients" | "other" | string; // what is the reason
+        reason: "ingredients" | "other" | "scam" | string; // what is the reason
     };
 }
 
 interface SessionPayment {
     method?: "card" | "cash"; // payed by
     paymentIntentId?: string; // stripe payment intent id to not generate it everytime user is at checkout
+    setupIntentId?: string; // stripe setup intent id to not generate it everytime
+    paymentMethodId?: string;
+    payed: boolean;
     money?: {
         hst: number; // tax amount
         subtotal: number; // subtotal, dishes price
         total: number; // total is price of all the dishes and tax
+        service?: number; // service fee, set on restaurant's dashboard
+        tip?: number; // amount of tip
     };
 }
 
@@ -129,6 +134,8 @@ interface WaiterRequest {
     resolvedTime?: number; // when waiter resolved the request
     
     waiterId?: ObjectId; // id of the waiter dealing with the request
+
+    amount?: number; // if request.reason == 'refund' amount is the amount of money to refund.
 
     waiters?: { waiterId: ObjectId; canceledTime: number; }[]; // all the waiters that accepted the request and then quitted it
 }

@@ -47,6 +47,32 @@
                     </span>
                 </div>
             </div>
+            <div class="service-fee" *ngIf="money.service">
+                <div class="title">
+                    <span class="global-text big">
+                        Service fee
+                    </span>
+                </div>
+                <div class="border"></div>
+                <div class="value">
+                    <span class="global-text big">
+                        ${{ money.service / 100 }}
+                    </span>
+                </div>
+            </div>
+            <div class="tip" *ngIf="money.tip">
+                <div class="title">
+                    <span class="global-text big">
+                        Tip
+                    </span>
+                </div>
+                <div class="border"></div>
+                <div class="value">
+                    <span class="global-text big">
+                        ${{ money.tip / 100 }}
+                    </span>
+                </div>
+            </div>
             <div class="hst">
                 <div class="title">
                     <span class="global-text big">
@@ -90,23 +116,96 @@
     </div>
 
     <div class="payment" *ngIf="payWithCard">
-        <ng-container *ngIf="elementsOptions.clientSecret">
-            <div class="email" *ngIf="showEmailInput">
-                <div class="label">
-                    <span class="global-text">
-                        Email address
+        <div *ngIf="paymentData.tips" class="tips">
+            <div class="title">
+                <span class="global-subtitle">
+                    Add tip
+                </span>
+            </div>
+            <div class="box">
+                <div class="options">
+                    <button (click)="removeTip()" class="tip tip-10">
+                        <div class="title">
+                            <span class="global-text normal black bold">
+                                0
+                            </span>
+                        </div>
+                    </button>
+                    <button (click)="addTip(10)" class="tip tip-10">
+                        <div class="title">
+                            <span class="global-text normal black bold">
+                                10%
+                            </span>
+                        </div>
+                    </button>
+                    <button (click)="addTip(20)" class="tip tip-10">
+                        <div class="title">
+                            <span class="global-text normal black bold">
+                                20%
+                            </span>
+                        </div>
+                    </button>
+                    <button (click)="addTip(30)" class="tip tip-10">
+                        <div class="title">
+                            <span class="global-text normal black bold">
+                                30%
+                            </span>
+                        </div>
+                    </button>
+                </div>
+                <div class="amount" *ngIf="money.tip">
+                    <span class="global-text bigger black bold">
+                        + ${{ money.tip / 100 }}
                     </span>
                 </div>
-                <input type="email" [(ngModel)]="email" id="email" class="global-input">
             </div>
-
-            <ngx-stripe-payment [elementsOptions]="elementsOptions" [clientSecret]="elementsOptions.clientSecret">
-            </ngx-stripe-payment>
-
-            <div class="buttons">
-                <button (click)="pay()" class="button orange-button">
-                    PAY
+        </div>
+        <div *ngIf="paymentData.paymentMethods && paymentData.paymentMethods.length > 0 && elementsOptions.clientSecret" class="payment-methods">
+            <div class="list">
+                <button (click)="selectPaymentMethod(method)" [class.selected]="method.id == selectedPaymentMethod?.id" *ngFor="let method of paymentData.paymentMethods" class="method">
+                    <div class="last4">
+                        <span class="circles global-text.big.bold">
+                            &#9679;&#9679;&#9679;&#9679;
+                        </span>
+                        <span class="global-text big bold black">
+                            {{ method.last4 }}
+                        </span>
+                    </div>
+                    <div class="brand">
+                        <img src="./../../../../../../../global-resources/icons/brands/{{ method.brand }}.png">
+                    </div>
                 </button>
+            </div>
+            <div class="confirm-button">
+                <button (click)="confirm()" class="button orange-button" [disabled]="!selectedPaymentMethod">
+                    PAY <span *ngIf="selectedPaymentMethod">WITH {{ selectedPaymentMethod.last4 }}</span>
+                </button>
+            </div>
+        </div>
+        <ng-container *ngIf="elementsOptions.clientSecret">
+            <div class="manual">
+                <div class="email" *ngIf="showEmailInput">
+                    <div class="label">
+                        <span class="global-text">
+                            Email address
+                        </span>
+                    </div>
+                    <input type="email" [(ngModel)]="email" id="email" class="global-input">
+                </div>
+    
+                <ngx-stripe-payment [elementsOptions]="elementsOptions" [clientSecret]="elementsOptions.clientSecret">
+                </ngx-stripe-payment>
+    
+                <div class="buttons">
+                    <button (click)="confirm()" class="button orange-button">
+                        <span *ngIf="paymentData.payment">
+                            PAY
+                        </span>
+                        <span *ngIf="paymentData.setup">
+                            CONFIRM
+                        </span>
+                    </button>
+                </div>
             </div>
         </ng-container>
 

@@ -9,7 +9,7 @@ interface ConvertedWaiterRequest {
     requestedTime: Time;
     acceptedTime?: Time;
     reason: string;
-    total: number;
+    total?: number;
     self: boolean;
 
     sessionType: string;

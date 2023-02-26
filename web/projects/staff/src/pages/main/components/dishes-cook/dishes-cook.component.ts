@@ -62,6 +62,13 @@ export class DishesCookComponent implements OnInit, OnDestroy {
                         break;
                     }
                 }
+            } else if(a == "removed") {
+                for(let i in this.dishes) {
+                    if(this.dishes[i]._id == dish._id) {
+                        this.dishes.splice(+i, 1);
+                        break;
+                    }
+                }
             }
 
             component.destroy();

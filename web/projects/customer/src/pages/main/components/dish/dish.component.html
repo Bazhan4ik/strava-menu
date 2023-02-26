@@ -1,6 +1,6 @@
 <a type="button" [routerLink]="goDown ? ['..', dish.id] : [dish.id]" [queryParams]="{ c: collection }" class="app" [class.small]="small">
     <div class="image">
-        <img [ngSrc]="imageUrl" width="196" height="196">
+        <img [ngSrc]="imageUrl" width="196" (load)="imageLoaded()" height="196">
     </div>
     <div class="name-price">
         <div class="name">

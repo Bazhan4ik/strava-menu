@@ -39,6 +39,11 @@ export class StaffService {
             this.http.post<T>(this.baseUrl + this.restaurant.id + "/" + this.locationId + "/" + path.join("/"), body)
         );
     }
+    delete<T>(...path: string[]) {
+        return firstValueFrom(
+            this.http.delete<T>(this.baseUrl + this.restaurant.id + "/" + this.locationId + "/" + path.join("/"))
+        );
+    }
 
 
     getRestaurant(restaurantId: string) {
@@ -47,10 +52,17 @@ export class StaffService {
         )
     }
 
-    addLocationAndJoinRooms(socketId: string, locationId: string) {
-        return firstValueFrom(
+    async init(socketId: string, locationId: string) {
+        const result: any = await firstValueFrom(
             this.http.get(this.baseUrl + this.restaurant.id + "/" + locationId + "/init", { params: { socketId } })
         );
+
+        this.restaurant.pages = result.pages;
+        this.restaurant.redirectTo = result.redirectTo;
+        this.locationId = locationId;
+        this.userId = result.userId;
+
+        return true;
     }
 
 

@@ -86,6 +86,8 @@ router.post("/create", async (req, res) => {
 
         restaurants: [],
 
+        hasPaymentMethod: false,
+
         info: {
             created: Date.now(),
 
@@ -105,6 +107,12 @@ router.post("/create", async (req, res) => {
         }
     };
 
+    const customer = await stripe.customers.create({
+        name: `${user.name.first} ${user.name.last}`,
+        email: user.email,
+    });
+
+    newUser.stripeCustomerId = customer.id;
 
     const result = await addUser(newUser);
 

@@ -34,7 +34,9 @@ export class DishComponent implements OnInit {
     @Input() goDown: boolean;
     @Input() small: boolean;
 
-
+    imageLoaded() {
+        console.log("IMAGE LAODED");
+    }
 
     async ngOnInit() {
 
