@@ -781,7 +781,7 @@ router.get("/checkout",
             email: user?.info?.email,
             paymentData: {
                 tips: location.settings.tips,
-                paymentMethods: paymentData.paymentMethods,
+                paymentMethods: paymentData?.paymentMethods,
                 // setup: !!paymentData?.setupIntentClientSecret,
                 setup: false,
                 // payment: !paymentData?.setupIntent && !!paymentData?.paymentIntentId,
