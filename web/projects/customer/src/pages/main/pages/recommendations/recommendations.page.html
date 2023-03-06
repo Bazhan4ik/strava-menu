@@ -2,15 +2,13 @@
     <div class="tracking" *ngIf="tracking && tracking.length > 0">
         <app-mini-tracking [dishes]="tracking"></app-mini-tracking>
     </div>
-    <div *ngIf="collections && collections.length == 0" class="no-collections">
-        <span class="global-text bold big black">
-            No collections
-        </span>
+    <div class="body">
+        <ng-container #body></ng-container>
     </div>
-    <div class="collections" *ngIf="collections && collections.length > 0">
+    <!-- <div class="collections" *ngIf="collections && collections.length > 0">
         <app-collection *ngFor="let collection of collections" [collection]="collection"></app-collection>
-    </div>
-    <div *ngIf="!collections" class="global-loading height-124">
+    </div> -->
+    <div *ngIf="!elements" class="global-loading height-124">
         <div></div>
         <div></div>
         <div></div>

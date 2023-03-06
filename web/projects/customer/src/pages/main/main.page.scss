@@ -76,13 +76,12 @@
 
     .box {
         background-color: var(--default-background);
-        padding: 8px;
         border-radius: var(--default-border-radius);
-        width: 234px;
+        width: 196px;
         position: absolute;
 
         button {
-            height: 32px;
+            height: 36px;
             width: 100%;
             display: flex;
             align-items: center;

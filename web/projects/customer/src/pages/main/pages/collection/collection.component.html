@@ -1,0 +1,32 @@
+<div class="app">
+    <div class="header" *ngIf="collection">
+        <div class="back-button">
+            <a class="icon-button" type="button" routerLink="../..">
+                <mat-icon>arrow_back</mat-icon>
+            </a>
+        </div>
+        <div class="text">
+            <div class="title">
+                <span class="global-subtitle">
+                    {{ collection.name }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="description" *ngIf="collection">
+        <span class="global-text">
+            {{ collection.description }}
+        </span>
+    </div>
+    <div class="dishes" *ngIf="collection">
+        <app-dish *ngFor="let dishId of collection.dishes" [dishObjectId]="dishId"></app-dish>
+    </div>
+
+
+    <div *ngIf="!collection" class="global-loading height-124">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

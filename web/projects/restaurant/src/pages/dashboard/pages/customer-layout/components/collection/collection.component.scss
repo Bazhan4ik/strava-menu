@@ -1,0 +1,27 @@
+.app {
+    padding-left: 6px;
+    height: 186px;
+
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 6px 0;
+    }
+
+    .dishes {
+        display: flex;
+        align-items: flex-start;
+        overflow-x: auto;
+        gap: 6px;
+
+        .dish {
+            .image {
+                img {
+                    height: 108px;
+                    width: 108px;
+                    border-radius: var(--default-border-radius);
+                }
+            }
+        }
+    }
+}

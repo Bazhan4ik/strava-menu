@@ -2,7 +2,7 @@
     <div class="collection-header">
         <div class="title">
             <span class="global-subtitle">
-                {{ collection.title }}
+                {{ collection.name }}
             </span>
             <span *ngIf="collection.redirectable" class="global-text">
                 redirectable
@@ -18,6 +18,6 @@
         </div>
     </div>
     <div class="dishes" #list>
-        <app-dish *ngFor="let dish of collection.dishes" [small]="small" [goDown]="goDown" [collection]="collection.id" [dishObjectId]="dish"></app-dish>
+        <app-dish *ngFor="let dish of collection.dishes" [small]="small" [collection]="collection.id" [dishObjectId]="dish"></app-dish>
     </div>
 </div>

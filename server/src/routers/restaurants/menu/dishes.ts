@@ -12,7 +12,7 @@ import { bufferFromString } from "../../../utils/bufferFromString.js";
 import { getIngredients } from "../../../utils/ingredients.js";
 import { getTags } from "../../../utils/tags.js";
 import { updateRestaurant } from "../../../utils/restaurant.js";
-import { updateOrders } from "../../../utils/orders.js";
+import { getOrders, updateOrders } from "../../../utils/orders.js";
 
 
 
@@ -127,25 +127,60 @@ router.get("/", logged(), restaurantWorker({}, { dishes: { available: true } }),
 
     res.send(result);
 });
-router.get("/:dishId", logged(), restaurantWorker({}, { dishes: { available: true } }), async (req, res) => {
+router.get("/:dishId", logged(), restaurantWorker({ collections: { name: 1, image: 1, _id: 1, dishes: 1, id: 1, }, }, { dishes: { available: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant } = res.locals as Locals;
+
+    if(!restaurant.collections) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
 
     if(!dishId) {
         return res.status(404).send({ reason: "DishIdNotProvided" });
     }
+
+
+    const getLastWeek = () => {
+        // date of last week's day but random time
+        const date = new Date(Date.now() - 604_800_000);
+
+        // set time to midnight
+        date.setHours(0, 0, 0);
+
+        return date.getTime();
+    }
+    const getAverageSales = () => {
+        let sumOfDifferences = 0;
+
+        for (let i = 0; i < sales.length - 1; i++) {
+            const diff = sales[i+1] - sales[i];
+            sumOfDifferences += diff;
+        }
+
+        const avgOfDifferences = sumOfDifferences / (sales.length - 1);
+
+        return +avgOfDifferences.toFixed(2);
+    }
     
 
-    const dish = await getDish(restaurant._id, { id: dishId }, { projection: { info: 1, library: 1, id: 1, tags: 1, ingredients: 1 } });
-
-
+    const dish = await getDish(restaurant._id, { id: dishId }, { projection: { _id: 1, info: 1, library: 1, id: 1, tags: 1, ingredients: 1 } });
+    
+    
     if(!dish) {
         return res.status(404).send({ reason: "NoDishFound" });
     }
+    
+    const orders = await getOrders(
+        restaurant._id,
+        {
+            "timing.ordered": { $gte: getLastWeek() /* a week */ },
+            dishes: { $elemMatch: { dishId: dish._id } }
+        },
+        { projection: { dishes: { dishId: 1 }, timing: { ordered: 1 } } }
+    ).toArray();
 
 
-
-    const returnDish = {
+    const convertedDish = {
         name: dish.info.name,
         description: dish.info.description,
         id: dish.id,
@@ -156,11 +191,85 @@ router.get("/:dishId", logged(), restaurantWorker({}, { dishes: { available: tru
         ingredients: dish.ingredients ? getIngredients(dish.ingredients) : null,
     };
 
+    const collections = [];
 
 
+    for(let c of restaurant.collections) {
+        for(let id of c.dishes) {
+            if(id.equals(dish._id)) {
+                collections.push({
+                    ...c,
+                    image: c.image?.buffer as any,
+                });
+                break;
+            }
+        }
+    }
 
-    res.send(returnDish);
 
+    const sales = [0, 0, 0, 0, 0, 0, 0];
+
+    const current = new Date();
+    for(let order of orders) {
+        const date = new Date(order.timing.ordered!);
+
+        for(let orderDish of order.dishes) {
+            if(orderDish.dishId.equals(dish._id)) {
+                const index = date.getDay() - current.getDay();
+
+                if(index > 0) {
+                    sales[+index - 1]++;
+                } else {
+                    sales[index + 6]++;
+                }
+
+            }
+        }
+    }
+
+    
+
+
+    res.send({ dish: convertedDish, collections, sales: { data: sales, start: new Date().getDay(), growth: getAverageSales() } });
+
+});
+router.get("/:dishId/edit", logged(), restaurantWorker({ }, { dishes: { adding: true } }), async (req, res) => {
+    const { restaurant } = res.locals as Locals;
+    const { dishId } = req.params;
+
+
+    const dish = await getDish(
+        restaurant._id,
+        { id: dishId },
+        { projection: { info: { name: 1, price: 1, description: 1, }, id: 1, ingredients: 1, library: 1 } },
+    );
+
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+
+
+    const result: {
+        name: string;
+        price: number;
+        description: string;
+        _id: ObjectId;
+        id: string;
+        ingredients: { amount: number; id: string; title: string; }[];
+    
+        image: any;
+    } = {
+        name: dish.info.name,
+        description: dish.info.description,
+        price: dish.info.price,
+        id: dish.id,
+        _id: dish._id,
+        ingredients: getIngredients(dish.ingredients),
+        image: dish.library?.original,
+    }
+
+
+    res.send(result);
 });
 router.put("/:dishId", logged(), restaurantWorker({}, { dishes: { adding: true } }), async (req, res) => {
     const { dishId } = req.params;
@@ -216,36 +325,36 @@ router.put("/:dishId", logged(), restaurantWorker({}, { dishes: { adding: true }
 
     res.send({ updated: result.ok == 1, newId: update["id"] });
 });
-router.get("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { available: true } }), async (req, res) => {
-    const { dishId } = req.params;
-    const { restaurant } = res.locals as Locals;
+// router.get("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { available: true } }), async (req, res) => {
+//     const { dishId } = req.params;
+//     const { restaurant } = res.locals as Locals;
 
-    if(!restaurant.collections || restaurant.collections.length == 0) {
-        return res.send([]);
-    }
+//     if(!restaurant.collections || restaurant.collections.length == 0) {
+//         return res.send([]);
+//     }
 
-    const dish = await getDish(restaurant._id, { $or: [ { _id: id(dishId) }, { id: dishId } ] }, { projection: { _id: 1 } });
+//     const dish = await getDish(restaurant._id, { $or: [ { _id: id(dishId) }, { id: dishId } ] }, { projection: { _id: 1 } });
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
-    }
+//     if(!dish) {
+//         return res.status(404).send({ reason: "DishNotFound" });
+//     }
 
-    const collections: Collection[] = [];
+//     const collections: Collection[] = [];
 
-    for(let c of restaurant.collections) {
-        for(let id of c.dishes) {
-            if(id.equals(dish._id)) {
-                collections.push({
-                    ...c,
-                    image: c.image.buffer as any,
-                });
-                break;
-            }
-        }
-    }
+//     for(let c of restaurant.collections) {
+//         for(let id of c.dishes) {
+//             if(id.equals(dish._id)) {
+//                 collections.push({
+//                     ...c,
+//                     image: c.image.buffer as any,
+//                 });
+//                 break;
+//             }
+//         }
+//     }
 
-    res.send(collections);
-});
+//     res.send(collections);
+// });
 router.put("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { adding: true, }, collections: { adding: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant } = res.locals as Locals;

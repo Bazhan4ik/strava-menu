@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { CollectionsRoutingModule } from './collections-routing.module';
 import { CollectionsPage } from './collections.page';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { CollectionsPage } from './collections.page';
     ],
     imports: [
         CommonModule,
-        CollectionsRoutingModule
+        CollectionsRoutingModule,
+        MatIconModule,
     ]
 })
 export class CollectionsModule { }

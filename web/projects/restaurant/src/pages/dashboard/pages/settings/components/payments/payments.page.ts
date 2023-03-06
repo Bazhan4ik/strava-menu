@@ -98,6 +98,7 @@ export class PaymentsPage implements OnInit {
         } catch (e: any) {
             if(e.status == 403) {
                 console.error("ACCOUNT NOT VERIFIED");
+                ev.target.checked = !value;
             }
         }
 

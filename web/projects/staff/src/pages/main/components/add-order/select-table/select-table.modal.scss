@@ -1,0 +1,57 @@
+.app {
+    height: 100%;
+    overflow-y: auto;
+
+    .box {
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+        max-width: 512px;
+        width: 100vw;
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+
+            .buttons {
+                min-width: 52px;
+            }
+        }
+
+        .body {
+
+            padding: 24px;
+
+            .tables {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 8px;
+
+                .table {
+                    background: none;
+                    border-radius: var(--default-border-radius);
+                    border: 2px solid var(--orange);
+                    aspect-ratio: 1 / 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+
+                    &.taken {
+                        border: 2px solid var(--gray);
+                    }
+                    &.selected {
+                        border: 2px solid var(--green);
+                    }
+                }
+            }
+
+        }
+    }
+}

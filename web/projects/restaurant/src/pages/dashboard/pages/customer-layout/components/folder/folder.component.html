@@ -1,0 +1,21 @@
+<div class="app">
+    <div class="header">
+        <div class="name">
+            <span class="global-subtitle">
+                {{ folder.name }}
+            </span>
+        </div>
+    </div>
+    <div class="collections">
+        <div *ngFor="let collection of folder.collections" class="collection">
+            <div class="image">
+                <img src="./../../../../../../../../../global-resources/images/no-image.svg" alt="">
+            </div>
+            <div class="name">
+                <span class="global-text">
+                    {{ collection.name }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

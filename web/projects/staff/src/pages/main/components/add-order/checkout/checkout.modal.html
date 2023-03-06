@@ -1,0 +1,167 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <div class="title">
+                <div class="close-button">
+                    <button (click)="close()" class="button icon-button">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                <div class="text">
+                    <span class="global-subtitle">
+                        Checkout
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="body">
+
+            <div class="order" *ngIf="order">
+                <div *ngIf="order.type == 'dinein'" class="dinein">
+                    <div class="title">
+                        <span *ngIf="order.id" class="global-text big black bold">
+                            Table #{{ order.id }}
+                        </span>
+                        <span *ngIf="!order.id" class="global-text big black bold">
+                            Select table
+                        </span>
+                    </div>
+                    <div class="buttons">
+                        <button *ngIf="order.id" (click)="selectTable()" class="orange-button button">
+                            Change table
+                        </button>
+                        <button *ngIf="!order.id" (click)="selectTable()" class="orange-button button">
+                            Select table
+                        </button>
+                    </div>
+                </div>
+                <div *ngIf="order.type == 'takeout'" class="takeout">
+
+                </div>
+            </div>
+
+            <div class="dishes">
+                <button *ngFor="let dish of dishes" (click)="addComment(dish._id)" class="dish">
+                    <div class="dish-info">
+                        <div class="image">
+                            <img [src]="dish.image" alt="">
+                        </div>
+                        <div class="name-price">
+                            <div class="name">
+                                <span class="global-text big black bold">
+                                    {{ dish.name }}
+                                </span>
+                            </div>
+                            <div class="price">
+                                <span class="global-text">
+                                    ${{ dish.price / 100 }}
+                                </span>
+                                <span *ngIf="dish.comment" class="dot">
+                                    &#9679;
+                                </span>
+                                <span *ngIf="dish.comment" class="global-text">
+                                    comment
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttons" (click)="$event.stopPropagation()">
+                        <button (click)="removeDish(dish._id)" class="icon-button">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+                    </div>
+                </button>
+            </div>
+
+            <div class="money" *ngIf="money">
+                <div class="subtotal">
+                    <div class="title">
+                        <span class="global-text big">
+                            Subtotal
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.subtotal / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="service-fee" *ngIf="money.service">
+                    <div class="title">
+                        <span class="global-text big">
+                            Service fee
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.service / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="tip" *ngIf="money.tip">
+                    <div class="title">
+                        <span class="global-text big">
+                            Tip
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.tip / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="hst">
+                    <div class="title">
+                        <span class="global-text big">
+                            HST
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.hst / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="total">
+                    <div class="title">
+                        <span class="global-text bigger black bold">
+                            Total
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big black bold">
+                            ${{ money.total / 100 }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button (click)="payed()" class="orange-button button">
+                    PAYED
+                </button>
+            </div>
+
+            <div *ngIf="!dishes || !money" class="global-loading height-124">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="loading" class="global-loading full-page">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+<ng-container #modalContainer></ng-container>

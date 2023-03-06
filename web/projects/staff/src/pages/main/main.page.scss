@@ -15,5 +15,15 @@
 
     .content {
         padding-bottom: 100px;
+
+        .manual-order {
+            padding: 24px;
+            
+            button {
+                width: 208px;
+                height: 52px;
+                border-radius: 52px;
+            }
+        }
     }
 }

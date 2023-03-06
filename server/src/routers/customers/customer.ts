@@ -1,13 +1,12 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
-import { DEFAULT_COLLECTIONS_IDS } from "../../../resources/data/collections.js";
-import { Dish } from "../../models/dish.js";
 import { Locals } from "../../models/general.js";
 import { Collection } from "../../models/restaurant.js";
+import { Session } from "../../models/session.js";
 import { getDish, getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { customerSession } from "../../utils/middleware/customerSession.js";
-import { customerRestaurant } from "../../utils/middleware/customRestaurant.js";
+import { customerRestaurant } from "../../utils/middleware/customerRestaurant.js";
 import { getSessions } from "../../utils/sessions.js";
 import { SessionRouter } from "./session.js";
 
@@ -94,41 +93,130 @@ router.get("/locations", customerRestaurant({ locations: 1, info: { name: 1, id:
     });
 });
 
-router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1 }), customerSession({}, {}), async (req, res) => {
+router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, folders: 1, layout: 1, }), customerSession({}, {}), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
 
 
+    if(!restaurant.collections || !restaurant.layout || !restaurant.folders) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
 
-    const dishes = await getDishes(restaurant._id, { }, { projection: projections.collections.noImage }) .toArray();
+    const getCollection = (id: ObjectId) => {
+        for(const collection of restaurant.collections) {
+            if(collection._id.equals(id)) {
+                return collection;
+            }
+        }
+        return null;
+    }
+    const getFolder = (id: ObjectId) => {
+        for(const folder of restaurant.folders) {
+            if(folder._id.equals(id)) {
+                return folder;
+            }
+        }
+        return null;
+    }
+    const getDish = (id: ObjectId) => {
+        for(const dish of dishes) {
+            if(dish._id.equals(id)) {
+                return dish;
+            }
+        }
+        return null!;
+    }
+
+    const dishesIds: ObjectId[] = [];
 
 
-    const map = new Map<string, Dish>();
-
-    for(let dish of dishes) {
-        map.set(dish._id.toString(), { ...dish, });
+    const result: {
+        tracking?: any[],
+        elements: {
+            type: "collection" | "folder";
+            data: {
+                name: string;
+                dishes: ObjectId[];
+            } | {
+                name: string;
+                collections: {
+                    name: string;
+                    id: string;
+                    _id: ObjectId;
+                    image: string;
+                }[];
+            }
+        }[];
+        dishes?: { [dishId: string]: any }[];
+    } = {
+        elements: [],
     }
     
+    for(const element of restaurant.layout) {
+        if(!element.data?.id) {
+            continue;
+        }
 
-    const collections = [];
+        if(element.type == "collection") {
+            const collection = getCollection(element.data.id);
 
-    for(let collection of restaurant.collections) {
-        if(!DEFAULT_COLLECTIONS_IDS.includes(collection.id)) {
-            collections.push({
-                title: collection.name,
-                id: collection.id,
-                redirectable: collection.dishes.length > 5,
-                dishes: collection.dishes,
+            
+            if(!collection) {
+                continue;
+            }
+
+            if(collection.dishes.length == 0) {
+                continue;
+            }
+            
+            dishesIds.push(...collection.dishes);
+
+            result.elements.push({
+                type: "collection",
+                data: {
+                    name: collection.name,
+                    dishes: collection.dishes,
+                },
             });
+        } else if(element.type == "folder") {
+            const folder = getFolder(element.data.id);
+
+            if(!folder) {
+                continue;
+            }
+
+            if(folder.collections.length == 0) {
+                continue;
+            }
+
+            const collections = [];
+            for(const c of folder.collections) {
+                const collection = getCollection(c);
+
+                if(collection) {
+                    collections.push({
+                        name: collection.name,
+                        image: collection.image?.buffer as any,
+                        _id: collection._id,
+                        id: collection.id
+                    }); 
+                }
+            }
+
+            result.elements.push({
+                type: "folder",
+                data: {
+                    name: folder.name,
+                    collections,
+                }
+            })
+
         }
     }
 
-    const result: any = {
-        collections,
-        dishes: Object.fromEntries([...map])
-    }
+    let sessions: Session[] = null!;
 
     if (user) {
-        const sessions = await getSessions(
+        sessions = await getSessions(
             restaurant._id,
             { "customer.customerId": user._id, status: "progress" },
             { projection: { dishes: { dishId: 1, status: 1, _id: 1 } } }
@@ -136,10 +224,24 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1 }), c
 
         result.tracking = [];
 
+        for (let session of sessions.slice(0, 1)) {
+            for (let dish of session.dishes.slice(0, 3)) {
+                dishesIds.push(dish.dishId);
+            }
+        }
+    }
+
+    const dishes = await getDishes(
+        restaurant._id,
+        { _id: { $in: dishesIds } },
+        { projection: projections.collections.noImage }
+    ).toArray();
+
+    if(sessions) {
         for (let session of sessions) {
-            for (let dish of session.dishes) {
-                const d = map.get(dish.dishId.toString());
-                result.tracking.push({
+            for (let dish of session.dishes.slice(0, 3)) {
+                const d = getDish(dish.dishId);
+                result.tracking!.push({
                     status: dish.status,
                     name: d?.info?.name,
                     _id: dish._id,
@@ -149,6 +251,12 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1 }), c
         }
     }
 
+    const dishMap = new Map();
+    for(const dish of dishes) {
+        dishMap.set(dish._id.toString(), dish);
+    }
+
+    result.dishes = Object.fromEntries(dishMap.entries());
 
     res.send(result);
 });
@@ -222,7 +330,6 @@ router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (re
 
     res.send(result);
 });
-
 router.get("/dishes/:dishId/image", async (req, res) => {
     const { restaurantId, dishId } = req.params as any;
 
@@ -252,6 +359,58 @@ router.get("/dishes/:dishId/image", async (req, res) => {
 
     res.send(null);
 });
+
+
+router.get("/collections/:collectionId", customerRestaurant({ collections: 1 }), async (req, res) => {
+    const { collectionId } = req.params;
+    const { restaurant } = res.locals as Locals;
+
+    if(!restaurant.collections) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const getCollection = () => {
+        for(const collection of restaurant.collections) {
+            if(collection.id == collectionId) {
+                return collection;
+            }
+        }
+        return null;
+    }
+
+
+    const collection = getCollection();
+
+    if(!collection) {
+        return res.status(404).send({ reason: "CollectionNotFound" });
+    }
+
+
+    const dishes = await getDishes(
+        restaurant._id,
+        { _id: { $in: collection.dishes } },
+        { projection: projections.collections.noImage }
+    ).toArray();
+
+    const dishesMap = new Map();
+    for(const dish of dishes) {
+        dishesMap.set(dish._id.toString(), dish);
+    }
+    
+
+
+    res.send({
+        collection: {
+            name: collection.name,
+            _id: collection._id,
+            id: collection.id,
+            description: collection.description,
+            dishes: collection.dishes,
+        },
+        dishes: Object.fromEntries(dishesMap.entries()),
+    });
+});
+
 
 router.get("/tracking", customerRestaurant({}), customerSession({}, {}), async (req, res) => {
     const { user, restaurant, session } = res.locals as Locals;
@@ -310,13 +469,6 @@ router.get("/tracking", customerRestaurant({}), customerSession({}, {}), async (
     });
 });
 
-router.post("/socketId", customerRestaurant({}), customerSession({}, {}), async (req, res) => {
-    const { user, restaurant, session } = res.locals as Locals;
-    const { socketId } = req.body;
-
-    
-    
-});
 
 
 

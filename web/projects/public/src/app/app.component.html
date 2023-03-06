@@ -78,7 +78,7 @@
                             <h1>Your Menu Online</h1>
                             <p class="p-large">Use StravaMenu to create a better customer expirience and improve your
                                 restaurant</p>
-                            <a class="btn-solid-lg page-scroll" [href]="loginLink">SIGN UP</a>
+                            <a class="btn-solid-lg page-scroll" [href]="registerLink">SIGN UP</a>
                         </div> <!-- end of text-container -->
                     </div> <!-- end of col -->
                     <div class="col-lg-6 col-xl-7">
@@ -151,8 +151,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="above-heading">DESCRIPTION</div>
-                    <h2 class="h2-heading">Online menu will give you advantage on your competitors</h2>
+                    <!-- <div class="above-heading">DESCRIPTION</div> -->
+                    <h2 class="h2-heading">Online menu will give you an advantage on your competitors</h2>
                 </div> <!-- end of col -->
             </div> <!-- end of row -->
             <div class="row">
@@ -529,26 +529,37 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="text-container">
-                        <h2>Now Is The Time To Upgrade Your Marketing Solution</h2>
-                        <p>Target the right customers for your business with the help of Tivo's patented segmentation
-                            technology and deploy efficient marketing campaigns. Keep your customers happy and loyal.
+                        <h2>Revamp your dining experience with our online menu solution</h2>
+                        <p>
+                            Attract customers to your restaurant with our smart online menu solution - maximize your reach and keep them coming back for more
                         </p>
                         <ul class="list-unstyled li-space-lg">
                             <li class="media">
-                                <i class="fas fa-square"></i>
+                                <i class="circle">
+                                    &#9679;
+                                </i>
                                 <div class="media-body">Understand customers and meet their requirements</div>
                             </li>
                             <li class="media">
-                                <i class="fas fa-square"></i>
-                                <div class="media-body">Targeted client base with Tivo's efficient technology</div>
+                                <i class="circle">
+                                    &#9679;
+                                </i>
+                                <div class="media-body">Advanced analytics for customer insights</div>
+                            </li>
+                            <li class="media">
+                                <i class="circle">
+                                    &#9679;
+                                </i>
+                                <div class="media-body">Customizable templates and real-time updates</div>
                             </li>
                         </ul>
-                        <a class="btn-solid-reg page-scroll" href="sign-up.html">SIGN UP</a>
+                        <a class="btn-solid-reg page-scroll" [href]="registerLink">SIGN UP</a>
                     </div> <!-- end of text-container -->
                 </div> <!-- end of col -->
                 <div class="col-lg-6">
-                    <div class="image-container">
-                        <img class="img-fluid" src="images/details.png" alt="alternative">
+                    <div class="image-container" id="computer-phone">
+                        <img class="img-fluid other computer" src="./../resources/images/COMPUTER_CUSTOMER.png" alt="alternative">
+                        <img class="img-fluid other small-border phone" src="./../resources/images/PHONE_CUSTOMER.png" alt="alternative">
                     </div> <!-- end of image-container -->
                 </div> <!-- end of col -->
             </div> <!-- end of row -->

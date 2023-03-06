@@ -68,6 +68,12 @@
                 </mat-icon>
                 Customers
             </a>
+            <a class="global-link" [class.disabled]="!pages.layout" routerLink="layout" [class.active]="currentPage == 'layout'">
+                <mat-icon>
+                    dashboard
+                </mat-icon>
+                Layout
+            </a>
             <a class="global-link" [class.disabled]="!pages.tables" routerLink="tables" [class.active]="currentPage == 'tables'">
                 <mat-icon>
                     table_restaurant

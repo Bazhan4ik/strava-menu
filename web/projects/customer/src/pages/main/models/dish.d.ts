@@ -8,7 +8,6 @@ interface Dish {
     id: string;
     updateImage: boolean;
     library: {
-        list: { resolution: number; buffer: any; }[];
         preview: any;
         blur: any;
     }

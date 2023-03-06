@@ -37,28 +37,86 @@
                 </div>
             </div>
         </div>
+
+
+
+        <div class="collections" *ngIf="collections">
+            <div class="header">
+                <div class="title">
+                    <span class="global-subtitle">
+                        Collections
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button (click)="editCollections()" class="icon-button orange-button square">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="collections.length > 0" class="list">
+                <div *ngFor="let collection of collections" class="collection">
+                    <div class="image">
+                        <img [src]="collection.image" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text bold big black">
+                            {{ collection.name }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="collections.length == 0" class="no-collections">
+                <span class="global-text big black bold">
+                    No collections
+                </span>
+            </div>
+        </div>
+
+
+        <div class="sales" *ngIf="dish">
+            <div class="chart">
+                <canvas baseChart class="chart"
+                        [data]="lineChartData"
+                        [options]="lineChartOptions"
+                        [type]="lineChartType"></canvas>
+            </div>
+            <div class="info">
+                <div class="header">
+                    <div class="title">
+                        <span class="global-subtitle">
+                            Sales
+                        </span>
+                    </div>
+                    <div class="badge">
+                        <span class="global-badge" [class.green]="averageGrowth > 0" [class.red]="averageGrowth < 0">
+                            <span class="plus" *ngIf="averageGrowth > 0">+</span> {{ averageGrowth }} daily
+                        </span>
+                    </div>
+                </div>
+                <div class="date">
+                    <span class="global-text">
+                        Last 7 days
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
         <div class="global-loading height-124" *ngIf="!dish">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
         </div>
-        <div class="bottom">
-            <!-- <div class="tabs">
-                <a routerLink="collections" class="button" type="button">
-                    Collections
-                </a>
-                <a routerLink="orders" class="button" type="button">
-                    Orders
-                </a>
-                <a routerLink="staff" class="button" type="button">
-                    Staff
-                </a>
-            </div> -->
-            <div class="pages" *ngIf="dish">
-                <router-outlet></router-outlet>
-            </div>
-        </div>
+        <span class="global-loading full-page" *ngIf="loading">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </span>
     </div>
     
 </div>

@@ -1,0 +1,24 @@
+.app {
+    .box {
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+        max-width: 512px;
+        width: 100vw;
+        padding: 12px;
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .body {
+            margin-top: 12px;
+        }
+    }
+}

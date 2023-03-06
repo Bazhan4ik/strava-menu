@@ -5,6 +5,7 @@ import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { joinStaff } from "../../utils/socket/socket.js";
 import { CookRouter } from "./cook.js";
+import { OrderRouter } from "./order.js";
 import { WaiterRouter } from "./waiter.js";
 
 
@@ -14,6 +15,7 @@ const router = Router({ mergeParams: true });
 
 
 router.use("/:locationId/waiter", WaiterRouter);
+router.use("/:locationId/order", OrderRouter);
 router.use("/:locationId/cook", CookRouter);
 
 

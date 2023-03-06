@@ -8,6 +8,14 @@ interface Collection {
     image: any;
 }
 
+interface Folder {
+    name: string;
+    id: string;
+    image: any;
+    open: boolean;
+    collections: Collection[];
+}
+
 @Component({
   selector: 'app-collections',
   templateUrl: './collections.page.html',
@@ -16,7 +24,7 @@ interface Collection {
 export class CollectionsPage implements OnInit {
 
 
-    collections: Collection[];
+    folders: Folder[];
 
 
     constructor(
@@ -26,14 +34,15 @@ export class CollectionsPage implements OnInit {
 
 
     async ngOnInit() {
-        const result: Collection[] = await this.service.get("menu/collections");
+        const result: Folder[] = await this.service.get("menu/collections");
 
         if(result) {
-            this.collections = [];
-            for(let collection of result) {
-                this.collections.push({
-                    ...collection,
-                    image: getImage(collection.image) || "./../../../../../../../../../../global-resources/images/no-image.svg",
+            this.folders = [];
+            for(let folder of result) {
+                    this.folders.push({
+                    ...folder,
+                    collections: folder.collections.map(c => { return { ...c, open: false, image: getImage(c.image) || "./../../../../../../../../../../global-resources/images/no-image.svg" } }),
+                    image: getImage(folder.image) || "./../../../../../../../../../../global-resources/images/no-image.svg",
                 });
             }
         }

@@ -18,13 +18,7 @@ interface Dish {
     tags: { id: string; title: string; }[];
     ingredients: { amount: number; id: string; title: string; }[];
 
-    library: {
-        preview: any;
-        list: {
-            buffer: any;
-            resolution: number;
-        }[]
-    };
+    image: any;
 }
 
 
@@ -76,7 +70,7 @@ export class EditDishPage implements OnInit {
         this.ingredientsFound = result;
     }
     async addIngredient(ingredient: Ingredient) {
-        const { AddIngredientModal } = await import("../shared-components/add-ingredient/add-ingredient.modal");
+        const { AddIngredientModal } = await import("../../../components/add-ingredient/add-ingredient.modal");
 
 
         const component = this.modalContainer.createComponent(AddIngredientModal);
@@ -104,7 +98,7 @@ export class EditDishPage implements OnInit {
     }
 
     async setImage() {
-        const { ImageModal } = await import("../shared-components/image/image.modal");
+        const { ImageModal } = await import("./../../../components/image/image.modal");
 
         const component = this.modalContainer.createComponent(ImageModal);
 
@@ -170,7 +164,7 @@ export class EditDishPage implements OnInit {
             return this.router.navigate([this.service.restaurant.id, "menu"]);
         }
 
-        const dish: Dish = await this.service.get("menu/dishes", dishId);
+        const dish: Dish = await this.service.get("menu/dishes", dishId, "edit");
 
         if(!dish) {
             return this.router.navigate([this.service.restaurant.id, "menu"]);
@@ -178,13 +172,11 @@ export class EditDishPage implements OnInit {
 
         this.dish = dish;
 
-        if(dish.library && dish.library.preview) {
-            this.image = getImage(dish.library.preview);
+        if(dish.image) {
+            this.image = getImage(dish.image);
         }
 
         this.ingredients = dish.ingredients;
-
-        console.log(dish.ingredients);
 
         this.form = new FormGroup({
             name: new FormControl(dish.name, Validators.required),

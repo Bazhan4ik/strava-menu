@@ -7,19 +7,7 @@ const routes: Routes = [
         path: "",
         component: DishPage,
         children: [
-            {
-                path: "",
-                pathMatch: "full",
-                redirectTo: "collections",
-            },
-            {
-                path: "collections",
-                loadComponent: () => import("./pages/collections/collections.page").then(c => c.CollectionsPage),
-            },
-            {
-                path: "orders",
-                loadComponent: () => import("./pages/orders/orders.page").then(c => c.OrdersPage),
-            }
+
         ]
     }
 ];

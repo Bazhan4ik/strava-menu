@@ -63,8 +63,34 @@ const routes: Routes = [
 
 
             {
+                path: "menu/folders/add",
+                loadChildren: () => import("./pages/all-collections/add-folder/add-folder.module").then(m => m.AddFolderModule),
+            },
+            {
+                path: "menu/folders/:folderId",
+                loadChildren: () => import("./pages/all-collections/folder/folder.module").then(m => m.FolderModule),
+            },
+            {
+                path: "menu/folders/:collectionId/edit",
+                loadChildren: () => import("./pages/all-collections/edit-collection/edit-collection.module").then(m => m.EditCollectionModule),
+            }
+
+
+            ,
+
+
+            {
                 path: "settings",
                 loadChildren: () => import("./pages/settings/settings.module").then(m => m.SettingsModule),
+            }
+
+
+            ,
+
+
+            {
+                path: "layout",
+                loadChildren: () => import("./pages/customer-layout/customer-layout.module").then(m => m.CustomerLayoutModule),
             }
 
 

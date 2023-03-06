@@ -189,7 +189,7 @@ export class PreviewPage implements OnInit {
             return;
         }
 
-        this.router.navigate([this.service.restaurant.id, this.service.locationId, "p", "checkout"]);
+        this.router.navigate([this.service.restaurant.id, this.service.locationId, "order", "checkout"]);
     }
 
     async changeTable() {

@@ -35,6 +35,9 @@
                         <span *ngIf="session.type == 'takeout'">
                             Takeout
                         </span>
+                        <span *ngIf="session.type == 'dinein'">
+                            Table 
+                        </span>
                     </span>
                     <span class="global-text bold">
                         #{{ session.id }}

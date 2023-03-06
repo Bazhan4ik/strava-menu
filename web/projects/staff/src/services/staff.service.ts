@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { env } from 'environment/environment';
 import { firstValueFrom } from 'rxjs';
+import { SocketService } from './socket.service';
 
 @Injectable({
     providedIn: 'root'
@@ -63,6 +64,14 @@ export class StaffService {
         this.userId = result.userId;
 
         return true;
+    }
+
+    async initManualOrdering(socketId: string) {
+        const result: any = await firstValueFrom(
+            this.http.get(this.baseUrl + this.restaurant.id + "/" + this.locationId + "/order", { params: { socketId } })
+        );
+
+        return result;
     }
 
 

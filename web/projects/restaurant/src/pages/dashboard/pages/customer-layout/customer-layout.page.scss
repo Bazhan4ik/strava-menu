@@ -1,0 +1,117 @@
+.app {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    .right {
+        padding-right: 12px;
+
+        .top {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .buttons {
+                .icon-button {
+                    height: 28px;
+                    width: 28px;
+
+                    mat-icon {
+                        width: 20px;
+                        height: 20px;
+                        font-size: 20px;
+                    }
+                }
+            }
+        }
+
+        .list {
+            .element {
+                padding: 8px 0;
+                border-top: 1px solid var(--default-border-color);
+                display: flex;
+                gap: 8px;
+
+                .movers {
+                    height: 100%;
+
+                    .icon-button {
+                        width: 30px;
+                        height: 30px;
+                    }
+                }
+
+                .info {
+                    width: 100%;
+
+                    .header {
+                        .title {
+                            .global-text {
+                                font-size: 16px;
+                            }
+                        }
+    
+                        .buttons {
+                            .icon-button {
+                                width: 22px;
+                                height: 22px;
+    
+                                mat-icon {
+                                    width: 14px;
+                                    height: 14px;
+                                    font-size: 14px;
+                                }
+                            }
+                        }
+                    }
+    
+                    .data {
+                        .no-data {
+                            .button {
+                                padding: 2px 4px;
+                                border: dashed 1px var(--blue);
+                                font-size: 14px;
+    
+                                mat-icon {
+                                    height: 16px;
+                                    width: 16px;
+                                    font-size: 16px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .no-elements {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+
+            .buttons {
+                .icon-button {
+                    border-radius: var(--default-border-radius);
+                    border: 1px solid var(--default-border-color);
+                    transition: all 0.2s;
+
+                    &:hover {
+                        box-shadow: var(--default-box-shadow);
+                    }
+                }
+            }
+        }
+    }
+
+    .phone {
+        height: 600px;
+        aspect-ratio: 390 / 844;
+        border-radius: 16px;
+        overflow: hidden;
+        overflow-y: auto;
+        border: 2px solid var(--default-border-color);
+        background-color: var(--default-background);
+    }
+}

@@ -18,8 +18,6 @@ passport.use(new JwtStrategy({
     secretOrKey: "CREATE JWT KEY AND ADD HERE"
 }, (payload, done) => {
 
-    console.log(payload);
-
     if(!payload.expires || !payload.userId) {
         return done("invalid");
     }

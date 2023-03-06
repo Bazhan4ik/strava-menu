@@ -15,7 +15,7 @@
 
         button {
             width: 100%;
-            height: 30px;
+            height: 34px;
             border-bottom: 1px solid var(--default-border-color);
             background: none;
             display: flex;
@@ -26,14 +26,18 @@
                 font-size: 18px;
                 width: 18px;
                 height: 18px;
+                color: var(--gray-dark);
             }
 
             &#remove {
                 mat-icon {
-                    color: var(--red-dark);
+                    color: var(--red);
                 }
                 .global-text {
                     color: var(--red-dark);
+                }
+                &:hover {
+                    background-color: var(--red-lighter);
                 }
             }
 

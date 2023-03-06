@@ -424,7 +424,7 @@ router.get("/session/:sessionId", logged(), restaurantWorker({}, { work: { waite
 
     res.send({
         ...session.info
-    })
+    });
 
 });
 

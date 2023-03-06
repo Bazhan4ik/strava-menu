@@ -1,0 +1,30 @@
+.app {
+    .header {
+        padding: 0 24px;
+        display: flex;
+        
+        .back-button {
+            
+        }
+        .text {
+            display: flex;
+            align-items: center;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+    }
+    .description {
+        padding: 0 24px;
+        margin-top: 12px;
+    }
+    .dishes {
+        padding: 0 24px;
+        margin-top: 12px;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}

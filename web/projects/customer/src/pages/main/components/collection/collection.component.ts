@@ -21,10 +21,10 @@ export class CollectionComponent implements AfterViewInit {
     @ViewChild("list") list: ElementRef;
 
     right() {
-        this.list.nativeElement.scrollLeft += 300;
+        this.list.nativeElement.scrollLeft += 400;
     }
     left() {
-        this.list.nativeElement.scrollLeft -= 300;
+        this.list.nativeElement.scrollLeft -= 400;
     }
 
     ngAfterViewInit() {

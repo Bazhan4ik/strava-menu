@@ -14,16 +14,20 @@ const routes: Routes = [
                 data: { routeReuse: true }
             },
             {
-                path: "p",
+                path: "order",
                 loadComponent: () => import("./pages/preview/preview.page").then(c => c.PreviewPage),
             },
             {
-                path: "p/checkout",
+                path: "order/checkout",
                 loadComponent: () => import("./pages/checkout/checkout.page").then(c => c.CheckoutPage),
             },
             {
-                path: "tracking",
+                path: "order/tracking",
                 loadComponent: () => import("./pages/tracking/tracking.page").then(c => c.TrackingPage),
+            },
+            {
+                path: "collection/:collectionId",
+                loadComponent: () => import("./pages/collection/collection.component").then(c => c.CollectionComponent),
             },
             {
                 path: ":dishId",

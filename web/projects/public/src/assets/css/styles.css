@@ -37,15 +37,13 @@ Colors:
 ******************************************/
 
 
-
-
 #features {
     display: none;
 }
 
-#details {
+/* #details {
     display: none;
-}
+} */
 
 #video {
     display: none;

@@ -57,3 +57,16 @@
         }
     }
 }
+
+@media screen and (max-width: 640px) {
+    .app {
+
+        .header {
+            padding: 8px 12px;
+        }
+
+        .dishes {
+            padding: 0 12px;
+        }
+    }
+}

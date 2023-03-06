@@ -19,7 +19,7 @@ export class LoggedOutGuard implements CanActivate {
         const token = this.cookieService.get("smjwt");
 
         if(!!token) { // if token exists
-            this.router.navigate(["home"]);
+            this.router.navigate(["home"], { replaceUrl: true });
         }
 
         return !token || token.length == 0;

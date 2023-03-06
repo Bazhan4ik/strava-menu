@@ -1,4 +1,5 @@
-import { ObjectId } from "mongodb";
+import { Binary, ObjectId } from "mongodb";
+import { NumberLiteralType } from "typescript";
 import { Worker } from "./worker.js";
 
 
@@ -45,13 +46,21 @@ interface Restaurant {
     blacklist?: (ObjectId | string)[];
     collections: Collection[];
     locations?: Location[];
+    folders: Folder[];
     customers?: Customer[];
     staff?: Worker[];
+    layout: LayoutElement[];
     
     tables?: { [locationId: string]: Table[]; };
 }
 
 
+interface LayoutElement {
+    _id: ObjectId;
+    position: number;
+    type: "collection" | "folder";
+    data?: { id: ObjectId };
+}
 
 interface LocationSettings {
     customers?: {
@@ -94,12 +103,19 @@ interface Collection {
     _id: ObjectId;
     id: string;
     name: string;
-    image: {
+    image?: {
         buffer: Buffer;
         userId: ObjectId;
     };
     dishes: ObjectId[];
     description: string;
+}
+
+interface Folder {
+    _id: ObjectId;
+    id: string;
+    name: string;
+    collections: ObjectId[];
 }
 
 interface Table {
@@ -132,4 +148,6 @@ export {
     Table,
     Ingredients,
     LocationSettings,
+    Folder,
+    LayoutElement,
 }

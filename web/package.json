@@ -37,6 +37,7 @@
     "angularx-qrcode": "^15.0.1",
     "ionic": "^4.1.2",
     "jsqr": "^1.4.0",
+    "ng2-charts": "^4.1.1",
     "ngx-chips": "^3.0.0",
     "ngx-cookie-service": "^15.0.0",
     "ngx-image-cropper": "^6.3.2",

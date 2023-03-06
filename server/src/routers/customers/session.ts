@@ -6,15 +6,14 @@ import { stripe } from "../../setup/stripe.js";
 import { getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { customerSession } from "../../utils/middleware/customerSession.js";
-import { customerRestaurant } from "../../utils/middleware/customRestaurant.js";
+import { customerRestaurant } from "../../utils/middleware/customerRestaurant.js";
 import { createSession, updateSession, updateSessions } from "../../utils/sessions.js";
 import { sendToWaiterCancelWaiterRequest, sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
 import { joinCustomer } from "../../utils/socket/socket.js";
 import { convertTime, getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
-import { Location, LocationSettings } from "../../models/restaurant.js";
+import { Location } from "../../models/restaurant.js";
 import Stripe from "stripe";
-import { stringify } from "querystring";
 
 
 const router = Router({ mergeParams: true });
@@ -405,7 +404,7 @@ router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1:
 
             updateSession(restaurant._id, { _id: session._id }, { $pull: { dishes: { dishId: d.dishId } } }, { noResponse: true });
 
-            continue
+            continue;
         }
 
         convertedDishes.push({
@@ -467,8 +466,6 @@ router.put("/type", customerRestaurant({}), customerSession({ info: { type: 1, i
 router.put("/table", customerRestaurant({ locations: { id: 1, _id: 1 }, tables: 1, }), customerSession({ info: { id: 1, location: 1, type: 1 } }, {}), async (req, res) => {
     const { session, restaurant } = res.locals as Locals;
     const { table } = req.body;
-
-    console.log(session.info.location);
 
     if (!restaurant.tables || !restaurant.locations) {
         return res.status(500).send({ reason: "InvalidError" });
@@ -601,7 +598,7 @@ router.get("/checkout",
     customerSession(
         {
             payment: 1,
-            info: { location: 1 },
+            info: { location: 1, type: 1, },
             dishes: { dishId: 1, _id: 1 },
         },
         {
@@ -771,13 +768,11 @@ router.get("/checkout",
             paymentData = result;
         }
 
-
-
         res.send({
             money,
             dishes,
             payWithCard: location.settings.methods?.card,
-            payWithCash: location.settings.methods?.cash,
+            payWithCash: location.settings.methods?.cash && session.info.type != "takeout",
             email: user?.info?.email,
             paymentData: {
                 tips: location.settings.tips,
@@ -920,12 +915,6 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
 
     const dishes = await getDishes(restaurantId, { _id: { $in: dishesId } }, { projection: { info: { price: 1, name: 1, }, } }).toArray();
 
-    const convertedDishes: {
-        name: string;
-        amount: string;
-        price: number;
-    }[] = [];
-
 
     const findDish = (dishId: ObjectId) => {
         for (let dish of dishes) {
@@ -964,14 +953,13 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
     const service = serviceFee ? serviceFee?.type == 1 ? serviceFee.amount : subtotal * serviceFee.amount / 100 : null!;
     const total = hst + subtotal + (service || 0) + tip;
 
-
     return {
         money: {
-            subtotal,
-            hst,
-            total,
-            service,
-            tip,
+            subtotal: +subtotal.toFixed(2),
+            hst: +hst.toFixed(2),
+            total: +total.toFixed(2),
+            service: +service.toFixed(2),
+            tip: +Math.floor(tip),
         },
         dishes: Array.from(map.values()),
     };
@@ -994,7 +982,6 @@ async function createPaymentIntent(data: {
             return paymentIntent;
         } catch (e: any) {
             console.error("at session.ts createPaymentIntent() update");
-
             throw e;
         }
 

@@ -1,0 +1,46 @@
+.app {
+    .content {
+        .image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+
+            img {
+                width: 248px;
+                height: 248px;
+                border-radius: var(--default-border-radius);
+            }
+        }
+
+        .collections {
+            margin-top: 24px;
+
+            .list {
+                .collection {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px;
+                    margin-top: 8px;
+                    background: none;
+                    border-radius: var(--default-border-radius);
+
+                    &:hover {
+                        background-color: var(--red-lighter);
+                    }
+                    
+                    .image {
+                        img {
+                            width: 52px;
+                            height: 52px;
+                            border-radius: var(--default-small-radius);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

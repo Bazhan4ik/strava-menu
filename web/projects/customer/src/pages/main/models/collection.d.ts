@@ -1,10 +1,11 @@
-import { Dish } from "./dish";
 
 interface Collection {
-    title: string;
+    name: string;
     dishes: string[];
     id: string;
     redirectable: boolean;
+    image?: any;
+    description?: string;
 }
 
 

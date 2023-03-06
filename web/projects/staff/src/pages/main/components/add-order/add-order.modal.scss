@@ -1,0 +1,129 @@
+.app {
+    height: 100%;
+    overflow-y: auto;
+    
+    .box {
+        background-color: var(--default-background);
+        max-width: 512px;
+        width: 100vw;
+        border-top-right-radius: var(--default-border-radius);
+        border-top-left-radius: var(--default-border-radius);
+        min-height: 100%;
+        padding-bottom: 100px;
+
+        .header {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .body {
+            padding: 12px;
+
+            .folders {
+                .folder {
+                    margin-top: 12px;
+                    border-radius: var(--default-border-radius);
+                    width: 100%;
+                    padding: 12px;
+                    padding-top: 0;
+                    
+                    .folder-header {
+                        width: 100%;
+                        border-radius: var(--default-border-radius);
+                        padding: 8px 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        background: none;
+                        
+                        &:hover {
+                            background-color: var(--default-on-background);
+                        }
+                    }
+
+                    .collections {
+                        margin-top: 12px;
+                        background-color: var(--default-background);
+                        border-radius: var(--default-border-radius);
+
+                        .collection {
+                            .collection-header {
+                                width: 100%;
+                                padding: 8px 12px;
+                                background: none;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+
+                                &:hover {
+                                    background-color: var(--default-on-background);
+                                }
+                            }
+
+                            .dishes {
+                                .dish {
+                                    width: 100%;
+                                    padding: 8px 12px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                                    height: 64px;
+
+                                    .dish-info {
+                                        display: flex;
+                                        align-items: center;
+                                        height: 100%;
+                                        gap: 8px;
+
+                                        .image {
+                                            height: 100%;
+
+                                            img {
+                                                height: 100%;
+                                                aspect-ratio: 1 / 1;
+                                                border-radius: var(--default-small-radius);
+                                            }
+                                        }
+    
+                                        .name-price {
+                                            
+                                        }
+                                    }
+
+                                    .buttons {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        gap: 8px;
+                                    }
+                                }
+                            }
+
+                            &:first-of-type {
+                                .collection-header {
+                                    border-top-right-radius: var(--default-border-radius);
+                                    border-top-left-radius: var(--default-border-radius);
+                                }
+                            }
+                            &:last-of-type.collection-header {
+                                border-bottom-right-radius: var(--default-border-radius);
+                                border-bottom-left-radius: var(--default-border-radius);
+                            }
+                        }
+                    }
+
+                    &.open {
+                        background-color: var(--default-on-background);
+                    }
+                }
+            }
+        }
+    }
+}

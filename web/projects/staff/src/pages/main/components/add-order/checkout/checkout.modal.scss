@@ -1,0 +1,142 @@
+.app {
+    height: 100%;
+    overflow-y: auto;
+
+    .box {
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+        min-height: 100%;
+        max-width: 512px;
+        width: 100vw;
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .body {
+            padding: 12px;
+
+            .order {
+                .dinein {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .buttons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+
+            .dishes {
+                margin-top: 24px;
+                
+                .dish {
+                    height: 64px;
+                    padding: 8px;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    border-radius: var(--default-small-radius);
+                    background: none;
+
+
+                    &:hover {
+                        background-color: var(--default-on-background);
+                    }
+
+                    .dish-info {
+                        height: 100%;
+                        display: flex;
+
+                        .image {
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            img {
+                                height: 100%;
+                                border-radius: var(--default-small-radius);
+                                aspect-ratio: 1 / 1;    
+                            }
+                        }
+                        .name-price {
+                            padding-left: 8px;
+
+                            .price {
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+
+                                .dot {
+                                    font-size: 12px;
+                                    color: var(--gray);
+                                }
+                            }
+                        }
+                    }
+
+                    .buttons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+            
+            .money {
+                margin-top: 24px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+
+                & > div {
+                    width: 324px;
+                    display: flex;
+                    align-items: flex-end;
+                    height: 28px;
+
+                    .title {
+                        span {
+                            white-space: nowrap;
+                        }
+                    }
+
+                    .border {
+                        width: 100%;
+                        border-bottom: 2px dotted var(--default-border-color);
+                    }
+
+                    &.total {
+                        .border {
+                            width: 100%;
+                            border-bottom: 2px dotted var(--black);
+                        }
+                    }
+                }
+            }
+
+            & > .buttons {
+                display: flex;
+                justify-content: flex-end;
+
+                .button {
+                    margin-top: 24px;
+                    border-radius: var(--default-small-radius);
+                    padding: 16px 20px;
+                }
+            }
+        }
+    }
+}

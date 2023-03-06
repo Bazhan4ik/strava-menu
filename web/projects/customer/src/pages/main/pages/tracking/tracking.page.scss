@@ -31,11 +31,11 @@
         padding-top: 24px;
 
         .dishes {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
 
             .dish {
-                width: 168px;
 
                 .image {
                     img {
@@ -96,5 +96,12 @@
                 margin-top: 24px;
             }
         }
+    }
+}
+
+
+@media screen and (max-width: 640px) {
+    .app {
+        padding: 0 12px;
     }
 }

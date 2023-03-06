@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomePage } from './home.page';
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { HomePage } from './home.page';
     ],
     imports: [
         CommonModule,
-        HomeRoutingModule
+        HomeRoutingModule,
+        NgChartsModule,
     ]
 })
 export class HomeModule { }

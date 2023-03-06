@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DishRoutingModule } from './dish-routing.module';
 import { DishPage } from './dish.page';
 import { MatIconModule } from '@angular/material/icon';
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
         CommonModule,
         DishRoutingModule,
         MatIconModule,
+        NgChartsModule,
     ]
 })
 export class DishModule { }

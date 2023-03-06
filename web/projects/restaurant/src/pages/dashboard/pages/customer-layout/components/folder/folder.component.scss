@@ -1,0 +1,33 @@
+.app {
+    padding-left: 6px;
+    height: 186px;
+    margin-top: 12px;
+
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 6px 0;
+    }
+
+    .collections {
+        display: flex;
+        align-items: flex-start;
+        width: 100%;
+        overflow-x: auto;
+        gap: 6px;
+
+        .collection {
+            width: 108px;
+
+            .image {
+                height: 108px;
+                width: 108px;
+                img {
+                    height: 108px;
+                    width: 108px;
+                    border-radius: var(--default-border-radius);
+                }
+            }
+        }
+    }
+}

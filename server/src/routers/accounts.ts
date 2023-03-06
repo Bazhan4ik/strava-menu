@@ -9,7 +9,7 @@ import { comparePasswords, encryptPassword } from "../utils/password.js";
 import { createRestaurant, getRestaurants } from "../utils/restaurant.js";
 import { addUser, getUser, updateUser } from "../utils/users.js";
 import { Locals } from "../models/general.js";
-import { DEFAULT_COLLECTIONS } from "../../resources/data/collections.js";
+import { getDefaultCollections } from "../../resources/data/collections.js";
 import { stripe } from "../setup/stripe.js";
 import { getEmptyIngredients } from "../utils/ingredients.js";
 
@@ -211,8 +211,8 @@ ${ securityCode }
 router.get("/", logged({  avatar: 1, info: { name: 1 }, restaurants: 1 }), async (req, res) => {
     const { user } = res.locals as Locals;
 
-    if(!user.info) {
-        return res.sendStatus(404);
+    if(!user.info || !user.restaurants) {
+        return res.status(500).send({ reason: "InvalidError" });
     }
 
 
@@ -226,6 +226,9 @@ router.get("/", logged({  avatar: 1, info: { name: 1 }, restaurants: 1 }), async
 
     const parsedRestaurants = [];
     for(let index = 0; index < user.restaurants.length; index++) {
+        if(!restaurants[index]) {
+            continue;
+        }
         parsedRestaurants.push({
             name: restaurants[index].info.name,
             redirectTo: user.restaurants[index].redirectTo,
@@ -275,14 +278,13 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
         locations: [],
         customers: [],
         tables: {},
-        collections: [
-            ...DEFAULT_COLLECTIONS,
-        ],
+        ...getDefaultCollections(),
         stripe: {
             card: "pending",
             payouts: "pending",
             account: "unverified",
         },
+        layout: [],
         staff: [{ userId: user._id, locations: [], settings: { isOwner: true }, joined: Date.now(), }]
     }
 

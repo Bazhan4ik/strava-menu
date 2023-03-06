@@ -1,0 +1,73 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a class="icon-button" type="button" routerLink="../../collections">
+                <mat-icon>
+                    close
+                </mat-icon>
+            </a>
+            <span class="global-title">
+                Add folder
+            </span>
+        </div>
+        <div class="buttons">
+            <button (click)="save()" class="button orange-button">
+                Save
+            </button>
+        </div>
+    </div>
+    <div class="content">
+
+        <div class="name">
+            <div class="label">
+                <span class="global-text">
+                    Name
+                </span>
+            </div>
+            <input type="text" class="global-input" [(ngModel)]="name">
+        </div>
+
+        <div class="collections">
+            <div class="header">
+                <div class="title">
+                    <span class="global-subtitle">
+                        Selected collections
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button (click)="editCollections()" class="orange-button icon-button square">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="list" *ngIf="collections && collections.length > 0">
+                <button (click)="removeCollection(collection.id)" *ngFor="let collection of collections" class="collection">
+                    <div class="image">
+                        <img [src]="collection.image" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ collection.name }}
+                        </span>
+                    </div>
+                </button>
+            </div>
+            <div *ngIf="collections && collections.length == 0" class="no-collections">
+                <span class="global-text big black bold">
+                    No collections
+                </span>
+            </div>
+        </div>
+
+        <div class="global-loading full-page" *ngIf="loading">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-container #modalContainer></ng-container>

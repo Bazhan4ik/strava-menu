@@ -81,7 +81,7 @@ export class CheckoutPage implements OnInit {
         
         this.service.$payments.subscribe(async data => {
             if(data.types.includes("payment/succeeded")) {
-                window.location.href = `${env.customerUrl}/${this.service.restaurant.id}/${this.service.locationId}/tracking`;
+                window.location.href = `${env.customerUrl}/${this.service.restaurant.id}/${this.service.locationId}/order/tracking`;
             }
         });
 
@@ -138,7 +138,7 @@ export class CheckoutPage implements OnInit {
 
         component.instance.leave.subscribe((redirect: boolean) => {
             if(redirect) {
-                window.location.href = `${env.customerUrl}/${this.service.restaurant.id}/${this.service.locationId}/tracking`;
+                window.location.href = `${env.customerUrl}/${this.service.restaurant.id}/${this.service.locationId}/order/tracking`;
             }
             component.destroy();
         });
@@ -161,7 +161,7 @@ export class CheckoutPage implements OnInit {
     }
     async addTip(amount: number) {
         this.money.total -= this.money.tip;
-        this.money.tip = this.money.subtotal * amount / 100;
+        this.money.tip = Number((this.money.subtotal * amount / 100).toFixed(2));
         this.money.total += this.money.tip;
 
         const update: any = await this.service.put({ amount }, "session/tip");
@@ -199,7 +199,13 @@ export class CheckoutPage implements OnInit {
         this.payWithCash = result.payWithCash;
         this.paymentData = result.paymentData;
         
-        this.money = result.money;
+        this.money = {
+            tip: +(result.money.tip / 100).toFixed(2),
+            subtotal: +(result.money.subtotal / 100).toFixed(2),
+            total: +(result.money.total / 100).toFixed(2),
+            service: +(result.money.service / 100).toFixed(2),
+            hst: +(result.money.hst / 100).toFixed(2),
+        };
         this.dishes = result.dishes;
         this.elementsOptions.clientSecret = result.paymentData.clientSecret;
 
@@ -214,7 +220,5 @@ export class CheckoutPage implements OnInit {
         setTimeout(() => {
             this.loading = false;
         }, 2000);
-
-        console.log(result);
     }
 }

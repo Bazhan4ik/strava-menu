@@ -24,5 +24,15 @@
         <div class="dishes-serve" *ngIf="restaurant.pages.waiter">
             <app-dishes-waiter></app-dishes-waiter>
         </div>
+        <div class="manual-order">
+            <button (click)="addOrder()" class="button orange-button">
+                <mat-icon>add</mat-icon>
+                <span class="global-text big black bold">
+                    ADD ORDER
+                </span>
+            </button>
+        </div>
     </div>
 </div>
+
+<ng-container #modalContainer></ng-container>

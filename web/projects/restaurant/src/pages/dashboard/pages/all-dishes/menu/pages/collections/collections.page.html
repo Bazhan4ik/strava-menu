@@ -1,24 +1,41 @@
 <div class="app">
-    <div class="list" *ngIf="collections && collections.length > 0">
-        <a type="button" routerLink="{{ collection.id }}" class="collection" *ngFor="let collection of collections">
-            <div class="image">
-                <img [src]="collection.image" alt="">
+    <div class="folders" *ngIf="folders && folders.length > 0">
+        <div *ngFor="let folder of folders" class="folder">
+            <div class="header">
+                <a class="title" routerLink="../folders/{{ folder.id }}">
+                    <span class="global-subtitle">
+                        {{ folder.name }}
+                    </span>
+                </a>
+                <div class="buttons">
+                    <button class="icon-button" (click)="folder.open = !folder.open">
+                        <mat-icon *ngIf="!folder.open">expand_more</mat-icon>
+                        <mat-icon *ngIf="folder.open">expand_less</mat-icon>
+                    </button>
+                </div>
             </div>
-            <div class="name">
-                <span class="global-text big black bold">
-                    {{ collection.name }}
-                </span>
+            <div class="collections" *ngIf="folder.open">
+                <a type="button" routerLink="{{ collection.id }}" class="collection" *ngFor="let collection of folder.collections">
+                    <div class="image">
+                        <img [src]="collection.image" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ collection.name }}
+                        </span>
+                    </div>
+                </a>
             </div>
-        </a>
+        </div>
     </div>
 
-    <div class="no-collections" *ngIf="collections && collections.length == 0">
+    <div class="no-collections" *ngIf="folders && folders.length == 0">
         <span class="global-text big black bold">
             Add your first collection
         </span>
     </div>
 
-    <div *ngIf="!collections" class="global-loading height-124">
+    <div *ngIf="!folders" class="global-loading height-124">
         <div></div>
         <div></div>
         <div></div>

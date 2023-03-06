@@ -55,7 +55,7 @@ export class EditCollectionPage implements OnInit {
     }
 
     async addDishes() {
-        const { SelectDishesModal } = await import("./../shared-components/select-dishes/select-dishes.modal");
+        const { SelectDishesModal } = await import("../../../components/select-dishes/select-dishes.modal");
 
         const component = this.modalContainer.createComponent(SelectDishesModal);
 
@@ -71,7 +71,7 @@ export class EditCollectionPage implements OnInit {
     }
 
     async setImage() {
-        const { ImageModal } = await import("./../shared-components/image/image.modal");
+        const { ImageModal } = await import("../../../components/image/image.modal");
 
      
         const component = this.modalContainer.createComponent(ImageModal);

@@ -26,6 +26,7 @@ export class DashboardPage implements OnInit {
         orders: boolean;
         staff: boolean;
         tables: boolean;
+        layout: boolean;
     }
 
     constructor(

@@ -1,4 +1,4 @@
-<a type="button" [routerLink]="goDown ? ['..', dish.id] : [dish.id]" [queryParams]="{ c: collection }" class="app" [class.small]="small">
+<a type="button" [routerLink]="url" [queryParams]="{ c: collection }" class="app" [class.small]="small">
     <div class="image">
         <img [ngSrc]="imageUrl" width="196" (load)="imageLoaded()" height="196">
     </div>

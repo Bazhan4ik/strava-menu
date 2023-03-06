@@ -33,7 +33,7 @@ export class MainPage implements OnInit {
 
         this.router.events.subscribe(ev => {
             if(ev instanceof NavigationEnd) {
-                this.showPreview = ev.url.split("?")[0].split("/")[3] != "p" && ev.url.split("?")[0].split("/")[3] != "tracking";
+                this.showPreview = ev.url.split("?")[0].split("/")[3] != "order" && ev.url.split("?")[0].split("/")[3] != "tracking";
             }
         });
     }
@@ -45,7 +45,7 @@ export class MainPage implements OnInit {
     }
 
     goTracking() {
-        this.router.navigate([this.service.restaurant.id, this.service.locationId, "tracking"]);
+        this.router.navigate([this.service.restaurant.id, this.service.locationId, "order", "tracking"]);
         this.showPopover = false;
     }
     goAccount() {
@@ -57,7 +57,7 @@ export class MainPage implements OnInit {
         const pos = e.target.getBoundingClientRect(e.target);
 
         this.popoverPosition = {
-            x: pos.right - 234,
+            x: pos.right - 196,
             y: pos.top + 32,
         };
 

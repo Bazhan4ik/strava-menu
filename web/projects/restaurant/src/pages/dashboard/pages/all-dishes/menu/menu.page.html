@@ -26,6 +26,10 @@
                     <mat-icon>add</mat-icon>
                     Add dish
                 </a>
+                <a *ngIf="currentPage == 'collections'" type="button" class="button orange-button" routerLink="folders/add">
+                    <mat-icon>add</mat-icon>
+                    Add folder
+                </a>
                 <a *ngIf="currentPage == 'collections'" type="button" class="button orange-button" routerLink="collections/add">
                     <mat-icon>add</mat-icon>
                     Add collection

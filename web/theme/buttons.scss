@@ -79,6 +79,10 @@
     background-color: var(--red) !important;
     color: var(--white) !important;
 
+    mat-icon {
+        color: var(--white) !important;
+    }
+
     &:hover {
         background-color: var(--red-hover) !important;
     }

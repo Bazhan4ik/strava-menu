@@ -1,0 +1,103 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <div class="title">
+                <div class="close">
+                    <button (click)="close()" class="icon-button" id="close">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                <div class="text">
+                    <span class="global-subtitle">
+                        Add order
+                    </span>
+                </div>
+            </div>
+            <div class="button">
+                <button (click)="goCheckout()" class="orange-button button">
+                    {{ dishesSelected }}
+                    Checkout
+                    <mat-icon>
+                        arrow_forward
+                    </mat-icon>
+                </button>
+            </div>
+        </div>
+        <div class="body">
+            <div class="folders">
+                <div *ngFor="let folder of folders; index as folderIndex" [class.open]="folder.open" class="folder">
+                    <button class="folder-header" (click)="openFolder(folderIndex)">
+                        <div class="name">
+                            <span class="global-text big black bold">
+                                {{ folder.name }}
+                            </span>
+                        </div>
+                        <div class="button">
+                            <button class="icon-button">
+                                <mat-icon *ngIf="!folder.open">expand_more</mat-icon>
+                                <mat-icon *ngIf="folder.open">expand_less</mat-icon>
+                            </button>
+                        </div>
+                    </button>
+                    <div class="collections" *ngIf="folder.open">
+                        <div *ngFor="let collection of folder.collections; index as collectionIndex" class="collection">
+                            <button (click)="openCollection(folderIndex, collectionIndex)" class="collection-header">
+                                <div class="name">
+                                    <span class="global-text big black bold">
+                                        {{ collection.name }}
+                                    </span>
+                                </div>
+                                <div class="buttons">
+                                    <button class="icon-button">
+                                        <mat-icon *ngIf="!collection.open">expand_more</mat-icon>
+                                        <mat-icon *ngIf="collection.open">expand_less</mat-icon>
+                                    </button>
+                                </div>
+                            </button>
+                            <div class="dishes" *ngIf="collection.open && folder.open">
+                                <div *ngFor="let dishId of collection.dishes" class="dish">
+                                    <div class="dish-info">
+                                        <div class="image">
+                                            <img [src]="dishes[dishId].image" alt="">
+                                        </div>
+                                        <div class="name-price">
+                                            <div class="name">
+                                                <span class="global-text big black">
+                                                    {{ dishes[dishId].info.name }}
+                                                </span>
+                                            </div>
+                                            <div class="price">
+                                                <span class="global-text">
+                                                    {{ dishes[dishId].info.price / 100 }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="buttons">
+                                        <div class="amount">
+                                            <span class="global-text big bold">
+                                                {{ dishes[dishId].amount }}
+                                            </span>
+                                        </div>
+                                        <button (click)="addComment(dishId)" class="icon-button">
+                                            <mat-icon>
+                                                message
+                                            </mat-icon>
+                                        </button>
+                                        <button (click)="addDish(dishId)" class="icon-button">
+                                            <mat-icon>
+                                                add
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-container #modalContainer></ng-container>

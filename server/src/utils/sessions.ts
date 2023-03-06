@@ -111,8 +111,8 @@ function removeSession(restaurantId: ObjectId, sessionId: ObjectId) {
  * 
  */
 async function confirmSession(data: {
-    restaurantId: string;
-    sessionId: string;
+    restaurantId: string | ObjectId;
+    sessionId: string | ObjectId;
     payed: boolean;
     paymentMethodId?: string;
 }) {
@@ -138,7 +138,7 @@ async function confirmSession(data: {
         }
         
 
-        const result = await client.db(sessionsDBName).collection<Session>(restaurantId).findOneAndUpdate(
+        const result = await client.db(sessionsDBName).collection<Session>(restaurantId.toString()).findOneAndUpdate(
             { _id: id(sessionId) },
             { $set: {
                 status: "progress",

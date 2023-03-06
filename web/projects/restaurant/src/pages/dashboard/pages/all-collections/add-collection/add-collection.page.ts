@@ -21,6 +21,7 @@ interface Dish {
 export class AddCollectionPage implements OnInit {
     name: string;
     description: string;
+    loading = false;
 
     image = "./../../../../../../../../global-resources/images/no-image.svg";
     imageUpdated: boolean = false;
@@ -36,7 +37,7 @@ export class AddCollectionPage implements OnInit {
 
 
     async setImage() {
-        const { ImageModal } = await import("./../shared-components/image/image.modal");
+        const { ImageModal } = await import("../../../components/image/image.modal");
 
      
         const component = this.modalContainer.createComponent(ImageModal);
@@ -61,7 +62,7 @@ export class AddCollectionPage implements OnInit {
     }
 
     async addDishes() {
-        const { SelectDishesModal } = await import("./../shared-components/select-dishes/select-dishes.modal");
+        const { SelectDishesModal } = await import("../../../components/select-dishes/select-dishes.modal");
 
         const component = this.modalContainer.createComponent(SelectDishesModal);
 
@@ -78,11 +79,10 @@ export class AddCollectionPage implements OnInit {
 
 
     async save() {
-        console.log(this.dishes, this.name, this.description, this.image);
-
         if(!this.name || this.name.length < 1) {
             return;
         }
+        this.loading = true;
 
         const result: any = await this.service.post({
             name: this.name,
@@ -94,6 +94,7 @@ export class AddCollectionPage implements OnInit {
         if(result.updated) {
             this.router.navigate([this.service.restaurant.id, "menu", "collections"]);
         }
+        this.loading = false;
     }
 
     ngOnInit() {

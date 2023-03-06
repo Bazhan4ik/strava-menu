@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { env } from 'environment/environment';
 import { StaffService } from '../../services/staff.service';
 
@@ -15,7 +15,24 @@ export class MainPage implements OnInit {
 
     constructor(
         private service: StaffService,
-    ) {}
+    ) { };
+
+    @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
+
+
+    async addOrder() {
+        const { AddOrderModal } = await import("./components/add-order/add-order.modal");
+
+        const component = this.modalContainer.createComponent(AddOrderModal);
+
+        component.instance.leave.subscribe(() => {
+            component.destroy();
+        });
+
+    }
+
+
+
 
 
     ngOnInit(): void {

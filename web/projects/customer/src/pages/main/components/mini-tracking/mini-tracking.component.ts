@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
+import { Subscription } from 'rxjs';
 import { DishesEvent } from '../../models/socket';
 
 
@@ -25,6 +26,8 @@ interface Dish {
 })
 export class MiniTrackingComponent implements OnInit, OnDestroy {
 
+    subscription: Subscription;
+
     constructor(
         private service: CustomerService,
     ) { };
@@ -35,7 +38,8 @@ export class MiniTrackingComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.service.$dishes.subscribe(data => {
+
+        this.subscription = this.service.$dishes.subscribe(data => {
             if(data.types.includes("dishes/status")) {
                 for(let dish of this.dishes) {
                     const { sessionDishId, status } = data.data as DishesEvent.status;
@@ -52,7 +56,7 @@ export class MiniTrackingComponent implements OnInit, OnDestroy {
         }
     }
     ngOnDestroy() {
-        
+        this.subscription?.unsubscribe();
     }
 
 }

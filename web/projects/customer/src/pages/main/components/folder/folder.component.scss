@@ -1,0 +1,121 @@
+.app {
+    .folder-header {
+        padding: 12px 24px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 72px;
+        gap: 8px;
+
+        .title {
+            max-width: 250px;
+            display: flex;
+            align-items: center;
+
+            span.global-subtitle {
+                display: -webkit-box;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .collections {
+        display: flex;
+        gap: 12px;
+        padding: 0 24px;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        scroll-behavior: smooth;
+
+        .collection {
+            min-width: 196px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            transition: 0.25s all;
+            border-radius: var(--default-border-radius);
+            outline: none;
+        
+            .image {
+                width: 100%;
+                img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: var(--default-border-radius);
+                }
+            }
+        
+            .name {
+                .global-text {
+                    display: -webkit-box;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+            }
+        }
+
+        /* width */
+        &::-webkit-scrollbar {
+            height: 4px;
+            display: none;
+        }
+
+        /* Track */
+        &::-webkit-scrollbar-track {
+            background: none;
+        }
+
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: #AAA;
+        }
+
+        &::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        /* Handle on hover */
+        &::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    }
+}
+
+
+@media screen and (max-width: 640px) {
+    .app {
+
+        .folder-header {
+            padding: 8px 12px;
+        }
+
+        .collections {
+            padding: 0 12px;
+            .collection {
+                min-width: 154px;
+            }
+        }
+    }
+}
+
+@media (pointer:none), (pointer:coarse) {
+    .app {
+        .folder-header {
+            .buttons {
+                display: none;
+            }
+        }
+    }
+}

@@ -1,0 +1,60 @@
+.app {
+    .content {
+        .folder {
+            display: flex;
+
+            .image {
+                img {
+                    width: 152px;
+                    height: 152px;
+                    border-radius: var(--default-border-radius);
+                }
+            }
+            .info {
+                padding-left: 12px;
+                .name {
+
+                }
+                .collections {
+
+                }
+            }
+        }
+        .collections {
+            margin-top: 24px;
+
+            .header {
+
+            }
+
+            .list {
+                .collection {
+                    margin-top: 8px;
+                    display: grid;
+                    grid-template-columns: 52px 1fr 64px;
+                    padding: 8px;
+                    border-radius: var(--default-border-radius);
+                    text-decoration: none;
+            
+                    &:hover {
+                        background-color: var(--default-on-background);
+                    }
+
+                    .image {
+                        img {
+                            width: 52px;
+                            height: 52px;
+                            border-radius: var(--default-small-radius);
+                        }
+                    }
+                    .name {
+                        padding-left: 8px;
+                    }
+                    .dishes {
+
+                    }
+                }
+            }
+        }
+    }
+}

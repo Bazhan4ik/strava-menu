@@ -63,7 +63,7 @@ export class AddDishPage implements OnInit {
 
 
     async addIngredient(ingredient: Ingredient) {
-        const { AddIngredientModal } = await import("../shared-components/add-ingredient/add-ingredient.modal");
+        const { AddIngredientModal } = await import("../../../components/add-ingredient/add-ingredient.modal");
 
 
         const component = this.modalContainer.createComponent(AddIngredientModal);
@@ -93,7 +93,7 @@ export class AddDishPage implements OnInit {
     }
 
     async setImage() {
-        const { ImageModal } = await import("../shared-components/image/image.modal");
+        const { ImageModal } = await import("./../../../components/image/image.modal");
 
         const component = this.modalContainer.createComponent(ImageModal);
 

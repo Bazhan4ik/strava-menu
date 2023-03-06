@@ -1,0 +1,95 @@
+<div class="app content-page">
+    <div class="right">
+        <div *ngIf="elements && elements.length > 0" class="top">
+            <div class="title">
+                <span class="global-text big black bold">
+                    Elements
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="addElement()" class="orange-button square icon-button">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+        <div class="list" *ngIf="elements && elements.length > 0">
+            <div *ngFor="let element of elements; index as i" class="element">
+                <div class="movers">
+                    <button (click)="moveUp(i)" class="icon-button">
+                        <mat-icon>expand_less</mat-icon>
+                    </button>
+                    <button (click)="moveDown(i)" class="icon-button">
+                        <mat-icon>expand_more</mat-icon>
+                    </button>
+                </div>
+                <div class="info">
+                    <div class="header">
+                        <div class="title">
+                            <span class="global-text big black bold">
+                                {{ element.position }}
+                            </span>
+                            <span class="global-text black bold">
+                                {{ element.name }}
+                            </span>
+                        </div>
+                        <div class="buttons">
+                            <button (click)="deleteElement(element)" class="icon-button">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            <button (click)="editElement(element)" class="icon-button">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="data">
+                        <span *ngIf="element.data && element.type == 'collection'" class="global-text small">
+                            {{ element.data.collection?.name }}
+                        </span>
+                        <span *ngIf="element.data && element.type == 'folder'" class="global-text small">
+                            {{ element.data.folder?.name }}
+                        </span>
+                        <div *ngIf="!element.data" class="no-data">
+                            <button (click)="selectCollection(element)" *ngIf="element.type == 'collection'" class="button">
+                                <mat-icon>add</mat-icon> Select collection
+                            </button>
+                            <button (click)="selectFolder(element)" *ngIf="element.type == 'folder'" class="button">
+                                <mat-icon>add</mat-icon> Select folder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="elements && elements.length == 0" class="no-elements">
+            <div class="title">
+                <span class="global-text big black bold">
+                    Add your first element
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="addElement()" class="icon-button white">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+        <span *ngIf="!elements" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </span>
+    </div>
+    <div class="phone">
+        <ng-container #phone></ng-container>
+    </div>
+</div>
+
+<div *ngIf="loading" class="global-loading full-page">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+<ng-container #modalContainer></ng-container>

@@ -1,0 +1,40 @@
+.app {
+    .week {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        color: #ffc60933;
+
+        .info {
+            .title {
+
+            }
+
+            .date {
+
+            }
+        }
+    }
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+    .app {
+        .week {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+
+            .chart {
+                width: 100%;
+            }
+            .info {
+                padding: 12px;
+                max-width: 324px;
+                width: 100vw;
+            }
+        }
+    }
+}

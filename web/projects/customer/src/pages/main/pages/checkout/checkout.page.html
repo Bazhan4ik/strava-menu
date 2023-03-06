@@ -43,7 +43,7 @@
                 <div class="border"></div>
                 <div class="value">
                     <span class="global-text big">
-                        ${{ money.subtotal / 100 }}
+                        ${{ money.subtotal }}
                     </span>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 <div class="border"></div>
                 <div class="value">
                     <span class="global-text big">
-                        ${{ money.service / 100 }}
+                        ${{ money.service }}
                     </span>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                 <div class="border"></div>
                 <div class="value">
                     <span class="global-text big">
-                        ${{ money.tip / 100 }}
+                        ${{ money.tip }}
                     </span>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                 <div class="border"></div>
                 <div class="value">
                     <span class="global-text big">
-                        ${{ money.hst / 100 }}
+                        ${{ money.hst }}
                     </span>
                 </div>
             </div>
@@ -95,7 +95,7 @@
                 <div class="border"></div>
                 <div class="value">
                     <span class="global-text big black bold">
-                        ${{ money.total / 100 }}
+                        ${{ money.total }}
                     </span>
                 </div>
             </div>
@@ -155,7 +155,7 @@
                 </div>
                 <div class="amount" *ngIf="money.tip">
                     <span class="global-text bigger black bold">
-                        + ${{ money.tip / 100 }}
+                        + ${{ money.tip }}
                     </span>
                 </div>
             </div>

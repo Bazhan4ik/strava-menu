@@ -1,0 +1,48 @@
+.app {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 100px;
+
+
+    .box {
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+        width: 624px;
+
+        .header {
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .body {
+            .list {
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                
+                .folder {
+                    padding: 12px;
+                    
+                    width: 100%;
+                    background: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    
+                    &:hover {
+                        background-color: var(--default-on-background);
+                        border-radius: var(--default-border-radius);
+                    }
+                }
+            }
+        }
+    }
+}

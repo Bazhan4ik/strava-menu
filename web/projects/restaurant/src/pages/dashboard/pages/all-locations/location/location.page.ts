@@ -60,11 +60,16 @@ export class LocationPage implements OnInit {
     async onMethodChange(ev: any, t: "cash" | "card") {
         const val = ev.target.checked;
 
-        const update: any = await this.service.put({ type: t, value: val }, "locations", this.location.id, "methods");
-
-        if(!update.updated) {
+        try {
+            const update: any = await this.service.put({ type: t, value: val }, "locations", this.location.id, "methods");
+    
+            if(!update.updated) {
+                ev.target.checked = !val;
+            }
+        } catch (e) {
             ev.target.checked = !val;
         }
+
     }
 
     async onCustomersChange(ev: any, t: string) {

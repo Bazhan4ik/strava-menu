@@ -20,6 +20,7 @@ export class DishComponent implements OnInit {
 
     dish: Dish;
 
+    url: string;
     imageUrl: string;
 
     
@@ -31,7 +32,6 @@ export class DishComponent implements OnInit {
 
     @Input() dishObjectId: string;
     @Input() collection: string;
-    @Input() goDown: boolean;
     @Input() small: boolean;
 
     imageLoaded() {
@@ -41,7 +41,8 @@ export class DishComponent implements OnInit {
     async ngOnInit() {
 
         this.dish = this.dishesService.dishes[this.dishObjectId];
-
+        
+        this.url = `/${this.service.restaurant.id}/${this.service.locationId}/${this.dish.id}`;
         this.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/dishes/" + this.dish._id + "/image";
         
         // if(this.dish.library.list) {

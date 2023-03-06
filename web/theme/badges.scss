@@ -4,6 +4,11 @@
     font-size: 15px;
     font-family: var(--button-font);
 
+    &.small {
+        font-size: 12px;
+        padding: 2px 4px;
+    }
+
     &.orange {
         background-color: var(--orange-light);
         color: var(--orange-darker);
@@ -15,5 +20,9 @@
     &.green {
         background-color: var(--green-light);
         color: var(--green-darker);
+    }
+    &.red {
+        background-color: var(--red-light);
+        color: var(--red-darker);
     }
 }
