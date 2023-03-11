@@ -75,19 +75,6 @@
         </div>
         <div class="comment" *ngIf="info">
             <input [value]="info.comment || ''" placeholder="Leave a comment..." (focus)="setComment()" class="global-input">
-            <!-- <div class="left">
-                <button (click)="setComment()" class="button orange-button">
-                    <span *ngIf="info.comment">Change</span>
-                    <span *ngIf="!info.comment">Add comment</span>
-                </button>
-            </div>
-            <div class="right">
-                <div class="text" *ngIf="info.comment">
-                    <span class="global-text">
-                        {{ info.comment }}
-                    </span>
-                </div>
-            </div> -->
         </div>
         <div *ngIf="dishes && dishes.length > 0" class="dishes">
             <div class="dish" *ngFor="let dish of dishes">
