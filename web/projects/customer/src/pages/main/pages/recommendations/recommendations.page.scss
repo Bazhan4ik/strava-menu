@@ -1,32 +1,64 @@
 .app {
-    .no-collections {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+    display: flex;
+    justify-content: center;
 
-    .collections {
-        width: 100%;
+    background-color: var(--default-background);
+
+    width: 100%;
+    height: 100%;
+
+    .box {
+        max-width: 504px;
+        width: 100vw;
+        min-height: 100vh;
+        padding-bottom: 100px;
+        
+        border-left: 2px solid var(--default-border-color);
+        border-right: 2px solid var(--default-border-color);
+        background-color: var(--default-background);
+        
+        .body {
+            height: calc(100% - 52px);
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            padding: 0 12px;
+            position: sticky;
+            top: 0;
+            left: 0;
+            background-color: var(--customer-header-background);
+            backdrop-filter: blur(4px);
+    
+            .restaurant {
+                .global-title {
+    
+                }
+            }
+            .order {
+                .icon-button {
+                    border-radius: var(--default-small-radius);
+                }
+            }
+        }
+    
+        .no-collections {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    
     }
 }
 
 @media screen and (max-width: 640px) {
     .app {
-    
-        .collections {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-    
-            .collection {
-                .collection-header {
-                    padding: 8px 12px;
-                }
-    
-                .dishes {
-                    padding: 0 12px;
-                }
-            }
+        .box {
+            border: none;
         }
     }
 }

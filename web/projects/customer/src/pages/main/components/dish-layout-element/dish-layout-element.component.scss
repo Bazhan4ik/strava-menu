@@ -1,0 +1,24 @@
+.app {
+    width: 100%;
+    padding: 0 12px;
+    padding-bottom: 24px;
+
+    .image {
+        img {
+            height: 168px;
+            object-fit: cover;
+            width: 100%;
+            border-radius: var(--customer-big-radius);
+        }
+    }
+
+    .info {
+        text-decoration: none;
+
+        .name-price {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+}

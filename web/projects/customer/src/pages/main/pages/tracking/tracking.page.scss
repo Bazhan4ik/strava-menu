@@ -1,99 +1,116 @@
 .app {
-    padding: 0 24px;
+    display: flex;
+    justify-content: center;
+
+    background-color: var(--default-background);
+
+    width: 100%;
     height: 100%;
 
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .title {
+    
+    .box {
+        border-left: 2px solid var(--default-border-color);
+        border-right: 2px solid var(--default-border-color);
+        background-color: var(--default-background);
+        max-width: 504px;
+        width: 100vw;
+        min-height: 100vh;
+        padding-bottom: 100px;
+        
+        .header {
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-
-            .global-subtitle {
+            justify-content: space-between;
+    
+            .title {
                 display: flex;
                 align-items: center;
-                gap: 8px;
-
-                mat-icon {
-                    width: 22px;
-                    height: 22px;
-                    font-size: 22px;
+    
+                .global-subtitle {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+    
+                    mat-icon {
+                        width: 22px;
+                        height: 22px;
+                        font-size: 22px;
+                    }
                 }
             }
         }
-    }
-
-
-
-    .content {
-        padding-top: 24px;
-
-        .dishes {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-
-            .dish {
-
-                .image {
-                    img {
-                        border-radius: var(--default-border-radius);
-                        width: 100%;
-                        height: auto;
+    
+    
+    
+        .content {
+            padding: 0 12px;
+    
+            .dishes {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 12px;
+    
+                .dish {
+    
+                    .image {
+                        img {
+                            border-radius: var(--default-border-radius);
+                            width: 100%;
+                            height: auto;
+                        }
                     }
-                }
-
-                .name-status {
-                    .status {
-                        margin-top: 6px;
-
-                        span {
-                            padding: 2px 6px;
-                            border-radius: 4px;
-
-                            &.orange {
-                                background-color: var(--orange);
-                                color: var(--black);
-                            }
-
-                            &.gray {
-                                background-color: var(--gray);
-                                color: var(--black);
-                            }
-
-                            &.purple {
-                                background-color: var(--purple);
-                                color: rgb(235, 235, 235);
-                            }
-
-                            &.green {
-                                background-color: var(--green);
-                                color: rgb(245, 245, 245);
-                            }
-                            &.red {
-                                background-color: var(--red);
-                                color: rgb(245, 245, 245);
+    
+                    .name-status {
+                        .status {
+                            margin-top: 6px;
+    
+                            span {
+                                padding: 2px 6px;
+                                border-radius: 4px;
+    
+                                &.orange {
+                                    background-color: var(--orange);
+                                    color: var(--black);
+                                }
+    
+                                &.gray {
+                                    background-color: var(--gray);
+                                    color: var(--black);
+                                }
+    
+                                &.purple {
+                                    background-color: var(--purple);
+                                    color: rgb(235, 235, 235);
+                                }
+    
+                                &.green {
+                                    background-color: var(--green);
+                                    color: rgb(245, 245, 245);
+                                }
+                                &.red {
+                                    background-color: var(--red);
+                                    color: rgb(245, 245, 245);
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-
-        .account {
-            width: 324px;
-            border-radius: var(--default-border-radius);
-            background-color: var(--default-background);
-            padding: 12px;
-
-            .title {
-                margin-bottom: 24px;
-            }
-
-            .buttons {
-                margin-top: 24px;
+    
+            .account {
+                width: 324px;
+                border-radius: var(--default-border-radius);
+                background-color: var(--default-background);
+                padding: 12px;
+    
+                .title {
+                    margin-bottom: 24px;
+                }
+    
+                .buttons {
+                    margin-top: 24px;
+                }
             }
         }
     }
@@ -102,6 +119,8 @@
 
 @media screen and (max-width: 640px) {
     .app {
-        padding: 0 12px;
+        .box {
+            border: none;
+        }
     }
 }

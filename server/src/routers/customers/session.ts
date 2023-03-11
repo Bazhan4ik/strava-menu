@@ -182,6 +182,7 @@ router.get("/",
             const $set: any = {
                 "customer.socketId": socketId,
                 "info.location": location._id,
+                "timing.connected": Date.now(),
             };
 
             if (table) {

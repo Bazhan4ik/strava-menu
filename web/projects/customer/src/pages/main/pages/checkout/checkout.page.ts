@@ -151,18 +151,20 @@ export class CheckoutPage implements OnInit {
 
     async removeTip() {
         const old = this.money.tip;
+        this.money.total = +(this.money.total - this.money.tip).toFixed(2);
         this.money.tip = null!;
 
         const update: any = await this.service.delete("session/tip");
         
         if(!update.updated) {
             this.money.tip = old;
+            this.money.total = +(this.money.total + this.money.tip).toFixed(2);
         }
     }
     async addTip(amount: number) {
         this.money.total -= this.money.tip;
         this.money.tip = Number((this.money.subtotal * amount / 100).toFixed(2));
-        this.money.total += this.money.tip;
+        this.money.total = +(this.money.total + this.money.tip).toFixed(2);
 
         const update: any = await this.service.put({ amount }, "session/tip");
 

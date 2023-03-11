@@ -1,0 +1,15 @@
+.app {
+    padding: 12px 6px;
+
+    display: grid;
+    grid-template-columns: 1fr 96px;
+    gap: 12px;
+
+    .image {
+        img {
+            width: 96px;
+            height: 96px;
+            border-radius: var(--default-border-radius);
+        }
+    }
+}

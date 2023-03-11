@@ -15,8 +15,8 @@
         </div>
     </div>
     <div class="collections" #list>
-        <a *ngFor="let collection of collections" routerLink="collection/{{ collection.id }}" class="collection">
-            <div class="image">
+        <a *ngFor="let collection of collections" [class.imageless]="!!collection.image" routerLink="../collection/{{ collection.id }}" class="collection">
+            <div class="image" *ngIf="collection.image">
                 <img [src]="collection.image" alt="">
             </div>
             <div class="name">

@@ -1,5 +1,4 @@
-import { Binary, ObjectId } from "mongodb";
-import { NumberLiteralType } from "typescript";
+import { ObjectId } from "mongodb";
 import { Worker } from "./worker.js";
 
 
@@ -58,7 +57,7 @@ interface Restaurant {
 interface LayoutElement {
     _id: ObjectId;
     position: number;
-    type: "collection" | "folder";
+    type: "collection" | "folder" | "dish";
     data?: { id: ObjectId };
 }
 

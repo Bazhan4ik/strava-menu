@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { DishesRoutingModule } from './dishes-routing.module';
 import { DishesPage } from './dishes.page';
+import { IonicModule } from '@ionic/angular';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { DishesPage } from './dishes.page';
     ],
     imports: [
         CommonModule,
-        DishesRoutingModule
+        DishesRoutingModule,
+        IonicModule,
     ]
 })
 export class DishesModule { }

@@ -1,6 +1,8 @@
 .app {
+    padding-bottom: 24px;
+    
     .collection-header {
-        padding: 12px 24px;
+        padding: 12px;
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 72px;
@@ -31,8 +33,8 @@
     .dishes {
         display: flex;
         gap: 12px;
-        padding: 0 24px;
         width: 100%;
+        padding: 0 12px;
         overflow-x: auto;
         padding-bottom: 6px;
         scroll-behavior: smooth;

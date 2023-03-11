@@ -1,0 +1,24 @@
+<div class="app">
+    <a class="image" routerLink="../dish/{{ dish.id }}">
+        <img [ngSrc]="imageUrl" width="128" height="128">
+    </a>
+    <a class="info" routerLink="../dish/{{ dish.id }}">
+        <div class="name-price">
+            <div class="name">
+                <span class="global-text big black bold">
+                    {{ dish.info.name }}
+                </span>
+            </div>
+            <div class="price">
+                <span class="global-text">
+                    ${{ dish.info.price / 100 }}
+                </span>
+            </div>
+        </div>
+        <div class="description">
+            <span class="global-text">
+                {{ dish.info.description }}
+            </span>
+        </div>
+    </a>
+</div>

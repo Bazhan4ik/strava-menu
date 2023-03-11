@@ -15,15 +15,22 @@
                 <img [src]="image || './../../../../../../../../global-resources/images/no-image.svg'" alt="">    
             </div>
             <div class="info">
-                <div class="name">
-                    <span class="global-text bigger black bold">
-                        {{ dish.name }}
-                    </span>
-                </div>
-                <div class="price">
-                    <span class="global-text normal">
-                        ${{ dish.price / 100 }}
-                    </span>
+                <div class="name-price-visibility">
+                    <div class="name-price">
+                        <div class="name">
+                            <span class="global-text bigger black bold">
+                                {{ dish.name }}
+                            </span>
+                        </div>
+                        <div class="price">
+                            <span class="global-text normal">
+                                ${{ dish.price / 100 }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="visibility">
+                        <ion-toggle mode="ios" color="orange" [checked]="dish.status == 'visible'" (ionChange)="onVisibilityChange($event)"></ion-toggle>
+                    </div>
                 </div>
                 <div class="tags" *ngIf="dish.tags && dish.tags.length > 0">
                     <span *ngFor="let tag of dish.tags" class="global-badge orange">

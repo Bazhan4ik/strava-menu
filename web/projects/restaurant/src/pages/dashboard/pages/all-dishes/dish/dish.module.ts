@@ -5,6 +5,7 @@ import { DishRoutingModule } from './dish-routing.module';
 import { DishPage } from './dish.page';
 import { MatIconModule } from '@angular/material/icon';
 import { NgChartsModule } from 'ng2-charts';
+import { IonicModule } from '@ionic/angular';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { NgChartsModule } from 'ng2-charts';
         DishRoutingModule,
         MatIconModule,
         NgChartsModule,
+        IonicModule,
     ]
 })
 export class DishModule { }

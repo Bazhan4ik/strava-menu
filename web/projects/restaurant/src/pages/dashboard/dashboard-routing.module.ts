@@ -151,7 +151,15 @@ const routes: Routes = [
 
             {
                 path: "tables",
-                loadChildren: () => import("./pages/tables/tables.module").then(m => m.TablesModule),
+                loadChildren: () => import("./pages/all-tables/select-live-location/select-live-location.module").then(m => m.SelectLiveLocationModule),
+            },
+            {
+                path: "tables/qr-codes",
+                loadChildren: () => import("./pages/all-tables/tables-qr-codes/tables-qr-codes.module").then(m => m.TablesQrCodesModule),
+            },
+            {
+                path: "tables/:locationId",
+                loadChildren: () => import("./pages/all-tables/tables/tables.module").then(m => m.TablesModule),
             }
 
 

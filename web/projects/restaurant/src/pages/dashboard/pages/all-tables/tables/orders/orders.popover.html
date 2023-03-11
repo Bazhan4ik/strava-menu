@@ -1,0 +1,21 @@
+<div class="app" #popover>
+    <div class="list">
+        <div class="session" *ngFor="let session of sessions">
+            <div class="connected">
+                <span class="global-text small">
+                    {{ session.connected }}
+                </span>
+            </div>
+            <div class="amount">
+                <span class="global-text small black">
+                    ${{ session.amount / 100 }}
+                </span>
+            </div>
+            <div class="status">
+                <span class="global-badge" [class.green]="session.status == 'progress'" [class.orange]="session.status == 'ordering'" [class.gray]="session.status == 'pending'">
+                    {{ session.status }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

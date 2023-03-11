@@ -7,5 +7,8 @@
 
 
 :root {
-    --customer-box-background: rgba(255, 255, 255, 0.85);
+    --customer-header-background: rgba(255, 255, 255, 0.8);
+    --customer-box-background: var(--white);
+    --customer-big-radius: 24px;
+    --customer-normal-radius: 14px;
 }

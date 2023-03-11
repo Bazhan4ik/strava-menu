@@ -14,13 +14,13 @@ interface Location {
 }
 
 
-@Component({
-    selector: 'app-tables',
-    templateUrl: './tables.page.html',
-    styleUrls: ['./tables.page.scss']
-})
-export class TablesPage implements OnInit {
 
+@Component({
+    selector: 'app-tables-qr-codes',
+    templateUrl: './tables-qr-codes.page.html',
+    styleUrls: ['./tables-qr-codes.page.scss']
+})
+export class TablesQrCodesPage implements OnInit {
     locations: Location[];
 
     downloadUrls: { locationId: string; tableId: number; url: string; }[] = [];
@@ -33,9 +33,9 @@ export class TablesPage implements OnInit {
     async addTable(locationId: string) {
         const result: any = await this.service.post({ locationId }, "tables");
 
-        if(result.updated) {
-            for(let l of this.locations) {
-                if(l.locationId == locationId) {
+        if (result.updated) {
+            for (let l of this.locations) {
+                if (l.locationId == locationId) {
                     l.tables.push(result.table);
                 }
             }
@@ -49,9 +49,9 @@ export class TablesPage implements OnInit {
     async removeTable(locationId: string) {
         const result: any = await this.service.delete("tables", locationId);
 
-        if(result.updated) {
-            for(let l of this.locations) {
-                if(l.locationId == locationId) {
+        if (result.updated) {
+            for (let l of this.locations) {
+                if (l.locationId == locationId) {
                     l.tables.splice(l.tables.length - 1, 1);
                     break;
                 }
@@ -65,13 +65,13 @@ export class TablesPage implements OnInit {
         const tables = [];
         let locationName: string;
 
-        for(let i of this.downloadUrls) {
-            if(i.locationId == locationId) {
+        for (let i of this.downloadUrls) {
+            if (i.locationId == locationId) {
                 tables.push(i);
             }
         }
-        for(let i of this.locations) {
-            if(i.locationId == locationId) {
+        for (let i of this.locations) {
+            if (i.locationId == locationId) {
                 locationName = i.locationName;
                 break;
             }

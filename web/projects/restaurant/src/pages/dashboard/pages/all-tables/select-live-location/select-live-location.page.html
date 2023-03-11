@@ -1,0 +1,42 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Select location
+            </span>
+        </div>
+        <div class="buttons">
+            <a routerLink="qr-codes" type="button" class="button">QR codes</a>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="locations && locations.length > 0" class="list">
+            <a routerLink="{{ location.id }}" class="location" *ngFor="let location of locations">
+                <div class="name">
+                    <span class="global-text big black bold">
+                        {{ location.name }}
+                    </span>
+                </div>
+                <div class="address">
+                    <span class="global-text bold">
+                        {{ location.city }}, {{ location.line1 }}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+    
+        <div *ngIf="locations && locations.length == 0" class="no-locations">
+            <span class="global-text big black bold">
+                No locations
+            </span>
+        </div>
+
+        <div *ngIf="!locations" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

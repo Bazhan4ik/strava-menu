@@ -36,6 +36,7 @@ const projections = {
         noImage: {
             id: 1,
             _id: 1,
+            status: 1,
             info: {
                 name: 1,
                 price: 1,
@@ -120,10 +121,63 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
     const getDish = (id: ObjectId) => {
         for(const dish of dishes) {
             if(dish._id.equals(id)) {
+                if(dish.status != "visible") {
+                    return null!;
+                }
                 return dish;
             }
         }
         return null!;
+    }
+    const filterDishes = () => {
+        for(let e = 0; e < result.elements.length; e++) {
+            const element = result.elements[e];
+
+            if(element.type == "folder") {
+
+                const collections = (element.data as { collections: { name: string; _id: ObjectId; id: string; dishes: ObjectId[]; }[]; }).collections;
+
+                for(let c = 0; c < collections.length; c++) {
+                    for(let d in collections[c].dishes) {
+                        if(!getDish(collections[c].dishes[d])) {
+                            collections[c].dishes.splice(+d, 1);
+                        }
+                    }
+                    if(collections[c].dishes.length == 0) {
+                        collections.splice(+c, 1);
+                        c -= 1;
+                    }
+                }
+                
+                continue;
+            } else if(element.type == "dish") {
+                const dish = getDish((element.data as any)._id);
+
+                if(!dish) {
+                    result.elements.splice(+e, 1);
+                    e -= 1;
+                    continue;
+                }
+
+                element.data = dish as any;
+                continue;
+            }
+
+            const dishes = (element.data as { dishes: ObjectId[] }).dishes;
+
+            for(let d in dishes) {
+                if(!getDish(dishes[d])) {
+                    dishes.splice(+d, 1);
+                }
+            }
+
+            if(dishes.length == 0) {
+                result.elements.splice(+e, 1);
+                e -= 1;
+            }
+        }
+
+        return result.elements;
     }
 
     const dishesIds: ObjectId[] = [];
@@ -132,7 +186,7 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
     const result: {
         tracking?: any[],
         elements: {
-            type: "collection" | "folder";
+            type: "collection" | "folder" | "dish";
             data: {
                 name: string;
                 dishes: ObjectId[];
@@ -143,7 +197,16 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
                     id: string;
                     _id: ObjectId;
                     image: string;
+                    dishes: ObjectId[];
                 }[];
+            } | {
+                _id: string;
+                id: string;
+                info: {
+                    name: string;
+                    description: string;
+                    price: number;
+                }
             }
         }[];
         dishes?: { [dishId: string]: any }[];
@@ -197,7 +260,8 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
                         name: collection.name,
                         image: collection.image?.buffer as any,
                         _id: collection._id,
-                        id: collection.id
+                        id: collection.id,
+                        dishes: collection.dishes,
                     }); 
                 }
             }
@@ -210,6 +274,14 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
                 }
             })
 
+        } else if(element.type == "dish") {
+            result.elements.push({
+                type: element.type,
+                data: {
+                    _id: element.data.id
+                } as any
+            });
+            dishesIds.push(element.data.id);
         }
     }
 
@@ -233,7 +305,7 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
 
     const dishes = await getDishes(
         restaurant._id,
-        { _id: { $in: dishesIds } },
+        { _id: { $in: dishesIds }, status: "visible" },
         { projection: projections.collections.noImage }
     ).toArray();
 
@@ -257,6 +329,8 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
     }
 
     result.dishes = Object.fromEntries(dishMap.entries());
+
+    result.elements = filterDishes();
 
     res.send(result);
 });
@@ -388,13 +462,19 @@ router.get("/collections/:collectionId", customerRestaurant({ collections: 1 }),
 
     const dishes = await getDishes(
         restaurant._id,
-        { _id: { $in: collection.dishes } },
+        { _id: { $in: collection.dishes }, status: "visible", },
         { projection: projections.collections.noImage }
     ).toArray();
 
     const dishesMap = new Map();
     for(const dish of dishes) {
         dishesMap.set(dish._id.toString(), dish);
+    }
+
+    for(const dishId in collection.dishes) {
+        if(!dishesMap.has(collection.dishes[dishId].toString())) {
+            collection.dishes.splice(+dishId, 1);
+        }
     }
     
 

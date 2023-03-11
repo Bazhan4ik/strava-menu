@@ -5,11 +5,16 @@ import { id } from "../../utils/id.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { updateRestaurant } from "../../utils/restaurant.js";
+import { LiveTablesRouter } from "./tablesLive.js";
 
 
 
 
 const router = Router({ mergeParams: true });
+
+
+router.use("/live/:locationId", LiveTablesRouter);
+
 
 
 router.get("/", logged(), restaurantWorker({ tables: 1, locations: { name: 1, id: 1, } }, { customers: { tables: true } }), async (req, res) => {

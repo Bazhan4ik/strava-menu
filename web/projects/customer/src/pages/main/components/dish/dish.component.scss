@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     transition: 0.25s all;
-    border-radius: var(--default-border-radius);
+    border-radius: var(--customer-normal-radius);
     outline: none;
 
     &.small {
@@ -15,7 +15,7 @@
         img {
             width: 100%;
             height: auto;
-            border-radius: var(--default-border-radius);
+            border-radius: var(--customer-normal-radius);
         }
     }
 

@@ -10,11 +10,16 @@ const routes: Routes = [
         children: [
             {
                 path: "",
+                redirectTo: "home",
+                pathMatch: "full",
+            },
+            {
+                path: "home",
                 loadComponent: () => import("./pages/recommendations/recommendations.page").then(c => c.RecommendationsPage),
                 data: { routeReuse: true }
             },
             {
-                path: "order",
+                path: "order/preview",
                 loadComponent: () => import("./pages/preview/preview.page").then(c => c.PreviewPage),
             },
             {
@@ -25,17 +30,20 @@ const routes: Routes = [
                 path: "order/tracking",
                 loadComponent: () => import("./pages/tracking/tracking.page").then(c => c.TrackingPage),
             },
+        
             {
                 path: "collection/:collectionId",
                 loadComponent: () => import("./pages/collection/collection.component").then(c => c.CollectionComponent),
+                data: { routeReuse: true },
             },
+
             {
-                path: ":dishId",
+                path: "dish/:dishId",
                 loadComponent: () => import("./pages/full-dish/full-dish.page").then(c => c.FullDishPage),
             },
             {
                 path: "**",
-                redirectTo: "",
+                redirectTo: "home",
             }
         ]
     }

@@ -22,16 +22,17 @@ export class SelectDishesModal implements OnInit {
 
     dishes: Dish[] = [];
 
-    ids: string[] = [];
-
+    
     newSelected: Dish[] = [];
-
+    
     constructor(
         private service: RestaurantService,
-    ) { };
+        ) { };
 
-
-    @Input() selected: Dish[];
+        
+    @Input() ids: string[] = [];
+    @Input() selected: Dish[] = [];
+    @Input() one = false;
     @Output() leave = new EventEmitter();
 
 
@@ -41,6 +42,17 @@ export class SelectDishesModal implements OnInit {
         if(ev.target.checked) {
             this.newSelected.push(dish);
             this.ids.push(dish._id);
+
+            if(this.one) {
+                this.ids = [dish._id];
+                for(let i in this.newSelected) {
+                    if(this.newSelected[i]._id == dish._id) {
+                        continue;
+                    }
+                    this.newSelected.splice(+i, 1);
+                }
+            }
+
         } else {
             for(let i in this.newSelected) {
                 if(this.newSelected[i]._id == dish._id) {

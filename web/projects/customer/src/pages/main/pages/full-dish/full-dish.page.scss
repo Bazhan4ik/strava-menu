@@ -1,112 +1,120 @@
 .app {
-    .header {
-        padding: 0 24px;
-        padding-top: 24px;
-    };
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    overflow-y: auto;
+    
+    .box {
+        max-width: 504px;
+        min-height: 100%;
+        width: 100vw;
+        height: 100vh;
+        border-left: 2px solid var(--default-border-color);
+        border-right: 2px solid var(--default-border-color);
 
-    .dish {
-        padding: 0 24px;
-        margin-top: 12px;
 
-        .info {
-            display: flex;
-
+        .header {
+            max-width: 500px;
+            width: 100vw;
+            position: relative;
+    
             .image {
+                width: 100%;
+                height: 248px;
                 img {
-                    border-radius: var(--default-border-radius);
-                    width: 196px;
-                    height: 196px;
+                    width: 100%;
+                    height: 248px;
+                    object-fit: cover;
                 }
             }
-
-            .name-description-buy {
-                position: relative;
-                width: calc(100% - 196px);
-                padding-left: 8px;
-
-                .name {
+    
+            #back-button {
+                background-color: var(--gray-light);
+                position: absolute;
+                height: 32px;
+                width: 32px;
+                top: 12px;
+                z-index: 1;
+                left: 12px;
+            }
+        };
+    
+        .dish {
+            padding: 24px;
+    
+            .info {
+                .name-price {
                     display: flex;
-                    align-items: center;
+                    align-items: flex-end;
                     justify-content: space-between;
                 }
-
-                .tags {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 4px;
-                }
-
-                .buy {
-                    position: absolute;
-                    bottom: 4px;
-                    left: 0;
-                    margin-top: 12px;
-                    width: 100%;
-
-                    .count {
-                        margin-left: 8px;
-                    }
-
-                    .buttons {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        margin: 0 8px;
-                        width: 100%;
-
-                        #add-span {
-                            // width: calc(100% - 38px - 16px);
-                            width: auto;
-
-                            #add {
-                                padding: 0;
-                                height: 38px;
-                                width: 100%;
-                                padding-right: 16px;
-                                justify-content: flex-start;
-                                gap: 0;
-
-                                .global-text {
-                                    font-family: var(--button-font);
-                                }
-
-                                mat-icon {
-                                    margin: 0 12px;
-                                }
-                            }
-                        }
-
-
-                        #comment-span {
-                            width: 38px;
-
-                            #comment {
-                                height: 38px;
-                                width: 38px;
-                            }
-                        }
-                    }
+                .description {
+                    margin-top: 24px;
                 }
             }
         }
-    }
 
-    .recommendations {
-        width: 100%;
-        margin-top: 16px;
-        border-top: 1px solid var(--default-border-color);
+        .buy {
+            margin-top: 32px;
 
-        .collection-header {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+            .buy-button {
+                width: 100%;
+                height: 40px;
+                padding: 4px;
+                border-radius: 40px;
+                border: 1px solid var(--default-border-color);
+                display: grid;
+                grid-template-columns: 32px 1fr 68px;
+                
+                .circle-button {
+                    height: 32px;
+                    width: 32px;
+                    border-radius: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: none;
 
-        .dishes {
-            margin-top: 12px;
-            display: flex;
-            gap: 12px;
+                    &.add, &.comment {
+                        background-color: var(--black);
+                        mat-icon {
+                            color: var(--gray-light);
+                        }
+                    }
+
+                    mat-icon {
+                        height: 18px;
+                        width: 18px;
+                        font-size: 18px;
+                    }
+
+                    // .global-loading {
+                    //     width: 100%;
+                    //     height: 100%;
+                    //     & > div {
+                    //         width: 20px;
+                    //         height: 20px;
+                    //         border: 2px solid var(--default-border-color);
+                    //         margin: 0;
+                    //     }
+                    // }
+                }
+                .comment {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .count {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .buttons {
+                    align-items: center;
+                    gap: 4px;
+                    display: flex;
+                }
+            }
         }
     }
 }
@@ -114,57 +122,8 @@
 
 @media screen and (max-width: 640px) {
     .app {
-        // padding: 12px;
-
-        .dish {
-            .info {
-                .name-description-buy {
-                    .buy {
-                        .buttons {
-                            #add-span {
-                                #add {
-                                    font-size: 16px;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-@media screen and (max-width: 500px) {
-    .app {
-        .header {
-            padding: 0 12px;
-            padding-top: 12px;
-        }
-        .dish {
-            margin-top: 12px;
-            padding: 0 12px;
-    
-            .info {
-                display: flex;
-    
-                .image {
-                    img {
-                        width: 124px;
-                        height: 124px;
-                    }
-                }
-
-                .name-description-buy {
-                    width: calc(100% - 124px);
-
-                    .buy {
-                        position: static;
-
-                        .buttons, .count {
-                            margin: 0
-                        }
-                    }
-                }
-            }
+        .box {
+            border: none;
         }
     }
 }

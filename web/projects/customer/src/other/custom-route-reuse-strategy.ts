@@ -42,6 +42,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
         };
 
         // routes are stored by path - the key is the path name, and the handle is stored under it so that you can only ever have one object stored for a single path
+
         this.storedRoutes[route.routeConfig?.path!] = storedRoute;
     }
 

@@ -11,6 +11,7 @@ interface Dish {
     price: number;
     description: number;
     id: string;
+    status: string;
     _id: string;
     tags: { title: string; id: string; }[];
     library: {
@@ -92,6 +93,23 @@ export class DishPage implements OnInit {
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
     @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+
+
+
+
+    async onVisibilityChange(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const value = input.checked;
+
+
+        const update: any = await this.service.put({ value }, "menu/dishes", this.dish.id, "visibility");
+
+        if(!update.updated) {
+            (event.target as HTMLInputElement).checked = !value;
+        }
+    }
+
+
 
     async editCollections() {
         const { AddCollectionsModal } = await import("../../../components/add-collections/add-collections.modal");

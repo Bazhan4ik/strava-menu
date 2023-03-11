@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { LayoutElement } from "../../models/restaurant.js";
-import { getDishes } from "../../utils/dishes.js";
+import { getDish, getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
@@ -41,7 +41,6 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
         }
         return result;
     }
-
     const getCollection = async (id: ObjectId) => {
         for(const collection of restaurant.collections) {
             if(collection._id.equals(id)) {
@@ -68,11 +67,20 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
             }
         }
     }
+    const getDishForElement = async (id: ObjectId) => {
+        const dish = await getDish(restaurant._id, { _id: id }, { projection: { info: { name: 1, price: 1, description: 1 } } });
+
+        if(!dish) {
+            return null!;
+        }
+
+        return { ...dish.info, _id: dish._id };
+    }
 
     const result = [];
     for(const element of restaurant.layout) {
         const el: any = {
-            name: element.type == "collection" ? "Collection" : "Folder",
+            name: element.type == "collection" ? "Collection" : element.type == "dish" ? "Dish" : "Folder",
             _id: element._id,
             type: element.type,
             position: element.position,
@@ -83,12 +91,14 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
         }
 
         if(element.type == "collection") {
-            el.data = { collection: await getCollection(element.data.id) }
+            el.data = { collection: await getCollection(element.data.id) };
         } else if(element.type == "folder") {
-            el.data = { folder: getFolder(element.data.id) }
+            el.data = { folder: getFolder(element.data.id) };
+        } else if(element.type == "dish") {
+            el.data = { dish: await getDishForElement(element.data.id) };
         }
 
-        if(!el.data.collection && !el.data.folder) {
+        if(!el.data.collection && !el.data.folder && !el.data.dish) {
             delete el.data;
 
             updateRestaurant(
@@ -109,7 +119,7 @@ router.post("/", logged(), restaurantWorker({ layout: 1 }), async (req, res) => 
     const { restaurant } = res.locals as Locals;
 
 
-    if(!type || typeof type != "string" || !["collection", "folder"].includes(type)) {
+    if(!type || typeof type != "string" || !["collection", "folder", "dish"].includes(type)) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
     if(!restaurant.layout) {
@@ -131,7 +141,7 @@ router.post("/", logged(), restaurantWorker({ layout: 1 }), async (req, res) => 
         { projection: { _id: 1 } },
     );
 
-    res.send({ updated: update.ok == 1, element: {...newElement, name: type == "collection" ? "Collection" : "Folder" } });
+    res.send({ updated: update.ok == 1, element: {...newElement, name: type == "collection" ? "Collection" : type == "dish" ? "Dish" : "Folder" } });
 });
 router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1 }), async (req, res) => {
     const { collectionId, elementId } = req.body;
@@ -206,6 +216,70 @@ router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1
 
     if(update.ok == 1) {
         return res.send({ updated: true, collection: { ...collection, dishes: await convertDishes(collection.dishes), image: collection.image?.buffer } });
+    }
+
+    res.send({ updated: false });
+});
+router.put("/dish", logged(), restaurantWorker({ layout: 1 }), async (req, res) => {
+    const { dishId, elementId } = req.body;
+    const { restaurant } = res.locals as Locals;
+    
+    if(!dishId || !elementId) {
+        return res.status(400).send({ reason: "InvalidInput" });
+    }
+    if(typeof dishId != "string" || typeof elementId != "string" || dishId.length != 24 || elementId.length != 24) {
+        return res.status(422).send({ reason: "InvalidInput" });
+    }
+    if(!restaurant.layout) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const getElementDish = async () => {
+        const dish = await getDish(restaurant._id, { _id: id(dishId) }, { projection: { info: { description: 1, name: 1, price: 1 } } });
+
+        if(!dish) {
+            return null;
+        }
+        
+        return { ...dish.info, _id: dish._id };
+    }
+    const getElement = () => {
+        for(const element of restaurant.layout) {
+            if(element._id.equals(elementId)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    const dish = await getElementDish();
+
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+
+    const layout = getElement();
+    if(!layout) {
+        return res.status(404).send({ reason: "ElementNotFound" });
+    }
+
+    if(layout.type != "dish") {
+        return res.status(403).send({ reason: "WrongType" });
+    }
+
+    if(layout.data?.id.equals(dish._id)) {
+        return res.send({ updated: true, dish });
+    }
+
+
+    const update = await updateRestaurant(
+        { _id: restaurant._id },
+        { $set: { "layout.$[element].data": { id: dish._id } } },
+        { arrayFilters: [ { "element._id": layout._id } ], projection: { _id: 1 } }
+    );
+
+    if(update.ok == 1) {
+        return res.send({ updated: true, dish });
     }
 
     res.send({ updated: false });

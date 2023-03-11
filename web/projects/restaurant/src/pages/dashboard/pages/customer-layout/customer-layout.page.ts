@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { CollectionComponent } from './components/collection/collection.component';
+import { DishComponent } from './components/dish/dish.component';
 import { FolderComponent } from './components/folder/folder.component';
 
 
@@ -27,6 +28,12 @@ interface LayoutElement {
                 _id: string;
                 dishes: string[];
             }[];
+        }
+        dish?: {
+            name: string;
+            price: number;
+            description: string;
+            _id: string;
         }
     };
 }
@@ -59,25 +66,28 @@ export class CustomerLayoutPage implements OnInit {
 
         this.phone.clear();
 
-        const [{ FolderComponent }, { CollectionComponent }] = await Promise.all([
-            import("./components/folder/folder.component"),
-            import("./components/collection/collection.component")
-        ]);
+        // const [{ FolderComponent }, { CollectionComponent }, { DishComponent }] = await Promise.all([
+        //     import("./components/folder/folder.component"),
+        //     import("./components/collection/collection.component"),
+        //     import("./components/dish/dish.component")
+        // ]);
 
         for(const [index, element] of this.elements.entries()) {
 
-            if(!element.data?.folder && !element.data?.collection) {
+            if(!element.data?.folder && !element.data?.collection && !element.data.dish) {
                 continue;
             }
 
             element.position = index + 1;
 
-            const component = this.phone.createComponent(element.type == "collection" ? CollectionComponent : FolderComponent as any);
+            const component = this.phone.createComponent(element.type == "collection" ? CollectionComponent : element.type == "dish" ? DishComponent : FolderComponent as any);
 
             if(element.type == "collection") {
                 ((component.instance as unknown) as CollectionComponent).collection = element.data.collection!;
             } else if(element.type == "folder") {
                 (component.instance as FolderComponent).folder = element.data.folder!;
+            } else if(element.type == "dish") {
+                (component.instance as DishComponent).dish = element.data.dish!;
             }
 
             this.components.push(component);
@@ -147,12 +157,45 @@ export class CustomerLayoutPage implements OnInit {
             component.destroy();
         });
     }
+    async selectDish(element: LayoutElement) {
+        const { SelectDishesModal } = await import("./../../components/select-dishes/select-dishes.modal");
+
+        const component = this.modalContainer.createComponent(SelectDishesModal);
+
+        if(element.data) {
+            component.instance.ids = [element.data?.dish?._id!];
+        }
+        component.instance.one = true;
+
+
+        component.instance.leave.subscribe(async (dishes: any) => {
+            component.destroy();
+
+            if(dishes[0]) {
+                const dish = dishes[0];
+
+                const update: { updated: boolean; dish: { name: string; description: string; _id: string; price: number; }} = await this.service.put({ dishId: dish._id, elementId: element._id }, "layout", "dish")
+
+                if(update.updated) {
+                    if(element.data) {
+                        element.data.dish = update.dish;
+                    } else {
+                        element.data = { id: update.dish._id, dish: update.dish};
+                    }
+                    this.updateLayout();
+                }
+            }
+        });
+    }
+
 
     editElement(element: LayoutElement) {
         if(element.type == "collection") {
             this.selectCollection(element);
         } else if(element.type == "folder") {
             this.selectFolder(element);
+        } else if(element.type == "dish") {
+            this.selectDish(element);
         }
     }
     async deleteElement(element: LayoutElement) {
@@ -230,7 +273,6 @@ export class CustomerLayoutPage implements OnInit {
                 if(result.updated) {
                     this.elements.push(result.element);
                     this.updateLayout();
-
                 }
             }
             

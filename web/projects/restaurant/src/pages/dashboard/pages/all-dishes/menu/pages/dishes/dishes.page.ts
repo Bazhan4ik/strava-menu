@@ -11,6 +11,7 @@ interface Dish {
     price: number;
     image: any;
     imageConverted: string;
+    status: string;
 }
 
 
@@ -26,7 +27,21 @@ export class DishesPage implements OnInit {
     constructor(
         private service: RestaurantService,
         private router: Router,
-    ) {}
+    ) {};
+
+
+    async onVisibilityChange(event: Event, dishId: string) {
+        const input = (event.target as HTMLInputElement);
+        const value = input.checked;
+
+
+        const update: any = await this.service.put({ value }, "menu/dishes", dishId, "visibility");
+        
+        if(!update.updated) {
+            (event.target as HTMLInputElement).checked = !value;
+        }
+
+    }
 
     async ngOnInit() {
         const result: Dish[] = await this.service.get("menu/dishes");

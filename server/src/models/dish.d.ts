@@ -12,6 +12,8 @@ interface Dish {
     ingredients: Ingredient[];
     tags: string[];
 
+    status: "visible" | "hidden" | "soldout";
+
     info: {
         name: string;
         description: string;

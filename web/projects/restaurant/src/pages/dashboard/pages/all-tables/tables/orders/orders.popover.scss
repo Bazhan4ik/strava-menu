@@ -1,0 +1,23 @@
+.app {
+    background-color: var(--default-background);
+    border-radius: var(--default-border-radius);
+    width: 228px;
+    min-height: 52px;
+    position: absolute;
+    box-shadow: var(--default-box-shadow);
+
+    .list {
+        .session {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 30% 30% 40%;
+            height: 52px;
+            border-bottom: 1px solid var(--default-border-color);
+            .connected, .amount, .status {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    }
+}

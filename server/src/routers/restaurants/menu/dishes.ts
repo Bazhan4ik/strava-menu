@@ -40,6 +40,8 @@ router.post("/", logged(), restaurantWorker({}, { dishes: { adding: true } }), a
             description: description || null!,
             price: price,
         },
+
+        status: "visible",
         
         library: null!,
         id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase(),
@@ -104,7 +106,7 @@ router.get("/", logged(), restaurantWorker({}, { dishes: { available: true } }),
     const { restaurant, user } = res.locals as Locals;
 
 
-    const dishes = await getDishes(restaurant._id, { }, { projection: { info: { name: 1, price: 1 }, id: 1, library: { preview: 1, } } }).toArray();
+    const dishes = await getDishes(restaurant._id, { }, { projection: { status: 1, info: { name: 1, price: 1 }, id: 1, library: { preview: 1, } } }).toArray();
 
     const result: {
         name: string;
@@ -112,6 +114,7 @@ router.get("/", logged(), restaurantWorker({}, { dishes: { available: true } }),
         image: any;
         id: string;
         _id: ObjectId;
+        status: string;
     }[] = [];
 
     for(let dish of dishes) {
@@ -121,6 +124,7 @@ router.get("/", logged(), restaurantWorker({}, { dishes: { available: true } }),
             id: dish.id,
             image: dish.library?.preview,
             _id: dish._id,
+            status: dish.status,
         });
     }
 
@@ -163,7 +167,7 @@ router.get("/:dishId", logged(), restaurantWorker({ collections: { name: 1, imag
     }
     
 
-    const dish = await getDish(restaurant._id, { id: dishId }, { projection: { _id: 1, info: 1, library: 1, id: 1, tags: 1, ingredients: 1 } });
+    const dish = await getDish(restaurant._id, { id: dishId }, { projection: { _id: 1, status: 1, info: 1, library: 1, id: 1, tags: 1, ingredients: 1 } });
     
     
     if(!dish) {
@@ -186,6 +190,7 @@ router.get("/:dishId", logged(), restaurantWorker({ collections: { name: 1, imag
         id: dish.id,
         price: dish.info.price,
         _id: dish._id,
+        status: dish.status,
         library: dish.library,
         tags: dish.tags ? getTags(dish.tags) : null,
         ingredients: dish.ingredients ? getIngredients(dish.ingredients) : null,
@@ -325,36 +330,6 @@ router.put("/:dishId", logged(), restaurantWorker({}, { dishes: { adding: true }
 
     res.send({ updated: result.ok == 1, newId: update["id"] });
 });
-// router.get("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { available: true } }), async (req, res) => {
-//     const { dishId } = req.params;
-//     const { restaurant } = res.locals as Locals;
-
-//     if(!restaurant.collections || restaurant.collections.length == 0) {
-//         return res.send([]);
-//     }
-
-//     const dish = await getDish(restaurant._id, { $or: [ { _id: id(dishId) }, { id: dishId } ] }, { projection: { _id: 1 } });
-
-//     if(!dish) {
-//         return res.status(404).send({ reason: "DishNotFound" });
-//     }
-
-//     const collections: Collection[] = [];
-
-//     for(let c of restaurant.collections) {
-//         for(let id of c.dishes) {
-//             if(id.equals(dish._id)) {
-//                 collections.push({
-//                     ...c,
-//                     image: c.image.buffer as any,
-//                 });
-//                 break;
-//             }
-//         }
-//     }
-
-//     res.send(collections);
-// });
 router.put("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }, { dishes: { adding: true, }, collections: { adding: true } }), async (req, res) => {
     const { dishId } = req.params;
     const { restaurant } = res.locals as Locals;
@@ -404,6 +379,26 @@ router.put("/:dishId/collections", logged(), restaurantWorker({ collections: 1 }
 
 
     
+    res.send({ updated: update.ok == 1 });
+});
+router.put("/:dishId/visibility", logged(), restaurantWorker({ }, { dishes: { adding: true } }), async (req, res) => {
+    const { dishId } = req.params;
+    const { value } = req.body;
+    const { restaurant } = res.locals as Locals;
+
+    if(typeof value != "boolean") {
+        return res.status(400).send({ reason: "InvalidInput" });
+    }
+
+    const update = await updateDish(
+        restaurant._id,
+        { id: dishId },
+        { $set: { status: value ? "visible" : "hidden" } },
+        { projection: { _id: 1 } },
+    );
+
+
+
     res.send({ updated: update.ok == 1 });
 });
 router.delete("/:dishId", logged(), restaurantWorker({ }, { dishes: { removing: true } }), async (req, res) => {

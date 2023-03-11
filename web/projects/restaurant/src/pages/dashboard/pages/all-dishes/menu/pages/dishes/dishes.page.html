@@ -27,6 +27,9 @@
                     </span>
                 </div>
             </div>
+            <div (click)="$event.stopPropagation()" class="visibility">
+                <ion-toggle color="orange" [checked]="dish.status == 'visible'" mode="ios" (ionChange)="onVisibilityChange($event, dish.id)"></ion-toggle>
+            </div>
         </a>
     </div>
 </div>

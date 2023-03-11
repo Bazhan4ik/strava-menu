@@ -1,0 +1,65 @@
+.app {
+    .content {
+        .top {
+            height: 32px;
+            display: grid;
+            grid-template-columns: 64px 96px 1fr 96px;
+
+            // .id {
+            //     padding-left: 8px;
+            // }
+        }
+        .list {
+            .table {
+                height: 38px;
+                display: grid;
+                grid-template-columns: 64px 96px 1fr 96px;
+                
+                &:nth-child(even) {
+                    background-color: rgba(248, 248, 248);
+                }
+
+                .id, .time, .orders, .amount {
+                    display: flex;
+                    align-items: center;
+                }
+                .id {
+                    padding-left: 8px;
+                }
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 736px) {
+
+    .app {
+        .content {
+            .list {
+                .location {
+                    .tables {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr 1fr;
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@media screen and (max-width: 550px) {
+    .app {
+        .content {
+            .list {
+                .location {
+                    .tables {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                    }
+                }
+            }
+        }
+    }
+}

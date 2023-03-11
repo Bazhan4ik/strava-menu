@@ -1,0 +1,67 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <a type="button" class="icon-button" routerLink="..">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Tables
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="top" *ngIf="tables">
+            <div class="id">
+                <span class="global-text">
+                    Table #
+                </span>
+            </div>
+            <div class="time">
+                <span class="global-text">
+                    Latest
+                </span>
+            </div>
+            <div class="orders">
+                <span class="global-text">
+                    Orders
+                </span>
+            </div>
+            <div class="amount">
+                <span class="global-text">
+                    Total
+                </span>
+            </div>
+        </div>
+        <div class="list" *ngIf="tables && tables.length > 0">
+            <div *ngFor="let table of tables" class="table" [class.taken]="table.taken">
+                <div class="id">
+                    <span class="global-text big black bold">
+                        {{ table.id }}
+                    </span>
+                </div>
+                <div class="time">
+                    <span class="global-text small">
+                        {{ table.connected }}
+                    </span>
+                </div>
+                <div class="orders">
+                    <button (mouseenter) ="openHover($event, table)" (mouseleave)="closePopover($event)" [disabled]="table.sessions.length == 0" [id]="table._id">
+                        {{ table.sessions.length }} orders on this table
+                    </button>
+                </div>
+                <div class="amount">
+                    ${{ table.total / 100 }}
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!tables" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<ng-container #popoverContainer></ng-container>

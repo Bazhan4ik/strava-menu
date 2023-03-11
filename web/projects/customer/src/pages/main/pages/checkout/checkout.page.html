@@ -1,221 +1,223 @@
 <div class="app">
-    <div class="header">
-        <div class="title">
-            <a routerLink=".." class="icon-button" type="button">
-                <mat-icon>
-                    arrow_back
-                </mat-icon>
-            </a>
-            <span class="global-subtitle">
-                Checkout
-            </span>
-        </div>
-    </div>
-
-    <div class="not-payment">
-        <div *ngIf="dishes && dishes.length > 0" class="dishes">
-            <div *ngFor="let dish of dishes" class="dish">
-                <div class="name-container">
-                    <span class="global-text big name black bold">
-                        {{ dish.name }}
-                    </span>
-                    <span class="x">
-                        x
-                    </span>
-                    <span class="global-text amount">
-                        {{ dish.amount }}
-                    </span>
-                </div>
-                <div class="price">
-                    <span class="big">
-                        ${{ dish.price / 100 }}
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="money" *ngIf="money">
-            <div class="subtotal">
-                <div class="title">
-                    <span class="global-text big">
-                        Subtotal
-                    </span>
-                </div>
-                <div class="border"></div>
-                <div class="value">
-                    <span class="global-text big">
-                        ${{ money.subtotal }}
-                    </span>
-                </div>
-            </div>
-            <div class="service-fee" *ngIf="money.service">
-                <div class="title">
-                    <span class="global-text big">
-                        Service fee
-                    </span>
-                </div>
-                <div class="border"></div>
-                <div class="value">
-                    <span class="global-text big">
-                        ${{ money.service }}
-                    </span>
-                </div>
-            </div>
-            <div class="tip" *ngIf="money.tip">
-                <div class="title">
-                    <span class="global-text big">
-                        Tip
-                    </span>
-                </div>
-                <div class="border"></div>
-                <div class="value">
-                    <span class="global-text big">
-                        ${{ money.tip }}
-                    </span>
-                </div>
-            </div>
-            <div class="hst">
-                <div class="title">
-                    <span class="global-text big">
-                        HST
-                    </span>
-                </div>
-                <div class="border"></div>
-                <div class="value">
-                    <span class="global-text big">
-                        ${{ money.hst }}
-                    </span>
-                </div>
-            </div>
-            <div class="total">
-                <div class="title">
-                    <span class="global-text bigger black bold">
-                        Total
-                    </span>
-                </div>
-                <div class="border"></div>
-                <div class="value">
-                    <span class="global-text big black bold">
-                        ${{ money.total }}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div *ngIf="!money || !dishes" class="global-loading height-124">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-
-    <div *ngIf="payWithCash" class="request">
-        <button class="orange-button button" (click)="cash()">
-            PAY WITH CASH
-        </button>
-    </div>
-
-    <div class="payment" *ngIf="payWithCard">
-        <div *ngIf="paymentData.tips" class="tips">
+    <div class="box">
+        <div class="header">
             <div class="title">
+                <a routerLink=".." class="icon-button" type="button">
+                    <mat-icon>
+                        arrow_back
+                    </mat-icon>
+                </a>
                 <span class="global-subtitle">
-                    Add tip
+                    Checkout
                 </span>
             </div>
-            <div class="box">
-                <div class="options">
-                    <button (click)="removeTip()" class="tip tip-10">
-                        <div class="title">
-                            <span class="global-text normal black bold">
-                                0
-                            </span>
-                        </div>
-                    </button>
-                    <button (click)="addTip(10)" class="tip tip-10">
-                        <div class="title">
-                            <span class="global-text normal black bold">
-                                10%
-                            </span>
-                        </div>
-                    </button>
-                    <button (click)="addTip(20)" class="tip tip-10">
-                        <div class="title">
-                            <span class="global-text normal black bold">
-                                20%
-                            </span>
-                        </div>
-                    </button>
-                    <button (click)="addTip(30)" class="tip tip-10">
-                        <div class="title">
-                            <span class="global-text normal black bold">
-                                30%
-                            </span>
-                        </div>
-                    </button>
+        </div>
+    
+        <div class="not-payment">
+            <div *ngIf="dishes && dishes.length > 0" class="dishes">
+                <div *ngFor="let dish of dishes" class="dish">
+                    <div class="name-container">
+                        <span class="global-text big name black bold">
+                            {{ dish.name }}
+                        </span>
+                        <span class="x">
+                            x
+                        </span>
+                        <span class="global-text amount">
+                            {{ dish.amount }}
+                        </span>
+                    </div>
+                    <div class="price">
+                        <span class="big">
+                            ${{ dish.price / 100 }}
+                        </span>
+                    </div>
                 </div>
-                <div class="amount" *ngIf="money.tip">
-                    <span class="global-text bigger black bold">
-                        + ${{ money.tip }}
+            </div>
+            <div class="money" *ngIf="money">
+                <div class="subtotal">
+                    <div class="title">
+                        <span class="global-text big">
+                            Subtotal
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.subtotal }}
+                        </span>
+                    </div>
+                </div>
+                <div class="service-fee" *ngIf="money.service">
+                    <div class="title">
+                        <span class="global-text big">
+                            Service fee
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.service }}
+                        </span>
+                    </div>
+                </div>
+                <div class="tip" *ngIf="money.tip">
+                    <div class="title">
+                        <span class="global-text big">
+                            Tip
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.tip }}
+                        </span>
+                    </div>
+                </div>
+                <div class="hst">
+                    <div class="title">
+                        <span class="global-text big">
+                            HST
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big">
+                            ${{ money.hst }}
+                        </span>
+                    </div>
+                </div>
+                <div class="total">
+                    <div class="title">
+                        <span class="global-text bigger black bold">
+                            Total
+                        </span>
+                    </div>
+                    <div class="border"></div>
+                    <div class="value">
+                        <span class="global-text big black bold">
+                            ${{ money.total }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div *ngIf="!money || !dishes" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    
+        <div *ngIf="payWithCash" class="request">
+            <button class="orange-button button" (click)="cash()">
+                PAY WITH CASH
+            </button>
+        </div>
+    
+        <div class="payment" *ngIf="payWithCard">
+            <div *ngIf="paymentData.tips" class="tips">
+                <div class="title">
+                    <span class="global-subtitle">
+                        Add tip
                     </span>
                 </div>
-            </div>
-        </div>
-        <div *ngIf="paymentData.paymentMethods && paymentData.paymentMethods.length > 0 && elementsOptions.clientSecret" class="payment-methods">
-            <div class="list">
-                <button (click)="selectPaymentMethod(method)" [class.selected]="method.id == selectedPaymentMethod?.id" *ngFor="let method of paymentData.paymentMethods" class="method">
-                    <div class="last4">
-                        <span class="circles global-text.big.bold">
-                            &#9679;&#9679;&#9679;&#9679;
-                        </span>
-                        <span class="global-text big bold black">
-                            {{ method.last4 }}
+                <div class="tip-box">
+                    <div class="options">
+                        <button (click)="removeTip()" class="tip tip-10">
+                            <div class="title">
+                                <span class="global-text normal black bold">
+                                    0
+                                </span>
+                            </div>
+                        </button>
+                        <button (click)="addTip(10)" class="tip tip-10">
+                            <div class="title">
+                                <span class="global-text normal black bold">
+                                    10%
+                                </span>
+                            </div>
+                        </button>
+                        <button (click)="addTip(20)" class="tip tip-10">
+                            <div class="title">
+                                <span class="global-text normal black bold">
+                                    20%
+                                </span>
+                            </div>
+                        </button>
+                        <button (click)="addTip(30)" class="tip tip-10">
+                            <div class="title">
+                                <span class="global-text normal black bold">
+                                    30%
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="amount" *ngIf="money.tip">
+                        <span class="global-text bigger black bold">
+                            + ${{ money.tip }}
                         </span>
                     </div>
-                    <div class="brand">
-                        <img src="./../../../../../../../global-resources/icons/brands/{{ method.brand }}.png">
-                    </div>
-                </button>
-            </div>
-            <div class="confirm-button">
-                <button (click)="confirm()" class="button orange-button" [disabled]="!selectedPaymentMethod">
-                    PAY <span *ngIf="selectedPaymentMethod">WITH {{ selectedPaymentMethod.last4 }}</span>
-                </button>
-            </div>
-        </div>
-        <ng-container *ngIf="elementsOptions.clientSecret">
-            <div class="manual">
-                <div class="email" *ngIf="showEmailInput">
-                    <div class="label">
-                        <span class="global-text">
-                            Email address
-                        </span>
-                    </div>
-                    <input type="email" [(ngModel)]="email" id="email" class="global-input">
                 </div>
-    
-                <ngx-stripe-payment [elementsOptions]="elementsOptions" [clientSecret]="elementsOptions.clientSecret">
-                </ngx-stripe-payment>
-    
-                <div class="buttons">
-                    <button (click)="confirm()" class="button orange-button">
-                        <span *ngIf="paymentData.payment">
-                            PAY
-                        </span>
-                        <span *ngIf="paymentData.setup">
-                            CONFIRM
-                        </span>
+            </div>
+            <div *ngIf="paymentData.paymentMethods && paymentData.paymentMethods.length > 0 && elementsOptions.clientSecret" class="payment-methods">
+                <div class="list">
+                    <button (click)="selectPaymentMethod(method)" [class.selected]="method.id == selectedPaymentMethod?.id" *ngFor="let method of paymentData.paymentMethods" class="method">
+                        <div class="last4">
+                            <span class="circles global-text.big.bold">
+                                &#9679;&#9679;&#9679;&#9679;
+                            </span>
+                            <span class="global-text big bold black">
+                                {{ method.last4 }}
+                            </span>
+                        </div>
+                        <div class="brand">
+                            <img src="./../../../../../../../global-resources/icons/brands/{{ method.brand }}.png">
+                        </div>
+                    </button>
+                </div>
+                <div class="confirm-button">
+                    <button (click)="confirm()" class="button orange-button" [disabled]="!selectedPaymentMethod">
+                        PAY <span *ngIf="selectedPaymentMethod">WITH {{ selectedPaymentMethod.last4 }}</span>
                     </button>
                 </div>
             </div>
-        </ng-container>
-
-        <div *ngIf="!elementsOptions.clientSecret || loading" class="global-loading full-page">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <ng-container *ngIf="elementsOptions.clientSecret">
+                <div class="manual">
+                    <div class="email" *ngIf="showEmailInput">
+                        <div class="label">
+                            <span class="global-text">
+                                Email address
+                            </span>
+                        </div>
+                        <input type="email" [(ngModel)]="email" id="email" class="global-input">
+                    </div>
+        
+                    <ngx-stripe-payment [elementsOptions]="elementsOptions" [clientSecret]="elementsOptions.clientSecret">
+                    </ngx-stripe-payment>
+        
+                    <div class="buttons">
+                        <button (click)="confirm()" class="button orange-button">
+                            <span *ngIf="paymentData.payment">
+                                PAY
+                            </span>
+                            <span *ngIf="paymentData.setup">
+                                CONFIRM
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+    
+            <div *ngIf="!elementsOptions.clientSecret || loading" class="global-loading full-page">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+    
         </div>
-
     </div>
 </div>
 
