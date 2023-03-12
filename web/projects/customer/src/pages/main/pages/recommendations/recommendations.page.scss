@@ -1,16 +1,22 @@
-.app {
-    display: flex;
-    justify-content: center;
-
+.recommendations-app {
+    
     background-color: var(--default-background);
-
+    
     width: 100%;
     height: 100%;
+    overflow-y: auto;
+    
+    .box-wrap {
+        display: flex;
+        justify-content: center;
+        min-height: 100%;
+        width: 100%;
+    }
 
     .box {
         max-width: 504px;
         width: 100vw;
-        min-height: 100vh;
+        min-height: 100%;
         padding-bottom: 100px;
         
         border-left: 2px solid var(--default-border-color);

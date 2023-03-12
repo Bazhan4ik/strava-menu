@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { StripePaymentElementComponent, StripeService } from 'ngx-stripe';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { StripeElementsOptions } from '@stripe/stripe-js';
+import { StripeElementsOptions, StripePaymentElementOptions } from '@stripe/stripe-js';
 import { NgxStripeModule } from 'ngx-stripe';
 import { firstValueFrom } from 'rxjs';
 import { env } from 'environment/environment';
@@ -41,18 +41,44 @@ export class CheckoutPage implements OnInit {
 
     dishes: Dish[];
     money: {
-        total: number;
-        subtotal: number;
-        hst: number;
-        service: number;
-        tip: number;
+        total: string;
+        subtotal: string;
+        hst: string;
+        service: string;
+        tip: string;
+    }
+
+    tips?: {
+        value10: string;
+        value15: string;
+        value20: string;
+        selected: string;
     }
 
     email: string;
     showEmailInput = false;
 
+    options: Partial<StripePaymentElementOptions> = {
+        fields: {
+            billingDetails: {
+                address: "never",
+            }
+        }
+    }
+
     elementsOptions: StripeElementsOptions = {
         locale: "en-CA",
+
+        appearance: {
+            "theme": "stripe",
+            disableAnimations: true,
+            variables: {
+                "colorPrimary": "#FFC409",
+                "borderRadius": "4px",
+                "focusOutline": "2px solid #FFC409",
+                // "focusBoxShadow": "none",
+            },
+        }
     };
 
     paymentData: PaymentData;
@@ -77,17 +103,21 @@ export class CheckoutPage implements OnInit {
 
 
     async confirm() {
+        if (!this.email) {
+            return;
+        }
+
         this.loading = true;
-        
+
         this.service.$payments.subscribe(async data => {
-            if(data.types.includes("payment/succeeded")) {
+            if (data.types.includes("payment/succeeded")) {
                 window.location.href = `${env.customerUrl}/${this.service.restaurant.id}/${this.service.locationId}/order/tracking`;
             }
         });
 
-        if(this.paymentData.payment) {
+        if (this.paymentData.payment) {
 
-            if(this.selectedPaymentMethod) {
+            if (this.selectedPaymentMethod) {
                 const result = await firstValueFrom(
                     this.stripeService.confirmCardPayment(this.paymentData.clientSecret, { payment_method: this.selectedPaymentMethod.id })
                 )
@@ -104,8 +134,8 @@ export class CheckoutPage implements OnInit {
                     }
                 })
             );
-    
-            if(result.error) {
+
+            if (result.error) {
                 this.loading = false;
                 console.error(" ON EEEEEEEEEEEERORRORORROORORO ");
             }
@@ -119,14 +149,14 @@ export class CheckoutPage implements OnInit {
                 elements: this.paymentElement.elements,
                 redirect: 'if_required',
             })
-        );        
+        );
 
     }
 
     async cash() {
-        const result: any = await this.service.put({ }, "session/request/cash");
+        const result: any = await this.service.put({}, "session/request/cash");
 
-        if(!result.updated) {
+        if (!result.updated) {
             return;
         }
 
@@ -137,7 +167,7 @@ export class CheckoutPage implements OnInit {
         component.instance.request = result.request;
 
         component.instance.leave.subscribe((redirect: boolean) => {
-            if(redirect) {
+            if (redirect) {
                 window.location.href = `${env.customerUrl}/${this.service.restaurant.id}/${this.service.locationId}/order/tracking`;
             }
             component.destroy();
@@ -149,28 +179,66 @@ export class CheckoutPage implements OnInit {
         this.selectedPaymentMethod = method;
     }
 
-    async removeTip() {
-        const old = this.money.tip;
-        this.money.total = +(this.money.total - this.money.tip).toFixed(2);
-        this.money.tip = null!;
+    /**
+     * 
+     * @param amount amount of the tip, for example $5 would be 500 cents 
+     * @param percentage percentage of the tip. should be saved so then when checkout reloaded tip option will be selected
+     * @returns the tip amount which is % 25 == 0
+     */
+    calculateTip(amount: number, percentage: number): number {
+        const result = amount * (percentage / 100);
+        const remainder = result % 25;
 
-        const update: any = await this.service.delete("session/tip");
-        
-        if(!update.updated) {
-            this.money.tip = old;
-            this.money.total = +(this.money.total + this.money.tip).toFixed(2);
+        if (remainder >= 12.5) {
+            return result + (25 - remainder);
+        } else {
+            return result - remainder;
         }
     }
-    async addTip(amount: number) {
-        this.money.total -= this.money.tip;
-        this.money.tip = Number((this.money.subtotal * amount / 100).toFixed(2));
-        this.money.total = +(this.money.total + this.money.tip).toFixed(2);
 
-        const update: any = await this.service.put({ amount }, "session/tip");
+    async removeTip() {
+        const old = this.money.tip;
+        this.money.total = (+this.money.total - +this.money.tip).toFixed(2);
+        this.money.tip = null!;
+        this.tips!.selected = null!;
 
-        if(!update.updated) {
+        const update: any = await this.service.delete("session/tip");
+
+        if (!update.updated) {
+            this.money.tip = old;
+            this.money.total = (+this.money.total + +this.money.tip).toFixed(2);
+        }
+    }
+    async addTip(percentage: number) {
+        const amount = this.calculateTip(+this.money.subtotal * 100, percentage);
+
+        this.money.tip = (amount / 100).toFixed(2);
+        this.tips!.selected = percentage.toString();
+        
+
+        const update: any = await this.service.put({ amount: amount, percentage: percentage }, "session/tip");
+
+        if (!update.updated) {
             this.money.tip = null!;
         }
+    }
+    async customTip() {
+        const { CustomTipModal } = await import("./../../components/custom-tip/custom-tip.modal");
+
+        const component = this.modalContainer.createComponent(CustomTipModal);
+
+        component.instance.leave.subscribe(async (amount: number) => {
+            if (amount) {
+                const update: { updated: boolean; } = await this.service.put({ amount: +amount.toFixed(2) * 100 }, "session/tip");
+
+                if (update.updated) {
+                    this.tips!.selected = "custom";
+                    this.money.tip = amount.toFixed(2);
+                }
+
+            }
+            component.destroy();
+        });
     }
 
     async ngOnInit() {
@@ -180,17 +248,18 @@ export class CheckoutPage implements OnInit {
             email: string,
             payWithCash: boolean;
             payWithCard: boolean;
-            paymentData: PaymentData
+            paymentData: PaymentData;
+            selectedTip: string;
         } = null!;
 
 
         try {
             result = await this.service.get({}, "session/checkout");
         } catch (e: any) {
-            if(e.status == 403) {
-                if(e.error.reason == "PaymentState") {
+            if (e.status == 403) {
+                if (e.error.reason == "PaymentState") {
                     console.error("PAYED");
-                } else if(e.error.reason == "InvalidAmount") {
+                } else if (e.error.reason == "InvalidAmount") {
                     this.router.navigate([this.service.restaurant.id, this.service.locationId, "p"]);
                 }
             }
@@ -200,18 +269,18 @@ export class CheckoutPage implements OnInit {
         this.payWithCard = result.payWithCard;
         this.payWithCash = result.payWithCash;
         this.paymentData = result.paymentData;
-        
-        this.money = {
-            tip: +(result.money.tip / 100).toFixed(2),
-            subtotal: +(result.money.subtotal / 100).toFixed(2),
-            total: +(result.money.total / 100).toFixed(2),
-            service: +(result.money.service / 100).toFixed(2),
-            hst: +(result.money.hst / 100).toFixed(2),
-        };
+
+        this.money = result.money;
+        this.tips = {
+            value10: (this.calculateTip(+this.money.subtotal * 100, 10) / 100).toFixed(2),
+            value15: (this.calculateTip(+this.money.subtotal * 100, 15) / 100).toFixed(2),
+            value20: (this.calculateTip(+this.money.subtotal * 100, 20) / 100).toFixed(2),
+            selected: result.selectedTip
+        }
         this.dishes = result.dishes;
         this.elementsOptions.clientSecret = result.paymentData.clientSecret;
 
-        if(result.email) {
+        if (result.email) {
             this.showEmailInput = false;
             this.email = result.email;
         } else {

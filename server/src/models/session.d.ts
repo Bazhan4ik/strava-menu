@@ -73,6 +73,7 @@ interface SessionPayment {
     setupIntentId?: string; // stripe setup intent id to not generate it everytime
     paymentMethodId?: string;
     payed: boolean;
+    selectedTipPercentage: number;
     money?: {
         hst: number; // tax amount
         subtotal: number; // subtotal, dishes price

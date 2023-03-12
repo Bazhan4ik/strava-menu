@@ -513,9 +513,9 @@ router.put("/table", customerRestaurant({ locations: { id: 1, _id: 1 }, tables: 
 
 router.put("/tip", customerRestaurant({ locations: { _id: 1, id: 1, settings: { tips: 1, } } }), customerSession({ info: { location: 1 }, payment: { money: { subtotal: 1 } } }, {}), async (req, res) => {
     const { session, restaurant } = res.locals as Locals;
-    const { amount } = req.body;
+    const { amount, percentage } = req.body;
 
-    if(typeof amount != "number") {
+    if(typeof amount != "number" || isNaN(amount) || (percentage && (typeof percentage != "number" || isNaN(percentage)))) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
 
@@ -549,7 +549,7 @@ router.put("/tip", customerRestaurant({ locations: { _id: 1, id: 1, settings: { 
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "payment.money.tip": session.payment.money.subtotal * amount / 100 } },
+        { $set: { "payment.money.tip": amount, "payment.selectedTipPercentage": percentage || "custom" } },
         { projection: { _id: 1 } }
     );
 
@@ -562,7 +562,7 @@ router.delete("/tip", customerRestaurant({}), customerSession({}, {}), async (re
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "payment.money.tip": null! } },
+        { $set: { "payment.money.tip": null!, "payment.selectedTipPercentage": null! } },
         { projection: { _id: 1 } }
     );
 
@@ -573,7 +573,7 @@ router.delete("/tip", customerRestaurant({}), customerSession({}, {}), async (re
 
 
 class AmountAndDishes {
-    money!: { subtotal: number; hst: number; total: number; service: number; };
+    money!: { subtotal: number; hst: number; total: number; tip: number; service: number; };
     dishes!: { name: string; amount: number; price: number; }[];
 }
 class ErrorResult {
@@ -632,7 +632,7 @@ router.get("/checkout",
             if(session.dishes.length == 0) {
                 return { status: 500, reason: "InvalidDishes" };
             }
-            const result = await calculateAmount(restaurant._id, session.dishes, session.payment?.money?.tip, location.settings.serviceFee!);
+            const result = await calculateAmount(restaurant._id, session.dishes, session.payment?.selectedTipPercentage, session.payment?.money?.tip, location.settings.serviceFee!);
 
             if (!result) {
                 return { status: 500, reason: "InvalidDishes" };
@@ -770,20 +770,27 @@ router.get("/checkout",
         }
 
         res.send({
-            money,
+            money: {
+                hst: (money.hst / 100).toFixed(2),
+                subtotal: (money.subtotal / 100).toFixed(2),
+                tip: (money.tip / 100).toFixed(2),
+                service: (money.service / 100).toFixed(2),
+                total: (money.total / 100).toFixed(2),
+            },
             dishes,
             payWithCard: location.settings.methods?.card,
             payWithCash: location.settings.methods?.cash && session.info.type != "takeout",
             email: user?.info?.email,
+            selectedTip: session.payment?.selectedTipPercentage,
             paymentData: {
                 tips: location.settings.tips,
                 paymentMethods: paymentData?.paymentMethods,
-                // setup: !!paymentData?.setupIntentClientSecret,
                 setup: false,
-                // payment: !paymentData?.setupIntent && !!paymentData?.paymentIntentId,
                 payment: true,
-                // clientSecret: paymentData?.setupIntentClientSecret || paymentData?.paymentIntentClientSecret,
                 clientSecret: paymentData?.paymentIntentClientSecret,
+                // clientSecret: paymentData?.setupIntentClientSecret || paymentData?.paymentIntentClientSecret,
+                // payment: !paymentData?.setupIntent && !!paymentData?.paymentIntentId,
+                // setup: !!paymentData?.setupIntentClientSecret,
             }
         });
 
@@ -905,8 +912,16 @@ export {
 
 
 
-
-async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: number = 0, serviceFee?: { amount: number; type: 1 | 2 }) {
+/**
+ * 
+ * @param restaurantId 
+ * @param ds - selected dishes, should be provided to get dishes' prices and calculate money
+ * @param tipPercentage - if tip added, and tip is some percents it should be recalculated because of new dishes could be added or removed
+ * @param tip - amount of tip, if it was custom, it will not be recalculated
+ * @param serviceFee - restaurant's service fee
+ * @returns AmountAndDishes || ErrorResult
+ */
+async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tipPercentage: number = 0, tip: number = 0, serviceFee?: { amount: number; type: 1 | 2 }) {
     const dishesId: ObjectId[] = [];
 
 
@@ -952,7 +967,8 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
 
     const hst = subtotal * 0.13;
     const service = serviceFee ? serviceFee?.type == 1 ? serviceFee.amount : subtotal * serviceFee.amount / 100 : null!;
-    const total = hst + subtotal + (service || 0) + tip;
+    const tipAmount = tipPercentage ? calculateTip(subtotal, tipPercentage) : null!;
+    const total = hst + subtotal + (service || 0) + (tipAmount || tip);
 
     return {
         money: {
@@ -960,7 +976,7 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
             hst: +hst.toFixed(2),
             total: +total.toFixed(2),
             service: +service.toFixed(2),
-            tip: +Math.floor(tip),
+            tip: +Math.floor(tipAmount || tip),
         },
         dishes: Array.from(map.values()),
     };
@@ -1009,5 +1025,23 @@ async function createPaymentIntent(data: {
             console.error("at session.ts createPaymentIntent() create");
             throw e;
         }
+    }
+}
+
+
+/**
+ * 
+ * @param amount amount of the tip, for example $5 would be 500 cents 
+ * @param percentage percentage of the tip. should be saved so then when checkout reloaded tip option will be selected
+ * @returns the tip amount which is % 25 == 0
+ */
+function calculateTip(amount: number, percentage: number): number {
+    const result = amount * (percentage / 100);
+    const remainder = result % 25;
+
+    if (remainder >= 12.5) {
+        return result + (25 - remainder);
+    } else {
+        return result - remainder;
     }
 }

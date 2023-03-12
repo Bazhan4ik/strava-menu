@@ -1,88 +1,90 @@
-<div class="app">
-    <div class="box">
-        <div class="header">
-            <a id="back-button" type="button" [routerLink]="backUrl"  class="icon-button">
-                <mat-icon>arrow_back</mat-icon>
-            </a>
-            <div class="image">
-                <img [src]="imageUrl" alt="">
+<div class="full-dish-app">
+    <div class="box-wrap">
+        <div class="box">
+            <div class="header">
+                <a id="back-button" type="button" [routerLink]="backUrl"  class="icon-button">
+                    <mat-icon>arrow_back</mat-icon>
+                </a>
+                <div class="image">
+                    <img [src]="imageUrl" alt="">
+                </div>
             </div>
-        </div>
-        <div class="dish" *ngIf="dish">
-
-            <!-- DISH INFO -->
-            <div class="info">
-                <div class="name-price">
-                    <div class="name">
-                        <span class="name global-text huge black bold">
-                            {{ dish.info.name }}
-                        </span>
-                    </div>
-                    <div class="price">
-                        <span class="price global-text big">
-                            ${{ dish.info.price / 100 }}
-                        </span>
-                    </div>
-                </div>
-                <div class="description">
-                    <span class="global-text">
-                        {{ dish.info.description }}
-                    </span>
-                </div>
+            <div class="dish" *ngIf="dish">
     
-                <div *ngIf="!dish" class="name-description-buy">
-                    <div class="global-loading height-124">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                <!-- DISH INFO -->
+                <div class="info">
+                    <div class="name-price">
+                        <div class="name">
+                            <span class="name global-text huge black bold">
+                                {{ dish.info.name }}
+                            </span>
+                        </div>
+                        <div class="price">
+                            <span class="price global-text big">
+                                ${{ dish.info.price / 100 }}
+                            </span>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <!-- DISH INFO END -->
-
-            <!-- BUY SECTION -->
-            <div class="buy" *ngIf="dish">
-                <div class="buy-button">
-                    <div class="comment">
-                        <button (click)="comment()" class="circle-button comment">
-                            <mat-icon>textsms</mat-icon>
-                        </button>
-                    </div>
-                    <div class="count">
+                    <div class="description">
                         <span class="global-text">
-                            {{ amount }} in cart
+                            {{ dish.info.description }}
                         </span>
                     </div>
-                    <div class="buttons">
-                        <button (click)="remove()" [disabled]="removing.loading || adding.loading || amount == 0" class="circle-button remove">
-                            <mat-icon *ngIf="!removing.loading && !removing.removed">remove</mat-icon>
-                            <div *ngIf="removing.loading" class="global-loading small">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                            <mat-icon *ngIf="removing.removed">done</mat-icon>
-                        </button>
-                        <button (click)="add()" [disabled]="removing.loading || adding.loading" class="circle-button add">
-                            <mat-icon *ngIf="!adding.loading && !adding.added">add</mat-icon>
-                            <div *ngIf="adding.loading" class="global-loading small">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                            <mat-icon *ngIf="adding.added">done</mat-icon>
-                        </button>
+        
+                    <div *ngIf="!dish" class="name-description-buy">
+                        <div class="global-loading height-124">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
                     </div>
                 </div>
+                <!-- DISH INFO END -->
+    
+                <!-- BUY SECTION -->
+                <div class="buy" *ngIf="dish">
+                    <div class="buy-button">
+                        <div class="comment">
+                            <button (click)="comment()" class="circle-button comment">
+                                <mat-icon>textsms</mat-icon>
+                            </button>
+                        </div>
+                        <div class="count">
+                            <span class="global-text">
+                                {{ amount }} in cart
+                            </span>
+                        </div>
+                        <div class="buttons">
+                            <button (click)="remove()" [disabled]="removing.loading || adding.loading || amount == 0" class="circle-button remove">
+                                <mat-icon *ngIf="!removing.loading && !removing.removed">remove</mat-icon>
+                                <div *ngIf="removing.loading" class="global-loading small">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                                <mat-icon *ngIf="removing.removed">done</mat-icon>
+                            </button>
+                            <button (click)="add()" [disabled]="removing.loading || adding.loading" class="circle-button add">
+                                <mat-icon *ngIf="!adding.loading && !adding.added">add</mat-icon>
+                                <div *ngIf="adding.loading" class="global-loading small">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                                <mat-icon *ngIf="adding.added">done</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- BUY SECTION END -->
+    
             </div>
-            <!-- BUY SECTION END -->
-
-        </div>
-        <div *ngIf="collection && collection.dishes.length > 0" class="recommendations">
-            <app-collection [collection]="collection" [goDown]="true" [small]="true"></app-collection>
+            <div *ngIf="collection && collection.dishes.length > 0" class="recommendations">
+                <app-collection [collection]="collection" [goDown]="true" [small]="true"></app-collection>
+            </div>
         </div>
     </div>
 </div>
