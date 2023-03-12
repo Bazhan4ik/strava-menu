@@ -1,6 +1,7 @@
-.app {
+.collection-app {
     display: flex;
     justify-content: center;
+    overflow-x: hidden;
 
     background-color: var(--default-background);
 
@@ -48,7 +49,7 @@
 }
 
 @media screen and (max-width: 624px) {
-    .app {
+    .collection-app {
         .box {
             border: none;
         }

@@ -1,6 +1,7 @@
 .preview-app {
     height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     
     .box-wrap {
         min-height: 100%;
@@ -225,8 +226,9 @@
 }
 
 @media screen and (max-width: 640px) {
-    .app {
+    .preview-app {
         .box {
+            border: none;
             .dishes {
                 .dish {
                     .right {

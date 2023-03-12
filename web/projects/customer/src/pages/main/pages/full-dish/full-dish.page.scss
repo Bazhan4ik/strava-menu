@@ -2,6 +2,7 @@
     height: 100%;
     width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     
     .box-wrap {
         width: 100%;
@@ -126,9 +127,12 @@
 
 
 @media screen and (max-width: 640px) {
-    .app {
-        .box {
-            border: none;
+    .full-dish-app {
+        .box-wrap {
+            .box {
+                border-left: none;
+                border-right: none;
+            }
         }
     }
 }
