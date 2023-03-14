@@ -44,6 +44,7 @@
     
                 <!-- BUY SECTION -->
                 <div class="buy" *ngIf="dish">
+                    <ng-container #modifiersContainer></ng-container>
                     <div class="buy-button">
                         <div class="comment">
                             <button (click)="comment()" class="circle-button comment">

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import sharp from "sharp";
-import { Dish } from "../../../models/dish.js";
+import { Dish, Modifier } from "../../../models/dish.js";
 import { Locals } from "../../../models/general.js";
 import { Collection } from "../../../models/restaurant.js";
 import { addDish, deleteDish, getDish, getDishes, updateDish } from "../../../utils/dishes.js";
@@ -47,7 +47,8 @@ router.post("/", logged(), restaurantWorker({}, { dishes: { adding: true } }), a
         id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase(),
         _id: id(),
         ingredients: null!,
-        tags: null!,
+        tags: [],
+        modifiers: [],
     };
     
 
@@ -143,7 +144,39 @@ router.get("/:dishId", logged(), restaurantWorker({ collections: { name: 1, imag
         return res.status(404).send({ reason: "DishIdNotProvided" });
     }
 
+    const getSelectTitle = (modifier: Modifier) => {
+        if(modifier.amountToSelect == "more") {
+            return `More than ${modifier.amountOfOptions} options`;
+        } else if(modifier.amountToSelect == "less") {
+            return `Up to ${modifier.amountOfOptions} options`;
+        } else if(modifier.amountToSelect == "one") {
+            return "Just one";
+        }
+    }
+    const getModifiers = () => {
 
+        if(!dish?.modifiers) {
+            return [];
+        }
+
+        
+        const result = [];
+        for(const modifier of dish!.modifiers) {
+            const options = [];
+            for(const option of modifier.options) {
+                options.push({
+                    ...option,
+                    price: option.price / 100,
+                });
+            }
+            result.push({
+                ...modifier,
+                options,
+                toSelectTitle: getSelectTitle(modifier),
+            });
+        }
+        return result;
+    }
     const getLastWeek = () => {
         // date of last week's day but random time
         const date = new Date(Date.now() - 604_800_000);
@@ -167,7 +200,7 @@ router.get("/:dishId", logged(), restaurantWorker({ collections: { name: 1, imag
     }
     
 
-    const dish = await getDish(restaurant._id, { id: dishId }, { projection: { _id: 1, status: 1, info: 1, library: 1, id: 1, tags: 1, ingredients: 1 } });
+    const dish = await getDish(restaurant._id, { id: dishId }, { projection: { _id: 1, modifiers: 1, status: 1, info: 1, library: 1, id: 1, tags: 1, ingredients: 1 } });
     
     
     if(!dish) {
@@ -194,6 +227,7 @@ router.get("/:dishId", logged(), restaurantWorker({ collections: { name: 1, imag
         library: dish.library,
         tags: dish.tags ? getTags(dish.tags) : null,
         ingredients: dish.ingredients ? getIngredients(dish.ingredients) : null,
+        modifiers: getModifiers(),
     };
 
     const collections = [];
@@ -401,6 +435,150 @@ router.put("/:dishId/visibility", logged(), restaurantWorker({ }, { dishes: { ad
 
     res.send({ updated: update.ok == 1 });
 });
+
+
+
+
+
+
+router.post("/:dishId/modifier", logged(), restaurantWorker({ }, { dishes: { adding: true } }), async (req, res) => {
+    const { dishId } = req.params;
+    const { modifier } = <{ modifier: Modifier }>req.body;
+    const { restaurant } = res.locals as Locals;
+
+    if(!modifier) {
+        return res.status(400).send({ reason: "ModifierNotProvided" });
+    }
+
+    const wrongName = !modifier.name || modifier.name.length < 2;
+    const wrongAmountOptions = !modifier.amountToSelect || !["less", "more", "one"].includes(modifier.amountToSelect);
+    const shouldntBeLessThan2IfLess = (modifier.amountToSelect == "less" && modifier.amountOfOptions < 2);
+    const shouldntBeMoreThanOptionsIfMore = (modifier.amountToSelect == "more" && modifier.amountOfOptions >= modifier.options.length);
+    const shouldBeOneIfOne = (modifier.amountToSelect == "one" && modifier.amountOfOptions != 1);
+    const wrongOptionsAmount = !modifier.amountOfOptions || modifier.amountOfOptions < 1 || shouldntBeLessThan2IfLess || shouldntBeMoreThanOptionsIfMore;
+    const wrongRequired = typeof modifier.required != "boolean";
+    const wrongOptions = !modifier.options || modifier.options.length < 2;
+
+    if(wrongName || wrongAmountOptions || wrongOptionsAmount || wrongOptions || shouldBeOneIfOne || wrongRequired) {
+        return res.status(400).send({ reason: "InvalidModifier" });
+    }
+    for(const option of modifier.options) {
+        if(!option.name || option.name.length < 2 || (option.price && typeof option.price != "number")) {
+            return res.status(400).send({ reason: "InvalidModifier" });
+        }
+        if(option.price) {
+            option.price = Math.floor(option.price * 100);
+        }
+        option._id = id();
+    }
+
+    modifier._id = id();
+
+    const update = await updateDish(restaurant._id, { id: dishId }, { $push: { modifiers: modifier } }, { projection: {} });
+
+
+    const getSelectTitle = () => {
+        if(modifier.amountToSelect == "more") {
+            return `More than ${modifier.amountOfOptions} options`;
+        } else if(modifier.amountToSelect == "less") {
+            return `Up to ${modifier.amountOfOptions} options`;
+        } else if(modifier.amountToSelect == "one") {
+            return "Just one";
+        }
+    }
+
+    res.send({ updated: update.ok == 1, modifier: {...modifier, toSelectTitle: getSelectTitle() } });
+});
+router.put("/:dishId/modifier", logged(), restaurantWorker({ }, { dishes: { adding: true } }), async (req, res) => {
+    const { dishId } = req.params;
+    const { modifier } = <{ modifier: Modifier }>req.body;
+    const { restaurant } = res.locals as Locals;
+
+    if(!modifier) {
+        return res.status(400).send({ reason: "ModifierNotProvided" });
+    }
+    
+    if(!modifier._id) {
+        return res.status(400).send({ reason: "NoModifierId" });
+    }
+
+    const wrongName = !modifier.name || modifier.name.length < 2;
+    const wrongAmountOptions = !modifier.amountToSelect || !["less", "more", "one"].includes(modifier.amountToSelect);
+    const shouldntBeLessThan2IfLess = (modifier.amountToSelect == "less" && modifier.amountOfOptions < 2);
+    const shouldntBeMoreThanOptionsIfMore = (modifier.amountToSelect == "more" && modifier.amountOfOptions >= modifier.options.length);
+    const shouldBeOneIfOne = (modifier.amountToSelect == "one" && modifier.amountOfOptions != 1);
+    const shouldntBeEqualIfMoreThanOptionsLength = (modifier.amountToSelect == "more" && modifier.amountOfOptions > modifier.options.length);
+    const wrongOptionsAmount = !modifier.amountOfOptions || modifier.amountOfOptions < 1 || shouldntBeLessThan2IfLess || shouldntBeMoreThanOptionsIfMore;
+    const wrongRequired = typeof modifier.required != "boolean";
+    const wrongOptions = !modifier.options || modifier.options.length < 2;
+
+    if(wrongName || wrongAmountOptions || wrongOptionsAmount || shouldntBeEqualIfMoreThanOptionsLength || wrongOptions || shouldBeOneIfOne || wrongRequired) {
+        return res.status(400).send({ reason: "InvalidModifier" });
+    }
+    for(const option of modifier.options) {
+        if(!option.name || option.name.length < 2 || (option.price && typeof option.price != "number")) {
+            return res.status(400).send({ reason: "InvalidModifier" });
+        }
+        if(option.price) {
+            option.price = Math.floor(option.price * 100);
+        }
+
+        if(option._id) {
+            option._id = id(option._id);
+        } else {
+            option._id = id();
+        }
+
+    }
+
+    modifier._id = id(modifier._id);
+
+    const update = await updateDish(
+        restaurant._id,
+        { id: dishId },
+        { $set: { "modifiers.$[modifier]": modifier } },
+        { projection: { _id: 1 }, arrayFilters: [{ "modifier._id": modifier._id, }] }
+    );
+
+
+    const getSelectTitle = () => {
+        if(modifier.amountToSelect == "more") {
+            return `More than ${modifier.amountOfOptions} options`;
+        } else if(modifier.amountToSelect == "less") {
+            return `Up to ${modifier.amountOfOptions} options`;
+        } else if(modifier.amountToSelect == "one") {
+            return "Just one";
+        }
+    }
+
+    res.send({ updated: update.ok == 1, modifier: {...modifier, options: modifier.options.map(o => { return { ...o, price: o.price / 100 } }), toSelectTitle: getSelectTitle() } });
+});
+router.delete("/:dishId/modifier/:modifierId", logged(), restaurantWorker({ }, { dishes: { adding: true } }), async (req, res) => {
+    const { dishId, modifierId } = req.params;
+    const { restaurant } = res.locals as Locals;
+
+    if(modifierId.length != 24) {
+        return res.status(400).send({ reason: "InvalidModifierId" });
+    }
+
+    const update = await updateDish(
+        restaurant._id,
+        { id: dishId },
+        { $pull: { modifiers: { _id: id(modifierId) } } },
+        { projection: { _id: 1 } },
+    );
+
+    res.send({ updated: update.ok == 1 });
+});
+
+
+
+
+
+
+
+
+
 router.delete("/:dishId", logged(), restaurantWorker({ }, { dishes: { removing: true } }), async (req, res) => {
     const { dishId } = req.params; // OBJECT ID HERE
     const { restaurant } = res.locals as Locals;

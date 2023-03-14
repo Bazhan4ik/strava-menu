@@ -7,9 +7,8 @@ import { getDish, getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { customerSession } from "../../utils/middleware/customerSession.js";
 import { customerRestaurant } from "../../utils/middleware/customerRestaurant.js";
-import { getSessions } from "../../utils/sessions.js";
+import { getSession, getSessions } from "../../utils/sessions.js";
 import { SessionRouter } from "./session.js";
-
 
 
 
@@ -51,6 +50,7 @@ const projections = {
             price: 1,
             description: 1,
         },
+        modifiers: 1,
     },
 }
 
@@ -342,8 +342,54 @@ router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (re
 
     const dish = await getDish(restaurant._id, { id: dishId }, { projection: projections.customerDish });
 
+    
     if (!dish) {
         return res.status(404).send({ reason: "DishNotFound" });
+    }
+    if(!dish.modifiers) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const getModifierSubtitle = (o: string, a: number) => {
+        if(o == "less") {
+            return `Up to ${a}`;
+        } else if(o == "more") {
+            return `At least ${a}`;
+        } else if(o == "one") {
+            return null!;
+        } else if(o == "equal") {
+            return `Choose ${a} options`;
+        }
+        return null!;
+    }
+    const getModifiers = () => {
+        const result: {
+            title: string;
+            subtitle: string;
+
+            _id: ObjectId;
+            required: boolean;
+            toSelect: number;
+            toSelectAmount: string;
+        
+            options: {
+                name: string;
+                price: number;
+                _id: ObjectId;
+            }[];
+        }[] = [];
+        for(const modifier of dish.modifiers!) {
+            result.push({
+                toSelect: modifier.amountOfOptions,
+                toSelectAmount: modifier.amountToSelect,
+                subtitle: getModifierSubtitle(modifier.amountToSelect, modifier.amountOfOptions),
+                options: modifier.options,
+                required: modifier.required,
+                _id: modifier._id,
+                title: modifier.name,
+            });
+        }
+        return result;
     }
 
     const result: any = {
@@ -355,12 +401,12 @@ router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (re
             },
             _id: dish._id,
             id: dish.id,
+            modifiers: getModifiers()
         }
     }
 
     if (c && typeof c == "string") {
         let collection: Collection = null!;
-
 
 
         for (let coll of restaurant.collections) {
@@ -369,32 +415,6 @@ router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (re
                 break;
             }
         }
-
-        // if (collection) {
-        //     const dishes = await getDishes(restaurant._id, { _id: { $in: collection.dishes, $ne: dish._id, } }, { projection: projections.collections.badQuality }).toArray();
-
-        //     const convertedDishes = [];
-
-        //     for (let dish of dishes) {
-        //         if (convertedDishes.length == 5) {
-        //             break;
-        //         }
-        //         convertedDishes.push({
-        //             name: dish.info.name,
-        //             price: dish.info.price,
-        //             id: dish.id,
-        //             library: dish.library?.list[0],
-        //             _id: dish._id,
-        //         });
-        //     }
-
-        //     result.collection = {
-        //         dishes: convertedDishes,
-        //         title: collection.name,
-        //         id: collection.id,
-        //         redirectable: dishes.length > 5
-        //     };
-        // }
 
     }
 
@@ -434,6 +454,108 @@ router.get("/dishes/:dishId/image", async (req, res) => {
     res.send(null);
 });
 
+router.get("/modifiers", customerRestaurant({ }), async (req, res) => {
+    const { restaurant } = res.locals as Locals;
+    const { sessionDishId, dishId } = req.query;
+
+    if(typeof sessionDishId != "string" || sessionDishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidSessionDishId" });
+    }
+    if(typeof dishId != "string" || dishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidDishId" });
+    }
+
+
+    const session = await getSession(
+        restaurant._id,
+        { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
+        { projection: { dishes: { _id: 1, modifiers: 1 } } },
+    );
+
+    if(!session) {
+        return res.status(404).send({ reason: "SesssionNotFound" });
+    }
+
+    const getModifierSubtitle = (o: string, a: number) => {
+        if(o == "less") {
+            return `Up to ${a}`;
+        } else if(o == "more") {
+            return `At least ${a}`;
+        } else if(o == "one") {
+            return null!;
+        } else if(o == "equal") {
+            return `Choose ${a} options`;
+        }
+        return null!;
+    }
+    const getSelectedModifiers = () => {
+        for(const dish of session.dishes) {
+            if(dish._id.equals(sessionDishId)) {
+                return dish.modifiers || [];
+            }
+        }
+        return null;
+    }
+
+    const modifiers = getSelectedModifiers();
+
+    if(!modifiers) {
+        return res.status(400).send({ reason: "ModifiersNotFound" });
+    }
+
+    if(modifiers.length == 0) {
+        return res.send({ modifiers: [] });
+    }
+
+    const dish = await getDish(
+        restaurant._id,
+        { _id: id(dishId) },
+        { projection: { modifiers: 1 } }
+    );
+
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+    if(!dish.modifiers) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const result = [];
+
+    for(const modifier of dish.modifiers) {
+        let added = false;
+        for(const dishModifier of modifiers) {
+            if(dishModifier._id.equals(modifier._id)) {
+                added = true;
+                result.push({
+                    toSelect: modifier.amountOfOptions,
+                    toSelectAmount: modifier.amountToSelect,
+                    subtitle: getModifierSubtitle(modifier.amountToSelect, modifier.amountOfOptions),
+                    options: modifier.options,
+                    required: modifier.required,
+                    _id: modifier._id,
+                    title: modifier.name,
+                    selected: dishModifier.selected || [],
+                });
+            }   
+        }
+        if(!added) {
+            result.push({
+                toSelect: modifier.amountOfOptions,
+                toSelectAmount: modifier.amountToSelect,
+                subtitle: getModifierSubtitle(modifier.amountToSelect, modifier.amountOfOptions),
+                options: modifier.options,
+                required: modifier.required,
+                _id: modifier._id,
+                title: modifier.name,
+                selected: [],
+            });
+        }
+    }
+    
+
+    res.send({ selected: result, modifiers: dish.modifiers });
+});
 
 router.get("/collections/:collectionId", customerRestaurant({ collections: 1 }), async (req, res) => {
     const { collectionId } = req.params;

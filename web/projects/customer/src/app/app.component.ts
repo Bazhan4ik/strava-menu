@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { NavigationEnd, NavigationStart, Router, Scroll } from '@angular/router';
-import { Subscription, pairwise, first, filter } from "rxjs";
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { pairwise, } from "rxjs";
 
 
 
@@ -25,16 +25,6 @@ export class AppComponent implements OnInit {
     
     
     ngOnInit() {
-        this.router.events
-            .pipe(pairwise())
-            .subscribe(([ev1, ev2]) => {
-                if(ev1 instanceof NavigationStart && ev2 instanceof NavigationEnd) {
-                    
-                    console.log("START AND ENd");
-                    
 
-                    window.scrollTo(0, 0)
-                }
-            });
     }
 }

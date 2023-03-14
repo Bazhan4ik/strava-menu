@@ -53,6 +53,8 @@ interface SessionDish {
         id?: string; // for staff to track the dish easier
     }
 
+    modifiers?: { _id: ObjectId; selected: ObjectId[]; }[];
+
 
     timing?: {
         taken?: number; // the the dish was taken to cook

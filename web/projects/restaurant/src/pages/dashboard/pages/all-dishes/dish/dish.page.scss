@@ -93,6 +93,54 @@
 
             }
         }
+
+        .modifiers {
+            margin-top: 24px;
+
+            .header {
+                padding: 8px 0;
+                border-bottom: 1px solid var(--default-border-color);
+            }
+
+            .body {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                padding-top: 12px;
+
+                .modifier {
+                    border-radius: var(--default-border-radius);
+                    border: 1px solid var(--default-border-color);
+                    padding: 12px;
+
+                    .name-buttons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .name {
+                            .requirement {
+                                color: var(--red);
+                            }
+                        }
+                        .buttons {
+                            display: flex;
+                            align-items: center;
+                        }
+                    }
+
+                    .options {
+                        .option {
+                            height: 28px;
+                            border-bottom: 1px solid var(--light-border-color);
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

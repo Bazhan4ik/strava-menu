@@ -45,6 +45,7 @@ export class PreviewPage implements OnInit {
     settings: Settings;
     address: string;
 
+    loading: boolean = false;
 
     errors = {
         dishes: false,
@@ -76,6 +77,31 @@ export class PreviewPage implements OnInit {
                 component.destroy();
             });
         });
+    }
+
+    async updateModifiers(dish: Dish) {
+        const { ModifiersModalModal } = await import("./../../components/modifiers-modal/modifiers-modal.modal");
+
+        const component = this.modalContainer.createComponent(ModifiersModalModal);
+
+        component.instance.dishId = dish.dishObjectId;
+        component.instance.sessionDishId = dish._id;
+
+        component.instance.leave.subscribe(async (m: any) => {
+            if(m) {
+
+                const update: any = await this.service.put({ modifiers: m }, "session/dish", dish._id, `modifiers?dishId=${dish.dishObjectId}`);
+
+                if(update.updated) {
+                    this.subtotal -= dish.price;
+                    dish.price = update.newPrice;
+                    this.subtotal += dish.price;
+                }
+
+            }
+            component.destroy();
+        });
+
     }
 
     async dishMore(ev: any, dish: Dish) {
@@ -127,6 +153,8 @@ export class PreviewPage implements OnInit {
                 }
             } else if(action == "more") {
                 this.router.navigate([this.service.restaurant.id, this.service.locationId, dish.dishId]);
+            } else if(action == "modifiers") {
+                this.updateModifiers(dish);
             }
 
             component.destroy();

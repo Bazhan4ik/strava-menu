@@ -51,6 +51,33 @@ export class CheckoutModal implements OnInit {
         this.leave.emit();
     }
 
+    async changeModifiers(dishId: string, sessionDishId: string) {
+        this.loading = true;
+        const { ModifiersComponent } = await import("./../modifiers/modifiers.component");
+
+        const component = this.modalContainer.createComponent(ModifiersComponent);
+
+        const result: any = await this.service.get(`order/modifiers/${dishId}?sessionDishId=${sessionDishId}`)
+
+        component.instance.modifiers = result.modifiers;
+
+        this.loading = false;
+
+        component.instance.leave.subscribe(async (m: any) => {
+            if(m) {
+                this.loading = true;
+
+                const result: any = await this.service.put({ modifiers: m }, `order/dish/modifiers?sessionDishId=${sessionDishId}&dishId=${dishId}`);
+
+                if(result.updated) {
+                    this.ngOnInit();
+                }
+
+            }
+            component.destroy();
+        });
+    }
+
     async addComment(id: string) {
         const { DishCommentModal } = await import("./../dish-comment/dish-comment.modal");
 

@@ -56,12 +56,15 @@ export class CheckoutPage implements OnInit {
     }
 
     email: string;
+    country: string;
     showEmailInput = false;
 
     options: Partial<StripePaymentElementOptions> = {
         fields: {
             billingDetails: {
-                address: "never",
+                address: {
+                    country: "never",
+                }
             }
         }
     }
@@ -119,7 +122,12 @@ export class CheckoutPage implements OnInit {
 
             if (this.selectedPaymentMethod) {
                 const result = await firstValueFrom(
-                    this.stripeService.confirmCardPayment(this.paymentData.clientSecret, { payment_method: this.selectedPaymentMethod.id })
+                    this.stripeService.confirmCardPayment(
+                        this.paymentData.clientSecret,
+                        {
+                            payment_method: this.selectedPaymentMethod.id,
+                        }
+                    )
                 )
 
                 return;
@@ -131,6 +139,14 @@ export class CheckoutPage implements OnInit {
                     redirect: 'if_required',
                     confirmParams: {
                         receipt_email: this.email,
+                        payment_method_data: {
+                            billing_details: {
+                                email: this.email,
+                                address: {
+                                    country: this.country,
+                                }
+                            }
+                        }
                     }
                 })
             );
@@ -188,12 +204,8 @@ export class CheckoutPage implements OnInit {
     calculateTip(amount: number, percentage: number): number {
         const result = amount * (percentage / 100);
         const remainder = result % 25;
-
-        if (remainder >= 12.5) {
-            return result + (25 - remainder);
-        } else {
-            return result - remainder;
-        }
+        
+        return result - remainder;
     }
 
     async removeTip() {
@@ -250,6 +262,7 @@ export class CheckoutPage implements OnInit {
             payWithCard: boolean;
             paymentData: PaymentData;
             selectedTip: string;
+            country: string;
         } = null!;
 
 
@@ -269,6 +282,8 @@ export class CheckoutPage implements OnInit {
         this.payWithCard = result.payWithCard;
         this.payWithCash = result.payWithCash;
         this.paymentData = result.paymentData;
+
+        this.country = result.country;
 
         this.money = result.money;
         this.tips = {

@@ -33,6 +33,20 @@
                 }
             }
 
+            .modifiers {
+                .list {
+                    padding: 8px;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    
+                    .modifier {
+                        .selected {
+                            padding-left: 8px;
+                        }
+                    }
+                }
+            }
+
             .session-info {
                 border-top: 1px solid var(--default-border-color);
                 height: 52px;

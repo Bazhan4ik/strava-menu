@@ -18,6 +18,7 @@ export class WaiterDishModal implements OnInit {
     customerAvatar: string = "./../../../../../../../global-resources/images/plain-avatar.jpg";
 
     session: { type: string; id: string; };
+    modifiers: { name: string; selected: string[] }[];
 
     constructor(
         private service: StaffService,
@@ -48,9 +49,10 @@ export class WaiterDishModal implements OnInit {
         }
 
 
-        const result: any = await this.service.get("waiter/session", this.sessionDish.sessionId);
+        const result: any = await this.service.get(`waiter/session?dishId=${this.sessionDish.dishId}&sessionDishId=${this.sessionDish._id}`);
 
-        this.session = result;
+        this.session = result.session;
+        this.modifiers = result.modifiers;
 
         console.log(result);
     }

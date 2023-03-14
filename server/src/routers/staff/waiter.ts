@@ -4,6 +4,7 @@ import { Locals } from "../../models/general.js";
 import { ConvertedWaiterRequest } from "../../models/other/waiterRequest.js";
 import { WaiterRequest } from "../../models/session.js";
 import { convertMultipleSessionsSessionDishes, convertSessionDishes } from "../../utils/convertSessionDishes.js";
+import { getDish } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
@@ -401,30 +402,86 @@ router.get("/dishes", logged(), restaurantWorker({}, { work: { waiter: true } })
     res.send(convertedOrderDishes);
 });
 
-router.get("/session/:sessionId", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
-    const { sessionId } = req.params;
+router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
+    const { sessionDishId, dishId } = req.query;
     const { restaurant, location } = res.locals as Locals;
 
-    if (!sessionId) {
-        return res.status(400).send({ reason: "InvalidInput" });
+
+    if (typeof dishId != "string" || dishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidDishId" });
+    }
+    if (typeof sessionDishId != "string" || sessionDishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidSessionDishId" });
     }
 
     const session = await getSession(
         restaurant._id,
-        { _id: id(sessionId) },
-        { projection: { info: 1, } },
+        { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
+        { projection: { info: 1, dishes: { modifiers: 1, _id: 1, } } },
     );
 
 
-    if (!session) {
-        return res.status(404).send({ reason: "SessionNotFound" });
+    if(!session) {
+        return res.status(404).send({ reason: "SesssionNotFound" });
     }
 
-    console.log(session);
+    const getSelectedModifiers = () => {
+        for(const dish of session.dishes) {
+            if(dish._id.equals(sessionDishId)) {
+                return dish.modifiers || [];
+            }
+        }
+        return null;
+    }
 
-    res.send({
-        ...session.info
-    });
+    const modifiers = getSelectedModifiers();
+
+    if(!modifiers) {
+        return res.status(400).send({ reason: "ModifiersNotFound" });
+    }
+
+    if(modifiers.length == 0) {
+        return res.send({ modifiers: [] });
+    }
+
+    const dish = await getDish(
+        restaurant._id,
+        { _id: id(dishId) },
+        { projection: { modifiers: { _id: 1, name: 1, options: { _id: 1, name: 1} } } }
+    );
+
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+    if(!dish.modifiers) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const result = [];
+
+    for(const dishModifier of modifiers) {
+        for(const modifier of dish.modifiers) {
+            if(dishModifier._id.equals(modifier._id)) {
+                const options: string[] = [];
+
+                for(const selected of dishModifier.selected) {
+                    for(const option of modifier.options) {
+                        if(option._id.equals(selected)) {
+                            options.push(option.name);
+                        }
+                    }
+                }
+
+                result.push({
+                    name: modifier.name,
+                    selected: options,
+                });
+            }   
+        }
+    }
+    
+
+    res.send({ session: session.info, modifiers: result });
 
 });
 

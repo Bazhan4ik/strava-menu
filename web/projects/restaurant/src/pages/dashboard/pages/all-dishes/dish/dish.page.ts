@@ -14,6 +14,16 @@ interface Dish {
     status: string;
     _id: string;
     tags: { title: string; id: string; }[];
+    modifiers: {
+        name: string;
+        required: boolean;
+        toSelectTitle: string;   
+        amountToSelect: "less" | "more" | "equal" | "one";
+        amountOfOptions: number;
+        _id: string;
+
+        options: { name: string; price: number; }[];
+    }[];
     library: {
         preview: any;
         list: {
@@ -110,6 +120,78 @@ export class DishPage implements OnInit {
     }
 
 
+    async addModifier() {
+        const { AddModifierModal } = await import("./../../../components/add-modifier/add-modifier.modal");
+
+        const component = this.modalContainer.createComponent(AddModifierModal);
+
+        component.instance.leave.subscribe(async (modifier: any) => {
+            if(!modifier) {
+                component.destroy();
+                return;
+            }
+            this.loading = true;
+
+            const update: { updated: boolean; modifier: Dish["modifiers"][0]; } = await this.service.post({ modifier }, "menu/dishes", this.dish.id, "modifier");
+
+            if(update.updated) {
+                this.dish.modifiers.push(update.modifier);
+            }
+
+            component.destroy();
+            this.loading = false;
+        });
+    }
+    async editModifier(modifier: Dish["modifiers"][0]) {
+        const { AddModifierModal } = await import("./../../../components/add-modifier/add-modifier.modal");
+
+        const component = this.modalContainer.createComponent(AddModifierModal);
+
+        component.instance.amountOfOptions = modifier.amountOfOptions;
+        component.instance.amountToSelect = modifier.amountToSelect;
+        component.instance.modifierName = modifier.name;
+        component.instance.options = modifier.options;
+        component.instance.required = modifier.required;
+
+        component.instance.leave.subscribe(async (updatedModifier: any) => {
+            if(!updatedModifier) {
+                component.destroy();
+                return;
+            }
+            this.loading = true;
+
+            const update: { updated: boolean; modifier: Dish["modifiers"][0]; } = await this.service.put({ modifier: { ...updatedModifier, _id: modifier._id, } }, "menu/dishes", this.dish.id, "modifier");
+
+            if(update.updated) {
+                for(let m in this.dish.modifiers) {
+                    if(modifier._id == this.dish.modifiers[m]._id) {
+                        this.dish.modifiers[m] = update.modifier;
+                        break;
+                    }
+                }
+            }
+
+            component.destroy();
+            this.loading = false;
+        });
+    }
+    async deleteModifier(id: string) {
+        this.loading = true;
+
+        const update: { updated: boolean; } = await this.service.delete("menu/dishes", this.dish.id, "modifier", id);
+
+        if(update.updated) {
+            for(const m in this.dish.modifiers) {
+                if(this.dish.modifiers[m]._id == id) {
+                    this.dish.modifiers.splice(+m, 1);
+                    break;
+                }
+            }
+        }
+
+        this.loading = false;
+    }
+
 
     async editCollections() {
         const { AddCollectionsModal } = await import("../../../components/add-collections/add-collections.modal");
@@ -132,6 +214,7 @@ export class DishPage implements OnInit {
             component.destroy();
         });
     }
+
 
 
 

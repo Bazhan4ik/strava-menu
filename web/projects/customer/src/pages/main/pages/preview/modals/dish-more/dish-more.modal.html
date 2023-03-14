@@ -1,5 +1,13 @@
 <div class="app" (click)="close()">
     <div class="box" [style.left]="position.left" [style.top]="position.top">
+        <button id="more" (click)="modifiers()">
+            <mat-icon>
+                settings
+            </mat-icon>
+            <span class="global-text big black">
+                Modifiers
+            </span>
+        </button>
         <button id="more" (click)="more()">
             <mat-icon>
                 open_in_new

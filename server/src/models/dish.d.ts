@@ -1,9 +1,5 @@
 import { Binary, ObjectId } from "mongodb";
 
-interface Ingredient {
-    id: string;
-    amount: number;
-}
 
 interface Dish {
     _id: ObjectId;
@@ -28,10 +24,33 @@ interface Dish {
         modified: number;
         userId: ObjectId;
     };
+
+    modifiers?: Modifier[];
+}
+
+interface Ingredient {
+    id: string;
+    amount: number;
+}
+
+interface Modifier {
+    _id: ObjectId;
+    name: string;
+    required: boolean;
+    amountToSelect: "less" | "more" | "one";
+    amountOfOptions: number;
+
+    options: Option[];
+}
+interface Option {
+    name: string;
+    price: number;
+    _id: ObjectId;
 }
 
 
 export {
     Dish,
     Ingredient,
+    Modifier,
 }

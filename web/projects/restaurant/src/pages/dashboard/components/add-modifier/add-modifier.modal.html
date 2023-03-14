@@ -1,0 +1,81 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <div class="title">
+                <button (click)="close()" class="icon-button">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <span class="global-subtitle">
+                    Modifiers
+                </span>
+            </div>
+            <div class="buttons">
+                <button [disabled]="red" (click)="save()" class="button orange-button" [class.red-button]="red">
+                    Save
+                </button>
+            </div>
+        </div>
+        <div class="body">
+            <div class="name-delete">
+                <div class="name">
+                    <input type="text" (input)="removeRed()" [(ngModel)]="modifierName" class="global-input" placeholder="Modifier title">
+                </div>
+            </div>
+            <div class="values">
+                <select class="global-input" name="amount-of-options" (change)="onAmountSelectedChanged(); removeRed()"
+                    [(ngModel)]="amountToSelect">
+                    <option value="none">How many options to select?</option>
+                    <option value="less">Less than or equal</option>
+                    <option value="more">More than or equal</option>
+                    <option value="one">One</option>
+                </select>
+                <input type="number" class="global-input" (input)="removeRed()" [placeholder]="placeholder"
+                    *ngIf="amountToSelect != 'none' && amountToSelect != 'one'"
+                    [(ngModel)]="amountOfOptions">
+            </div>
+            <div class="required">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Required
+                    </span>
+                </div>
+                <div class="global-checkbox">
+                    <input id="checkbox-for-required" (change)="onRequiredChanged($event)"
+                        [checked]="required" type="checkbox" aria-hidden="true" />
+                    <label for="checkbox-for-required"></label>
+                </div>
+            </div>
+            <button (click)="addOption()" class="add-option">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        Add option
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button class="icon-button">
+                        <mat-icon>
+                            add
+                        </mat-icon>
+                    </button>
+                </div>
+            </button>
+            <div class="options">
+                <div class="option" *ngFor="let option of options; index as optionIndex">
+                    <div class="name">
+                        <input [(ngModel)]="option.name" (input)="removeRed()" type="text" placeholder="Option title" class="global-input">
+                    </div>
+                    <div class="price">
+                        <input [(ngModel)]="option.price" (input)="removeRed()" type="number" placeholder="(optional) Option price"
+                            class="global-input">
+                    </div>
+                    <div class="remove">
+                        <button class="icon-button" (click)="deleteOption(optionIndex); removeRed()">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

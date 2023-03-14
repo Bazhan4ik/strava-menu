@@ -41,7 +41,7 @@
             </div>
 
             <div class="dishes">
-                <button *ngFor="let dish of dishes" (click)="addComment(dish._id)" class="dish">
+                <div *ngFor="let dish of dishes" class="dish">
                     <div class="dish-info">
                         <div class="image">
                             <img [src]="dish.image" alt="">
@@ -66,11 +66,17 @@
                         </div>
                     </div>
                     <div class="buttons" (click)="$event.stopPropagation()">
+                        <button (click)="changeModifiers(dish.dishId, dish._id)" class="icon-button">
+                            <mat-icon>settings</mat-icon>
+                        </button>
+                        <button (click)="addComment(dish._id)" class="icon-button">
+                            <mat-icon>textsms</mat-icon>
+                        </button>
                         <button (click)="removeDish(dish._id)" class="icon-button">
                             <mat-icon>remove</mat-icon>
                         </button>
                     </div>
-                </button>
+                </div>
             </div>
 
             <div class="money" *ngIf="money">

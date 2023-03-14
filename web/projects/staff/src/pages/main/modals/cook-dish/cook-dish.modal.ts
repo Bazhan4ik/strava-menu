@@ -24,6 +24,7 @@ export class CookDishModal implements OnInit, OnDestroy {
     subscription: Subscription;
 
     disableButtons = false;
+    modifiers: { name: string; selected: string[] }[];
 
     constructor(
         private service: StaffService,
@@ -81,7 +82,6 @@ export class CookDishModal implements OnInit, OnDestroy {
         this.disableButtons = false;
     }
 
-
     async remove() {
         this.disableButtons = true;
         const { RemoveDishModal } = await import("./../remove-dish/remove-dish.modal");
@@ -111,7 +111,7 @@ export class CookDishModal implements OnInit, OnDestroy {
 
 
 
-    ngOnInit() {
+    async ngOnInit() {
         this.subscription = this.socket.$cookDishes.subscribe(res => {
             if(res.types.includes("dishes/done")) {
                 const { sessionDishId } = res.data as CookDishesData.done;
@@ -130,6 +130,9 @@ export class CookDishModal implements OnInit, OnDestroy {
             this.cookAvatar = getImage(this.sessionDish.people.cook.avatar);
         }
 
+        const result: any = await this.service.get(`cook/modifiers?dishId=${this.sessionDish.dishId}&sessionDishId=${this.sessionDish._id}`);
+
+        this.modifiers = result.modifiers;
     }
     ngOnDestroy() {
         this.subscription?.unsubscribe();

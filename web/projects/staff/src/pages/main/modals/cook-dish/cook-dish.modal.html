@@ -38,6 +38,30 @@
                     </div>
                 </div>
             </div>
+            <div class="modifiers">
+                <div *ngIf="modifiers && modifiers.length > 0" class="list">
+                    <div *ngFor="let modifier of modifiers" class="modifier">
+                        <div class="name">
+                            <span class="global-text normal">
+                                {{ modifier.name }}:
+                            </span>
+                        </div>
+                        <div class="selected">
+                            <div *ngFor="let selected of modifier.selected" class="option">
+                                <span class="global-text" >
+                                    {{ selected }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!modifiers" class="global-loading height-124 small">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
             <div class="comments">
                 <div class="dish-comment" *ngIf="sessionDish.comment">
                     <div class="icon">

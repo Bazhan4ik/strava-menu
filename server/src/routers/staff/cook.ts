@@ -15,7 +15,7 @@ import { updateRestaurant } from "../../utils/restaurant.js";
 import { getSession, getSessions, updateSession } from "../../utils/sessions.js";
 import { sendToCustomerDishStatus } from "../../utils/socket/customer.js";
 import { sendDishIsDone, sendDishIsQuitted, sendDishIsTaken } from "../../utils/socket/dishes.js";
-import { sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
+import { sendToCustomerAcceptWaiterRequest, sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
 import { getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
 
@@ -44,6 +44,85 @@ router.get("/dishes", logged(), restaurantWorker({}, { work: { cook: true } }), 
     res.send(convertedOrderDishes);
 });
 
+router.get("/modifiers", logged(), restaurantWorker({ }, { work: { cook: true } }), async (req, res) => {
+    const { restaurant } = res.locals as Locals;
+    const { dishId, sessionDishId } = req.query;
+
+    if(typeof dishId != "string" || dishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidDishId" });
+    }
+    if(typeof sessionDishId != "string" || sessionDishId.length != 24) {
+        return res.status(400).send({ reason: "InvalidSessionDishId" });
+    }
+
+    const session = await getSession(
+        restaurant._id,
+        { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
+        { projection: { dishes: { _id: 1, modifiers: 1 } } },
+    );
+
+    if(!session) {
+        return res.status(404).send({ reason: "SesssionNotFound" });
+    }
+
+    const getSelectedModifiers = () => {
+        for(const dish of session.dishes) {
+            if(dish._id.equals(sessionDishId)) {
+                return dish.modifiers || [];
+            }
+        }
+        return null;
+    }
+
+    const modifiers = getSelectedModifiers();
+
+    if(!modifiers) {
+        return res.status(400).send({ reason: "ModifiersNotFound" });
+    }
+
+    if(modifiers.length == 0) {
+        return res.send({ modifiers: [] });
+    }
+
+    const dish = await getDish(
+        restaurant._id,
+        { _id: id(dishId) },
+        { projection: { modifiers: { _id: 1, name: 1, options: { _id: 1, name: 1} } } }
+    );
+
+    if(!dish) {
+        return res.status(404).send({ reason: "DishNotFound" });
+    }
+    if(!dish.modifiers) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const result = [];
+
+    for(const dishModifier of modifiers) {
+        for(const modifier of dish.modifiers) {
+            if(dishModifier._id.equals(modifier._id)) {
+                const options: string[] = [];
+
+                for(const selected of dishModifier.selected) {
+                    for(const option of modifier.options) {
+                        if(option._id.equals(selected)) {
+                            options.push(option.name);
+                        }
+                    }
+                }
+
+                result.push({
+                    name: modifier.name,
+                    selected: options,
+                });
+            }   
+        }
+    }
+    
+
+    res.send({ modifiers: result });
+});
 
 
 router.put("/take", logged({ info: { name: 1, }, avatar: { buffer: 1 } }), restaurantWorker({ }, { work: { cook: true } }), async (req, res) => {

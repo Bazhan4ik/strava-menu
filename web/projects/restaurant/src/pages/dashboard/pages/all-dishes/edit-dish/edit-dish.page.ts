@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { deferEvent } from '@ionic/core/dist/types/utils/helpers';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 

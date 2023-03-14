@@ -108,6 +108,61 @@
             </div>
         </div>
 
+        <div class="modifiers" *ngIf="dish">
+            <div class="header">
+                <div class="title">
+                    <span class="global-text">
+                        Modifiers
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button (click)="addModifier()" class="icon-button square orange-button">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="body">
+                <div *ngFor="let modifier of dish.modifiers" class="modifier">
+                    <div class="name-buttons">
+                        <div class="name">
+                            <span class="global-text big black bold">
+                                {{ modifier.name }}
+                            </span>
+                            <span class="requirement" *ngIf="modifier.required">
+                                *
+                            </span>
+                        </div>
+                        <div class="buttons">
+                            <button (click)="deleteModifier(modifier._id)" class="icon-button">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            <button (click)="editModifier(modifier)" class="icon-button">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="how-many-options">
+                        <span class="global-text normal black">
+                            {{ modifier.toSelectTitle }}
+                        </span>
+                    </div>
+                    <div class="options">
+                        <div *ngFor="let option of modifier.options" class="option">
+                            <div class="name">
+                                <span class="global-text">
+                                    {{ option.name }}
+                                </span>
+                            </div>
+                            <div class="price" *ngIf="option.price">
+                                <span class="global-text">
+                                    +${{ option.price }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 

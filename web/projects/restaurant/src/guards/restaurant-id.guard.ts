@@ -17,26 +17,31 @@ export class RestaurantIdGuard implements CanActivate {
 
         const restaurantId = route.paramMap.get("restaurantId");
 
-        console.log(restaurantId);
-
         if(!restaurantId) {
             window.location.href = env.accountUrl + "/home";
             return false;
         }
 
         if(!this.service.restaurant) {
-            const result = await this.service.getRestaurant(restaurantId);
 
-
-            console.log(result);
-
-            if(!result) {
-                window.location.href = env.accountUrl + "/home";
-
-                return false;
+            try {
+                const result = await this.service.getRestaurant(restaurantId);
+    
+    
+                if(!result) {
+                    window.location.href = env.accountUrl + "/home";
+    
+                    return false;
+                }
+    
+                this.service.restaurant = result;
+            } catch (e: any) {
+                if(e.status == 404) {
+                    if(e.error.reason == "RestaurantNotFound") {
+                        window.location.href = `${env.accountUrl}/home`;
+                    }
+                }
             }
-
-            this.service.restaurant = result;
         }
 
 

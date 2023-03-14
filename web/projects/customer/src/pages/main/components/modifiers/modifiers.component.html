@@ -1,0 +1,39 @@
+<div class="modifications-app">
+    <div class="list">
+        <div *ngFor="let modifier of modifiers; index as modifierIndex" [class.invalid]="modifier.invalid" class="modifier">
+            <div class="header">
+                <div class="title">
+                    <span class="global-text big black bold">
+                        {{ modifier.title }}
+                    </span>
+                </div>
+                <div *ngIf="modifier.required" class="required">
+                    <span class="global-text">
+                        required
+                    </span>
+                </div>
+            </div>
+            <div class="subtitle" *ngIf="modifier.subtitle">
+                <span class="global-text normal">{{ modifier.subtitle }}</span>
+            </div>
+            <div class="options">
+                <div *ngFor="let option of modifier.options; index as optionIndex" class="option">
+                    <div class="name">
+                        <span class="global-text normal">
+                            {{ option.name }}
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            +${{ option.price / 100 }}
+                        </span>
+                        <div class="modifier-checkbox">
+                            <input id="checkbox-{{ modifierIndex }}-{{ optionIndex }}" (change)="onOptionSelected($event, modifierIndex, optionIndex)" [checked]="modifier.selected?.includes(option._id)" type="checkbox" aria-hidden="true" />
+                            <label for="checkbox-{{ modifierIndex }}-{{ optionIndex }}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

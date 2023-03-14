@@ -18,7 +18,7 @@ interface Table {
 })
 export class SelectTableModal implements OnInit {
     tables: Table[];
-    selected: Table;
+    selected?: Table;
     loading: boolean;
 
     constructor(
@@ -38,6 +38,9 @@ export class SelectTableModal implements OnInit {
     }
 
     async save() {
+        if(!this.selected) {
+            return;
+        }
         this.loading = true;
 
         const result: any = await this.service.put({ tableId: this.selected._id }, "order/table");

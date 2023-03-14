@@ -1,13 +1,13 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, Injector, OnDestroy, OnInit, ViewChild, ViewContainerRef, } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewContainerRef, AfterViewInit, ComponentRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
 import { DishesService } from 'projects/customer/src/services/dishes.service';
-import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { Subscription } from 'rxjs';
 import { CollectionComponent } from '../../components/collection/collection.component';
+import { ModifiersComponent } from '../../components/modifiers/modifiers.component';
 import { Dish } from '../../models/dish';
 
 @Component({
@@ -17,7 +17,7 @@ import { Dish } from '../../models/dish';
     standalone: true,
     imports: [CommonModule, MatIconModule, RouterModule, CollectionComponent, NgOptimizedImage],
 })
-export class FullDishPage implements OnInit, OnDestroy {
+export class FullDishPage implements OnInit, OnDestroy, AfterViewInit {
 
     image: string;
     imageUrl: string;
@@ -26,6 +26,7 @@ export class FullDishPage implements OnInit, OnDestroy {
     backUrl: string;
     collection: any;
     subscription: Subscription;
+    modifiers: ComponentRef<ModifiersComponent>;
 
     adding = {
         loading: false,
@@ -42,6 +43,7 @@ export class FullDishPage implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private injector: Injector,
         private dishesService: DishesService,
+        private changeDetector: ChangeDetectorRef,
     ) {
         this.subscription = this.router.events.subscribe(ev => {
             if(ev instanceof NavigationEnd) {
@@ -60,6 +62,7 @@ export class FullDishPage implements OnInit, OnDestroy {
     };
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
+    @ViewChild("modifiersContainer", { read: ViewContainerRef }) modifiersContainer: ViewContainerRef;
 
 
     async remove() {
@@ -99,11 +102,19 @@ export class FullDishPage implements OnInit, OnDestroy {
         this.adding.loading = true;
         this.adding.added = false;
 
-        const result: { insertedId: string; } = await this.service.post({ comment, dishId: this.dish._id }, "session", "dish");
+        const modifiers = this.modifiers.instance.getModifiers();
 
-        if(result.insertedId) {
-            this.amount++;
-            
+        if(!modifiers) {
+            this.adding.added = false;
+            this.adding.loading = false;
+            return;
+        }
+
+        this.amount++;
+
+        const result: { insertedId: string; } = await this.service.post({ comment, modifiers, dishId: this.dish._id }, "session", "dish");
+
+        if(result.insertedId) {    
             this.service.session.dishes.push({
                 _id: result.insertedId,
                 dishId: this.dish._id,
@@ -116,6 +127,8 @@ export class FullDishPage implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.adding.added = false;
             }, 1000);
+        } else {
+            this.amount--;
         }
 
     }
@@ -135,6 +148,18 @@ export class FullDishPage implements OnInit, OnDestroy {
     }
 
 
+    reloadModifications() {
+        this.changeDetector.detectChanges();
+
+        this.modifiers = this.modifiersContainer.createComponent(ModifiersComponent);
+
+        this.modifiers.instance.modifiers = this.dish.modifiers;
+    }
+
+
+    async ngAfterViewInit() {
+        
+    }
     async ngOnInit() {
 
         const dishId = this.route.snapshot.paramMap.get("dishId");
@@ -169,6 +194,8 @@ export class FullDishPage implements OnInit, OnDestroy {
             } = await this.service.get({ collection: collectionId || undefined!, }, "dishes", dishId);
             
             this.dish = result.dish;
+
+            this.reloadModifications();
             
             for(let i of this.service.session.dishes) {
                 if(i.dishId == this.dish._id) {
@@ -182,9 +209,7 @@ export class FullDishPage implements OnInit, OnDestroy {
         }
         return;
     }
-
     ngOnDestroy(): void {
         this.subscription?.unsubscribe();
     }
-
 }

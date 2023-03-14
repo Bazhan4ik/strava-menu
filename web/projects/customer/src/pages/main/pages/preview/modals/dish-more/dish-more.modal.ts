@@ -30,6 +30,9 @@ export class DishMoreModal {
     more() {
         this.leave.emit("more");
     }
+    modifiers() {
+        this.leave.emit("modifiers");
+    }
 
 
 }

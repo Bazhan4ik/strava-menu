@@ -170,7 +170,7 @@
                         </button>
                         <button (click)="customTip()" [class.selected]="tips?.selected == 'custom'" class="tip tip-10">
                             <div class="title">
-                                <span class="global-text normal black bold">
+                                <span class="global-text black bold">
                                     Custom
                                 </span>
                             </div>
@@ -197,7 +197,7 @@
                                 Email address
                             </span>
                         </div>
-                        <input placeholder="example@mail.com" name="email" type="email" [(ngModel)]="email" id="email">
+                        <input inputmode="email" placeholder="example@mail.com" name="email" type="email" [(ngModel)]="email" id="email">
                     </div>
                     <div *ngIf="paymentData.paymentMethods && paymentData.paymentMethods.length > 0 && elementsOptions.clientSecret" class="payment-methods">
                         <div class="list">

@@ -15,6 +15,7 @@
         max-width: 504px;
         min-height: 100%;
         width: 100vw;
+        padding-bottom: 100px;
         border-left: 2px solid var(--default-border-color);
         border-right: 2px solid var(--default-border-color);
 
@@ -64,17 +65,18 @@
             margin-top: 32px;
 
             .buy-button {
+                margin-top: 24px;
                 width: 100%;
-                height: 40px;
+                height: 44px;
                 padding: 4px;
-                border-radius: 40px;
+                border-radius: 44px;
                 border: 1px solid var(--default-border-color);
                 display: grid;
-                grid-template-columns: 32px 1fr 68px;
+                grid-template-columns: 36px 1fr 76px;
                 
                 .circle-button {
-                    height: 32px;
-                    width: 32px;
+                    height: 36px;
+                    width: 36px;
                     border-radius: 100%;
                     display: flex;
                     align-items: center;
