@@ -19,10 +19,40 @@
             <app-waiter-requests></app-waiter-requests>
         </div>
         <div class="dishes-cook" *ngIf="restaurant.pages.cook">
-            <app-dishes-cook></app-dishes-cook>
+            <div class="block-header">
+                <div class="title">
+                    <span class="global-subtitle">
+                        Dishes to cook
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button (click)="cook.switchType()" class="icon-button">
+                        <mat-icon *ngIf="cook.type == 'singles'">folder_copy</mat-icon>
+                        <mat-icon *ngIf="cook.type == 'folders'">content_copy</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="body">
+                <ng-container #cookBodyContainer></ng-container>
+            </div>
         </div>
         <div class="dishes-serve" *ngIf="restaurant.pages.waiter">
-            <app-dishes-waiter></app-dishes-waiter>
+            <div class="block-header">
+                <div class="title">
+                    <span class="global-subtitle">
+                        Dishes to serve
+                    </span>
+                </div>
+                <div class="buttons">
+                    <button (click)="waiter.switchType()" class="icon-button">
+                        <mat-icon *ngIf="waiter.type == 'singles'">folder_copy</mat-icon>
+                        <mat-icon *ngIf="waiter.type == 'folders'">content_copy</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="body">
+                <ng-container #waiterBodyContainer></ng-container>
+            </div>
         </div>
         <div class="manual-order">
             <button (click)="addOrder()" class="button orange-button">

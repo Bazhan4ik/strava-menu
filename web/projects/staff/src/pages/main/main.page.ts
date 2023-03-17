@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { env } from 'environment/environment';
 import { StaffService } from '../../services/staff.service';
 
@@ -13,12 +13,77 @@ export class MainPage implements OnInit {
     redirectUrl: string;
     redirectText: string;
 
+    waiter: {
+        body: ComponentRef<any>;
+        type: "singles" | "folders";
+        switchType: Function;
+        showDefault: Function;
+        showFolders: Function;
+    } = {
+        body: null!,
+        type: "singles",
+        showFolders: async () => {
+            const { FoldersWaiterComponent } = await import("./components/waiter/folders-waiter/folders-waiter.component");
+
+            this.waiter.body = this.waiterBodyContainer.createComponent(FoldersWaiterComponent);
+        },
+        showDefault: async () => {
+            const { DishesWaiterComponent } = await import("./components/waiter/dishes-waiter/dishes-waiter.component");
+
+            this.waiter.body = this.waiterBodyContainer.createComponent(DishesWaiterComponent);
+        },
+        switchType: async () => {
+            this.waiter.body.destroy();
+
+            if(this.waiter.type == "singles") {
+                this.waiter.type = "folders";
+                this.waiter.showFolders();
+            } else {
+                this.waiter.type = "singles";
+                this.waiter.showDefault();
+            }
+        }
+    }
+
+    cook: {
+        body: ComponentRef<any>;
+        type: "singles" | "folders";
+        switchType: Function;
+        showDefault: Function;
+        showFolders: Function;
+    } = {
+        body: null!,
+        type: "singles",
+        showFolders: async () => {
+            const { FoldersCookComponent } = await import("./components/cook/folders-cook/folders-cook.component");
+
+            this.cook.body = this.cookBodyContainer.createComponent(FoldersCookComponent);
+        },
+        showDefault: async () => {
+            const { DishesCookComponent } = await import("./components/cook/dishes-cook/dishes-cook.component");
+
+            this.cook.body = this.cookBodyContainer.createComponent(DishesCookComponent);
+        },
+        switchType: async () => {
+            this.cook.body.destroy();
+
+            if(this.cook.type == "singles") {
+                this.cook.type = "folders";
+                this.cook.showFolders();
+            } else {
+                this.cook.type = "singles";
+                this.cook.showDefault();
+            }
+        }
+    }
+
     constructor(
         private service: StaffService,
     ) { };
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
-
+    @ViewChild("cookBodyContainer", { read: ViewContainerRef }) cookBodyContainer: ViewContainerRef;
+    @ViewChild("waiterBodyContainer", { read: ViewContainerRef }) waiterBodyContainer: ViewContainerRef;
 
     async addOrder() {
         const { AddOrderModal } = await import("./components/add-order/add-order.modal");
@@ -28,9 +93,7 @@ export class MainPage implements OnInit {
         component.instance.leave.subscribe(() => {
             component.destroy();
         });
-
     }
-
 
 
 
@@ -45,6 +108,12 @@ export class MainPage implements OnInit {
             this.redirectText = "Account";
             this.redirectUrl = env.accountUrl + "/home";
         }
-        
+
+        if(this.restaurant.pages.cook) {
+            this.cook.showDefault();
+        }
+        if(this.restaurant.pages.waiter) {
+            this.waiter.showDefault();
+        }
     }
 }

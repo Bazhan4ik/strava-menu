@@ -19,8 +19,10 @@ async function convertSessionDishes(data: {
     ordered: Time;
     comment?: string;
     skip: SessionDishStatus[];
+    id: string;
+    type: string;
 }) {
-    const { sessionDishes, comment: orderComment, sessionId, customerId, restaurantId, ordered, skip } = data;
+    const { sessionDishes, type, id, comment: orderComment, sessionId, customerId, restaurantId, ordered, skip } = data;
 
     const getIds = () => {
         const dishIds = [];
@@ -89,6 +91,11 @@ async function convertSessionDishes(data: {
             orderComment: orderComment!, 
             id: sessionDish.info.id!,
             status: sessionDish.status,
+
+            order: {
+                type,
+                id,
+            },
             
             people: {
                 customer: customer! || { name: "Deleted user", avatar: null },
@@ -204,6 +211,11 @@ async function convertMultipleSessionsSessionDishes(data: {
 
                 dish: d!,
 
+                order: {
+                    type: session.info.type,
+                    id: session.info.id,
+                },
+
                 time: {
                     ordered: getDelay(session.timing.ordered),
                     taken: getDelay(dish.timing?.taken),
@@ -231,8 +243,10 @@ async function convertOneSessionDish(data: {
     sessionId: ObjectId;
     customerId: ObjectId;
     comment?: string;
+    type: string;
+    id: string;
 }) {
-    let { ordered, sessionId, customerId, restaurantId, comment: orderComment, sessionDish } = data;
+    let { ordered, sessionId, customerId, restaurantId, comment: orderComment, sessionDish, type, id } = data;
 
 
     const users = await getUsers({ _id: { $in: [customerId, sessionDish.staff?.cook!, sessionDish.staff?.waiter!] } }, { projection: { info: { name: 1 }, avatar: 1 } }).toArray();
@@ -267,6 +281,11 @@ async function convertOneSessionDish(data: {
         comment: sessionDish.info.comment,
         id: sessionDish.info.id!,
         orderComment: orderComment!,
+
+        order: {
+            type: type,
+            id: id,
+        },
         
         time: {
             ordered: getDelay(ordered),

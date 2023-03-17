@@ -16,6 +16,15 @@
     .content {
         padding-bottom: 100px;
 
+        .dishes-cook, .dishes-serve {
+            .block-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 24px;
+            }
+        }
+
         .manual-order {
             padding: 24px;
             

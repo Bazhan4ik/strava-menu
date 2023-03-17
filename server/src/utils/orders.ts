@@ -32,6 +32,18 @@ async function updateOrders(restaurantId: ObjectId, filter: Filter<Session>, upd
 }
 
 
+async function getOrder(restaurantId: ObjectId, filter: Filter<Session>, options: FindOptions): Promise<Session | null> {
+    try {
+        const result = await client.db(ordersDBName).collection<Session>(restaurantId.toString()).findOne(filter, options);
+
+        return result!;
+    } catch (e) {
+        console.error("at getOrder()");
+        throw e;
+    }
+}
+
+
 
 
 
@@ -125,4 +137,5 @@ export {
     addOrder,
     getOrders,
     updateOrders,
+    getOrder,
 }

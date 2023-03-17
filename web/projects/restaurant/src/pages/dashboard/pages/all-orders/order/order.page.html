@@ -1,0 +1,171 @@
+<div class="order-app content-page">
+    <div class="header">
+        <div class="title">
+            <a routerLink=".." type="button" class="icon-button">
+                <mat-icon>close</mat-icon>
+            </a>
+            <span class="global-title">
+                Order
+            </span>
+        </div>
+    </div>
+    <div class="content">
+
+        <div class="top" *ngIf="order">
+            <div class="customer">
+                <div class="name">
+                    {{ order.customer.name }}
+                </div>
+            </div>
+            <div class="status">
+                <span class="global-badge" [class.green]="order.status == 'done'">
+                    {{ order.status }}
+                </span>
+            </div>
+            <div class="total">
+                <span class="global-text black normal">
+                    ${{ order.money.total / 100 }}
+                </span>
+            </div>
+            <div class="date-location">
+                <div class="location">
+                    <mat-icon>
+                        place
+                    </mat-icon>
+                    <span class="global-text black normal">
+                        {{ order.location }}
+                    </span>
+                </div>
+                <div class="date">
+                    <mat-icon>schedule</mat-icon>
+                    <span class="global-text black normal">
+                        {{ order.date }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="payment" *ngIf="order">
+            <div class="title">
+                <span class="global-subtitle">
+                    Payment details
+                </span>
+            </div>
+            <div class="list">
+                <div class="method">
+                    <div class="title">
+                        <span class="global-text">
+                            Method
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-badge green">
+                            {{ order.method }}
+                        </span>
+                    </div>
+                </div>
+                <div class="subtotal">
+                    <div class="title">
+                        <span class="global-text normal">
+                            Subtotal
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            ${{ order.money.subtotal / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="service" *ngIf="order.money.service">
+                    <div class="title">
+                        <span class="global-text normal">
+                            Service fee
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            ${{ order.money.service / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="tip" *ngIf="order.money.tip">
+                    <div class="title">
+                        <span class="global-text normal">
+                            Tip
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            ${{ order.money.tip / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="tax">
+                    <div class="title">
+                        <span class="global-text normal">
+                            Tax ({{ order.money.taxTitle }})
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            ${{ order.money.tax / 100 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="total">
+                    <div class="title">
+                        <span class="global-text normal">
+                            Total
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            ${{ order.money.total / 100 }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="dishes" *ngIf="order">
+            <div class="title">
+                <span class="global-subtitle">
+                    Dishes
+                </span>
+            </div>
+            <div class="list">
+                <div *ngFor="let dish of order.dishes" class="dish">
+                    <div class="image">
+                        <img [src]="dish.image" alt="">
+                    </div>
+                    <div class="name-price">
+                        <div class="name">
+                            <span class="global-text normal black bold">
+                                {{ dish.name }}
+                            </span>
+                        </div>
+                        <div class="price">
+                            <span class="global-text">
+                                ${{ dish.price / 100 }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modifiers">
+                        <span class="global-text">
+                            +{{ dish.modifiers }} modifiers
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="timeline" *ngIf="order">
+            <app-timeline [orderId]="order._id"></app-timeline>
+        </div>
+
+        <div *ngIf="!order" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

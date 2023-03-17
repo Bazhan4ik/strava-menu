@@ -1,6 +1,6 @@
 import { Filter, FindOneAndUpdateOptions, FindOptions, ObjectId, UpdateFilter, UpdateOptions } from "mongodb";
 import { sessionsDBName } from "../config.js";
-import { Session } from "../models/session.js";
+import { Session, TimelineComponent } from "../models/session.js";
 import { client } from "../setup/mongodb.js";
 import { convertSessionDishes } from "./convertSessionDishes.js";
 import { id } from "./id.js";
@@ -125,18 +125,23 @@ async function confirmSession(data: {
             { projection: { payment: { payed: 1, }, status: 1 } }
         );
 
-        if(!session) {
+        const timeline: TimelineComponent = {
+            action: "payed",
+            time: Date.now(),
+            userId: "customer",
+        }
 
+        if(!session) {
             const update = await updateOrders(
                 id(restaurantId),
                 { _id: id(sessionId) },
-                { $set: { "payment.payed": true, "payment.paymentMethodId": paymentMethodId } },
+                { $set: { "payment.payed": true, "payment.paymentMethodId": paymentMethodId }, $push: { timeline } },
                 { noResponse: true }
             );
 
             return false;
         }
-        
+    
 
         const result = await client.db(sessionsDBName).collection<Session>(restaurantId.toString()).findOneAndUpdate(
             { _id: id(sessionId) },
@@ -145,8 +150,10 @@ async function confirmSession(data: {
                 "payment.method": "card",
                 "payment.payed": payed,
                 "timing.ordered": Date.now(),
+            }, $push: {
+                timeline
             } },
-            { projection: { dishes: 1, customer: { customerId: 1, }, info: { location: 1, comment: 1, } } }
+            { projection: { dishes: 1, customer: { customerId: 1, }, info: { location: 1, comment: 1, id: 1, type: 1, } } }
         );
 
         const convertedOrderDishes = await convertSessionDishes({
@@ -157,6 +164,8 @@ async function confirmSession(data: {
             skip: [],
             customerId: result.value?.customer.customerId!,
             comment: result.value?.info.comment,
+            type: result.value?.info.type!,
+            id: result.value?.info.id!,
         });
 
         sendToStaffNewOrder(id(restaurantId), result.value?.info.location!, convertedOrderDishes);

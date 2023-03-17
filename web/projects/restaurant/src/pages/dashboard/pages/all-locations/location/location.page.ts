@@ -93,7 +93,7 @@ export class LocationPage implements OnInit {
     async onServiceFeeEnabled(event: any) {
         const update: any = await this.service.put({ enabled: true, amount: 0, type: 1  }, "locations", this.location.id, "service-fee");
 
-        this.location.settings.serviceFee = { amount: 0, type: 1, };
+        this.location.settings.serviceFee = { amount: null!, type: 1, };
 
         if(!update.updated) {
             this.location.settings.serviceFee = null;
@@ -118,7 +118,7 @@ export class LocationPage implements OnInit {
             this.location.settings.serviceFee.type = 1;
         }
 
-        this.location.settings.serviceFee.amount = 0;
+        this.location.settings.serviceFee.amount = null!;
     }
     async onServiceFeeUpdated() {
         if(!this.location.settings.serviceFee) {

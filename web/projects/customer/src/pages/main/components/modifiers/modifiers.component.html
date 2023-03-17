@@ -24,8 +24,8 @@
                         </span>
                     </div>
                     <div class="value">
-                        <span class="global-text">
-                            +${{ option.price / 100 }}
+                        <span class="global-text" *ngIf="option.price">
+                            ${{ option.price / 100 }}
                         </span>
                         <div class="modifier-checkbox">
                             <input id="checkbox-{{ modifierIndex }}-{{ optionIndex }}" (change)="onOptionSelected($event, modifierIndex, optionIndex)" [checked]="modifier.selected?.includes(option._id)" type="checkbox" aria-hidden="true" />

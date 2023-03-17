@@ -1,20 +1,19 @@
 .app {
     
-    .header {
-        padding: 24px;
-    }
-    
+
     .content {
         background-color: var(--default-on-background);
-        min-height: 164px;
+        min-height: 250px;
+        padding: 24px;
         width: 100%;
         overflow-x: auto;
-        padding: 24px;
 
         .list {
-            min-width: 100vw;
             display: flex;
             gap: 18px;
+            width: 100%;
+            margin: 12px 0;
+            border-radius: var(--default-border-radius);
         }
 
         .no-dishes {

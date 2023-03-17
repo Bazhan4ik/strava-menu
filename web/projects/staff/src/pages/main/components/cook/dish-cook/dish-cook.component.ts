@@ -1,11 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { ConvertedSessionDish } from 'projects/staff/src/models/order-dishes';
 
 @Component({
-  selector: 'app-dish-cook',
-  templateUrl: './dish-cook.component.html',
-  styleUrls: ['./dish-cook.component.scss']
+    selector: 'app-dish-cook',
+    templateUrl: './dish-cook.component.html',
+    styleUrls: ['./dish-cook.component.scss'],
+    standalone: true,
+    imports: [CommonModule]
 })
 export class DishCookComponent implements OnInit, OnDestroy {
 
@@ -16,7 +19,7 @@ export class DishCookComponent implements OnInit, OnDestroy {
     createTakenInterval() {
         this.sessionDish.takenInterval = setInterval(() => {
             this.sessionDish.time.taken!.minutes++;
-            if(this.sessionDish.time.taken!.minutes == 60) {
+            if (this.sessionDish.time.taken!.minutes == 60) {
                 this.sessionDish.time.taken!.hours++;
                 this.sessionDish.time.taken!.minutes = 0;
             }
@@ -25,7 +28,7 @@ export class DishCookComponent implements OnInit, OnDestroy {
     createOrderedInterval() {
         this.sessionDish.orderedInterval = setInterval(() => {
             this.sessionDish.time.ordered.minutes++;
-            if(this.sessionDish.time.ordered.minutes == 60) {
+            if (this.sessionDish.time.ordered.minutes == 60) {
                 this.sessionDish.time.ordered.hours++;
                 this.sessionDish.time.ordered.minutes = 0;
             }
@@ -35,10 +38,10 @@ export class DishCookComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.image = getImage(this.sessionDish.dish.image) || "./../../../../../../../global-resources/images/no-image.svg";
 
-        if(this.sessionDish.time.ordered) {
+        if (this.sessionDish.time.ordered) {
             this.sessionDish.orderedTimeout = setTimeout(() => {
                 this.sessionDish.time.ordered.minutes++;
-                if(this.sessionDish.time.ordered.minutes == 60) {
+                if (this.sessionDish.time.ordered.minutes == 60) {
                     this.sessionDish.time.ordered.hours++;
                     this.sessionDish.time.ordered.minutes = 0;
                 }
@@ -46,10 +49,10 @@ export class DishCookComponent implements OnInit, OnDestroy {
             }, this.sessionDish.time.ordered.nextMinute);
             this.sessionDish.time.ordered.nextMinute = null!;
         }
-        if(this.sessionDish.time.taken) {
+        if (this.sessionDish.time.taken) {
             this.sessionDish.takenTimeout = setTimeout(() => {
                 this.sessionDish.time.taken!.minutes++;
-                if(this.sessionDish.time.taken!.minutes == 60) {
+                if (this.sessionDish.time.taken!.minutes == 60) {
                     this.sessionDish.time.taken!.hours++;
                     this.sessionDish.time.taken!.minutes = 0;
                 }

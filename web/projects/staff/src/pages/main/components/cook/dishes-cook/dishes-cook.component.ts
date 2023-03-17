@@ -24,7 +24,7 @@ export class DishesCookComponent implements OnInit, OnDestroy {
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
 
     async openDishModal(dish: ConvertedSessionDish) {
-        const { CookDishModal } = await import("./../../modals/cook-dish/cook-dish.modal");
+        const { CookDishModal } = await import("../../../modals/cook-dish/cook-dish.modal");
 
 
         const component = this.modalContainer.createComponent(CookDishModal);

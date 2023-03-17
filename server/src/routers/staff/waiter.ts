@@ -274,7 +274,7 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
             projection: {
                 customer: { socketId: 1, customerId: 1, },
                 dishes: 1,
-                info: { comment: 1 },
+                info: { comment: 1, id: 1, type: 1, },
                 waiterRequests: {
                     active: true,
                     waiterId: 1,
@@ -340,6 +340,8 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
             skip: [],
             customerId: session.customer.customerId!,
             comment: session.info.comment,
+            type: session.info.type,
+            id: session.info.id,
         });
 
         sendToStaffNewOrder(restaurant._id, location, convertedOrderDishes);
@@ -417,7 +419,7 @@ router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }
     const session = await getSession(
         restaurant._id,
         { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
-        { projection: { info: 1, dishes: { modifiers: 1, _id: 1, } } },
+        { projection: { info: { type: 1, id: 1, }, dishes: { modifiers: 1, _id: 1, } } },
     );
 
 
@@ -441,7 +443,7 @@ router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }
     }
 
     if(modifiers.length == 0) {
-        return res.send({ modifiers: [] });
+        return res.send({ modifiers: [], session: session.info });
     }
 
     const dish = await getDish(

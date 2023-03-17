@@ -1,14 +1,7 @@
 <div class="app">
-    <div class="header">
-        <div class="title">
-            <span class="global-subtitle">
-                Dishes to cook
-            </span>
-        </div>
-    </div>
     <div class="content">
         <div class="list" *ngIf="dishes && dishes.length > 0">
-            <app-dish-cook (click)="openDishModal(dish)" *ngFor="let dish of dishes" [sessionDish]="dish"></app-dish-cook>
+            <app-dish-waiter (click)="openDishModal(dish)" *ngFor="let dish of dishes" [sessionDish]="dish"></app-dish-waiter>
         </div>
         <div class="no-dishes" *ngIf="dishes && dishes.length == 0">
             <span class="global-text big black bold">

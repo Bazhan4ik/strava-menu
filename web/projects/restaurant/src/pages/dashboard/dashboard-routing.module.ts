@@ -133,7 +133,11 @@ const routes: Routes = [
 
             {
                 path: "orders",
-                loadChildren: () => import("./pages/orders/orders.module").then(m => m.OrdersModule),
+                loadChildren: () => import("./pages/all-orders/orders/orders.module").then(m => m.OrdersModule),
+            },
+            {
+                path: "orders/:orderId",
+                loadChildren: () => import("./pages/all-orders/order/order.module").then(m => m.OrderModule),
             }
 
 

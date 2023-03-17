@@ -135,7 +135,7 @@ export class DishPage implements OnInit {
             const update: { updated: boolean; modifier: Dish["modifiers"][0]; } = await this.service.post({ modifier }, "menu/dishes", this.dish.id, "modifier");
 
             if(update.updated) {
-                this.dish.modifiers.push(update.modifier);
+                this.dish.modifiers.push({ ...update.modifier, options: update.modifier.options.map(o => { return { ...o, price: o.price / 100 } }) });
             }
 
             component.destroy();

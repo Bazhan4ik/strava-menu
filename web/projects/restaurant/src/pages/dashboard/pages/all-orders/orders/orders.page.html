@@ -1,0 +1,51 @@
+<div class="app content-page">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Orders
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div *ngIf="orders && orders.length > 0" class="list">
+            <a *ngFor="let order of orders" routerLink="{{ order._id }}" class="order">
+                <div class="customer">
+                    <div class="avatar">
+                        <img [src]="order.customer.avatar" alt="">
+                    </div>
+                    <div class="name">
+                        <span class="global-text big black bold">
+                            {{ order.customer.name }}
+                        </span>
+                    </div>
+                </div>
+                <div class="total">
+                    <span class="global-text black">
+                        ${{ order.total / 100 }}
+                    </span>
+                </div>
+                <div class="status">
+                    <span class="global-badge" [class.green]="order.status == 'done'">
+                        {{ order.status }}
+                    </span>
+                </div>
+                <div class="date">
+                    <span class="global-text black">
+                        {{ order.date }}
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div *ngIf="orders && orders.length == 0" class="no-orders">
+            <span class="global-text big black bold">
+                No orders
+            </span>
+        </div>
+        <div *ngIf="!orders" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>

@@ -11,11 +11,10 @@ import { updateIngredientsUsage } from "../../utils/ingredients.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { addOrder } from "../../utils/orders.js";
-import { updateRestaurant } from "../../utils/restaurant.js";
 import { getSession, getSessions, updateSession } from "../../utils/sessions.js";
 import { sendToCustomerDishStatus } from "../../utils/socket/customer.js";
 import { sendDishIsDone, sendDishIsQuitted, sendDishIsTaken } from "../../utils/socket/dishes.js";
-import { sendToCustomerAcceptWaiterRequest, sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
+import { sendToWaiterWaiterRequest } from "../../utils/socket/waiterRequest.js";
 import { getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
 
@@ -243,7 +242,7 @@ router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), a
         } },
         {
             arrayFilters: [ { "sessionDish._id": id(sessionDishId) } ],
-            projection: { dishes: 1, timing: { ordered: 1, }, info: { comment: 1 }, customer: { customerId: 1, socketId: 1 } }
+            projection: { dishes: 1, timing: { ordered: 1, }, info: { comment: 1, type: 1, id: 1, }, customer: { customerId: 1, socketId: 1 } }
         }
     );
 
@@ -275,6 +274,8 @@ router.put("/done", logged(), restaurantWorker({ }, { work: { cook: true } }), a
         sessionId: update.session?._id!,
         sessionDish: sessionDish!,
         comment: update.session?.info.comment,
+        type: update.session?.info.type!,
+        id: update.session?.info.id!,
     });
 
     if(!convertedSessionDish) {

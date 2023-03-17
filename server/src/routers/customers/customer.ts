@@ -2,12 +2,12 @@ import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { Collection } from "../../models/restaurant.js";
-import { Session } from "../../models/session.js";
+import { Session, TimelineComponent } from "../../models/session.js";
 import { getDish, getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { customerSession } from "../../utils/middleware/customerSession.js";
 import { customerRestaurant } from "../../utils/middleware/customerRestaurant.js";
-import { getSession, getSessions } from "../../utils/sessions.js";
+import { getSession, getSessions, updateSession } from "../../utils/sessions.js";
 import { SessionRouter } from "./session.js";
 
 
@@ -335,8 +335,8 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, fold
     res.send(result);
 });
 
-router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (req, res) => {
-    const { restaurant } = res.locals as Locals;
+router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), customerSession({}, { }), async (req, res) => {
+    const { restaurant, session } = res.locals as Locals;
     const { dishId } = req.params;
     const { c } = req.query;
 
@@ -419,10 +419,18 @@ router.get("/dishes/:dishId", customerRestaurant({ collections: 1, }), async (re
     }
 
 
-
-
-
     res.send(result);
+
+
+    const timeline: TimelineComponent = {
+        action: "page",
+        time: Date.now(),
+        page: "dish",
+        userId: "customer",
+        dishId: dish._id,
+    };
+
+    updateSession(restaurant._id, { _id: session._id, }, { $push: { timeline } }, { noResponse: true, });
 });
 router.get("/dishes/:dishId/image", async (req, res) => {
     const { restaurantId, dishId } = req.params as any;
@@ -557,9 +565,9 @@ router.get("/modifiers", customerRestaurant({ }), async (req, res) => {
     res.send({ selected: result, modifiers: dish.modifiers });
 });
 
-router.get("/collections/:collectionId", customerRestaurant({ collections: 1 }), async (req, res) => {
+router.get("/collections/:collectionId", customerRestaurant({ collections: 1 }), customerSession({}, {}), async (req, res) => {
     const { collectionId } = req.params;
-    const { restaurant } = res.locals as Locals;
+    const { restaurant, session } = res.locals as Locals;
 
     if(!restaurant.collections) {
         return res.status(500).send({ reason: "InvalidError" });
@@ -611,6 +619,16 @@ router.get("/collections/:collectionId", customerRestaurant({ collections: 1 }),
         },
         dishes: Object.fromEntries(dishesMap.entries()),
     });
+
+    const timeline: TimelineComponent = {
+        action: "page",
+        time: Date.now(),
+        page: "collection",
+        userId: "customer",
+        collectionId: collection._id,
+    };
+
+    updateSession(restaurant._id, { _id: session._id, }, { $push: { timeline } }, { noResponse: true, });
 });
 
 

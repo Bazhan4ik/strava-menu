@@ -1,0 +1,38 @@
+<div class="app">
+    <div class="content">
+        <div class="list" *ngIf="folders && folders.length > 0">
+            <button (click)="openFolder(folder)" *ngFor="let folder of folders" class="folder">
+                <div class="header">
+                    <span class="global-text black big bold">
+                        {{ folder.type }} {{ folder.id }}
+                    </span>
+                </div>
+                <div class="dishes">
+                    <div class="dish" *ngFor="let dish of folder.dishes">
+                        <div class="image">
+                            <img [src]="dish.dish.image" alt="">
+                        </div>
+                        <div class="name">
+                            <span class="global-text small">
+                                {{ dish.dish.name }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="no-folders" *ngIf="folders && folders.length == 0">
+            <span class="global-text big black bold">
+                Nothing to serve
+            </span>
+        </div>
+        <div *ngIf="!folders" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<ng-container #modalContainer></ng-container>

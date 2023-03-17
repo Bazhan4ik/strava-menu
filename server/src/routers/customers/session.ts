@@ -14,6 +14,8 @@ import { convertTime, getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
 import { Location } from "../../models/restaurant.js";
 import Stripe from "stripe";
+import { Time } from "../../models/other/time.js";
+import { dishesDBName } from "../../config.js";
 
 
 const router = Router({ mergeParams: true });
@@ -242,10 +244,16 @@ router.put("/comment", customerRestaurant({}), customerSession({ info: { comment
         comment = null!;
     }
 
+    const timeline: TimelineComponent = {
+        action: "comment",
+        time: Date.now(),
+        userId: "customer"
+    }
+
     const update = await updateSession(
         restaurant._id,
         { _id: session._id, },
-        { $set: { "info.comment": comment } },
+        { $set: { "info.comment": comment }, $push: { timeline } },
         { projection: { _id: 1 } }
     );
 
@@ -392,11 +400,16 @@ router.post("/dish", customerRestaurant({}), customerSession({ info: { type: 1, 
         action: "dish/add",
         userId: "customer",
         time: Date.now(),
-        dishId: newDish._id,
+        sessionDishId: newDish._id,
     }
 
 
-    const update = await updateSession(restaurant._id, { _id: session._id, }, { $push: { dishes: newDish } }, { projection: { _id: 1, } });
+    const update = await updateSession(
+        restaurant._id,
+        { _id: session._id, },
+        { $push: { dishes: newDish, timeline: timeline } },
+        { projection: { _id: 1, } }
+    );
 
 
     res.send({
@@ -428,27 +441,54 @@ router.put("/dish/:orderDishId/comment", customerRestaurant({}), customerSession
         comment = null;
     }
 
+    const timeline: TimelineComponent = {
+        action: "dish/comment",
+        time: Date.now(),
+        sessionDishId: id(orderDishId),
+        userId: "customer",
+    };
+
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "dishes.$[dish].info.comment": comment } },
+        { $set: { "dishes.$[dish].info.comment": comment }, $push: timeline },
         { arrayFilters: [{ "dish._id": id(orderDishId) }] }
     );
 
     res.send({ updated: update.ok == 1 });
 });
-router.delete("/dish/:orderDishId", customerRestaurant({}), customerSession({}, {}), async (req, res) => {
+router.delete("/dish/:orderDishId", customerRestaurant({}), customerSession({ dishes: { _id: 1, dishId: 1 }}, {}), async (req, res) => {
     const { orderDishId } = req.params;
     const { restaurant, session } = res.locals as Locals;
 
     if (!orderDishId || orderDishId.length != 24) {
         return res.status(400).send({ reason: "InvalidId" });
     }
+    if(!session.dishes) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+    const getDishId = () => {
+        for(const sdish of session.dishes) {
+            if(sdish._id.equals(orderDishId)) {
+                return sdish.dishId;
+            }
+        }
+        return null;
+    }
+
+    const timeline: TimelineComponent = {
+        action: "dish/remove",
+        dishId: getDishId()!,
+        time: Date.now(),
+        userId: "customer",
+    };
+
 
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $pull: { "dishes": { _id: id(orderDishId) } } },
+        { $pull: { "dishes": { _id: id(orderDishId) } }, $push: { timeline } },
         { projection: { _id: 1 } }
     );
 
@@ -551,10 +591,18 @@ router.put("/dish/:sessionDishId/modifiers", customerRestaurant({}), customerSes
     const convertedModifiers = checkModifiers();
 
 
+    const timeline: TimelineComponent = {
+        action: "dish/modifiers",
+        sessionDishId: id(sessionDishId),
+        userId: "customer",
+        time: Date.now(),
+    }
+
+
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "dishes.$[dish].modifiers": convertedModifiers } },
+        { $set: { "dishes.$[dish].modifiers": convertedModifiers }, $push: { timeline } },
         { arrayFilters: [ { "dish._id": id(sessionDishId) } ] }
     );
 
@@ -685,7 +733,23 @@ router.put("/type", customerRestaurant({}), customerSession({ info: { type: 1, i
         id = Math.floor(Math.random() * 9000 + 1000).toString();
     }
 
-    const update = await updateSession(restaurant._id, { _id: session._id }, { $set: { "info.type": type as SessionType, "info.id": id! } }, { projection: { _id: 1 } });
+
+    const timeline: TimelineComponent = {
+        action: "type",
+        time: Date.now(),
+        userId: "customer",
+    }
+
+
+    const update = await updateSession(
+        restaurant._id,
+        { _id: session._id },
+        {
+            $set: { "info.type": type as SessionType, "info.id": id! },
+            $push: { timeline },
+        },
+        { projection: { _id: 1 } }
+    );
 
 
     res.send({ updated: update.ok == 1, id });
@@ -727,11 +791,17 @@ router.put("/table", customerRestaurant({ locations: { id: 1, _id: 1 }, tables: 
         }
     }
 
+    const timeline: TimelineComponent = {
+        action: "id",
+        userId: "customer",
+        time: Date.now(),
+    }
+
     if (!tableNumber) {
         return res.status(400).send({ reason: "InvalidTable" });
     }
 
-    const update = await updateSession(restaurant._id, { _id: session._id }, { $set: { "info.id": tableNumber.toString() } }, { projection: { _id: 1 } });
+    const update = await updateSession(restaurant._id, { _id: session._id }, { $set: { "info.id": tableNumber.toString() }, $push: { timeline } }, { projection: { _id: 1 } });
 
     res.send({ updated: update.ok == 1, table: tableNumber.toString() });
 });
@@ -772,10 +842,17 @@ router.put("/tip", customerRestaurant({ locations: { _id: 1, id: 1, settings: { 
         return res.status(403).send({ reason: "TipsDisabled" });
     }
 
+    const timeline: TimelineComponent = {
+        action: "tip/add",
+        userId: "customer",
+        amount: amount,
+        time: Date.now(),
+    }
+
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "payment.money.tip": amount, "payment.selectedTipPercentage": percentage || "custom" } },
+        { $set: { "payment.money.tip": amount, "payment.selectedTipPercentage": percentage || "custom" }, $push: { timeline } },
         { projection: { _id: 1 } }
     );
 
@@ -785,10 +862,16 @@ router.delete("/tip", customerRestaurant({}), customerSession({}, {}), async (re
     const { session, restaurant } = res.locals as Locals;
 
 
+    const timeline: TimelineComponent = {
+        action: "tip/remove",
+        userId: "customer",
+        time: Date.now(),
+    }
+
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "payment.money.tip": null!, "payment.selectedTipPercentage": null! } },
+        { $set: { "payment.money.tip": null!, "payment.selectedTipPercentage": null! }, $push: { timeline } },
         { projection: { _id: 1 } }
     );
 
@@ -799,7 +882,7 @@ router.delete("/tip", customerRestaurant({}), customerSession({}, {}), async (re
 
 
 class AmountAndDishes {
-    money!: { subtotal: number; hst: number; total: number; tip: number; service: number; };
+    money!: { subtotal: number; tax: number; taxTitle: string; total: number; tip: number; service: number; };
     dishes!: { name: string; amount: number; price: number; }[];
 }
 class ErrorResult {
@@ -820,7 +903,7 @@ class SuccessfulPaymentDataResult {
 router.get("/checkout",
     customerRestaurant({
         stripe: { stripeAccountId: 1, },
-        locations: { _id: 1, settings: 1, country: 1, },
+        locations: { _id: 1, settings: 1, country: 1, state: 1 },
     }),
     customerSession(
         {
@@ -837,6 +920,14 @@ router.get("/checkout",
 
         const { session, restaurant, user } = res.locals as Locals;
 
+        const getLocation = () => {
+            for(const location of restaurant!.locations!) {
+                if(location._id.equals(session.info.location)) {
+                    return location;
+                }
+            }
+            return null;
+        }
         const findError = () => {
             if (!restaurant.locations) {
                 return { status: 500, reason: "InvalidError" };
@@ -858,7 +949,14 @@ router.get("/checkout",
             if(session.dishes.length == 0) {
                 return { status: 500, reason: "InvalidDishes" };
             }
-            const result = await calculateAmount(restaurant._id, session.dishes, session.payment?.selectedTipPercentage, session.payment?.money?.tip, location.settings.serviceFee!);
+            const result = await calculateAmount({
+                restaurantId: restaurant._id,
+                ds: session.dishes,
+                tipPercentage: session.payment?.selectedTipPercentage || 0,
+                tip: session.payment?.money?.tip || 0,
+                serviceFee: location.settings.serviceFee!,
+                location: { country: location.country!, state: location.state!, }
+            });
 
             if (!result) {
                 return { status: 500, reason: "InvalidDishes" };
@@ -972,11 +1070,20 @@ router.get("/checkout",
         let location: Location = null!;
         let money: AmountAndDishes["money"] = null!;
         let dishes: AmountAndDishes["dishes"] = null!;
+        let dishesUpdate: any = null!;
+        let dishesArrayFilter: any = null!;
         let paymentData: SuccessfulPaymentDataResult = null!;
 
         const error = findError();
         if (error) {
             return res.status(error.status).send({ reason: error.reason });
+        }
+
+        location = getLocation()!;
+        if(!location) {
+            return res.status(404).send({ reason: "LocationNotFound" });
+        } else if(!location.state || !location.country) {
+            return res.status(500).send({ reason: "InvalidError" });
         }
 
         const calcres = await convertDishesAndCalculateMoney();
@@ -985,6 +1092,8 @@ router.get("/checkout",
         } else {
             money = (calcres as any).money;
             dishes = (calcres as any).dishes;
+            dishesArrayFilter = (calcres as any).dishesArrayFilter;
+            dishesUpdate = (calcres as any).dishesUpdate;
         }
 
         if(location.settings.methods?.card) {
@@ -997,11 +1106,12 @@ router.get("/checkout",
 
         res.send({
             money: {
-                hst: (money.hst / 100).toFixed(2),
+                tax: (money.tax / 100).toFixed(2),
                 subtotal: (money.subtotal / 100).toFixed(2),
                 tip: money.tip ? (money.tip / 100).toFixed(2) : null!,
                 service: money.service ? (money.service / 100).toFixed(2) : null!,
                 total: (money.total / 100).toFixed(2),
+                taxTitle: money.taxTitle,
             },
             dishes,
             country: location.country,
@@ -1029,9 +1139,10 @@ router.get("/checkout",
                     "payment.paymentIntentId": paymentData?.paymentIntentId,
                     "payment.setupIntentId": paymentData?.setupIntent,
                     "payment.money": money,
+                    ...dishesUpdate,
                 }
             },
-            { projection: { _id: 1 } }
+            { projection: { _id: 1 }, arrayFilters: dishesArrayFilter }
         );
     });
 
@@ -1046,8 +1157,15 @@ router.put("/request/cash", customerRestaurant({}), customerSession({ info: { id
         requestedTime: Date.now(),
     };
 
+    const timeline: TimelineComponent = {
+        action: "waiterRequest/create",
+        time: Date.now(),
+        userId: "customer",
+        waiterRequestId: newRequest._id,
+    }
 
-    const update = await updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest } }, { projection: { _id: 1, } });
+
+    const update = await updateSession(restaurant._id, { _id: session._id }, { $push: { waiterRequests: newRequest, timeline } }, { projection: { _id: 1, } });
 
 
     const request = {
@@ -1111,6 +1229,13 @@ router.put("/request/cancel", customerRestaurant({}), customerSession({ waiterRe
         return res.status(404).send({ reason: "RequestNotFound" });
     }
 
+    const timeline: TimelineComponent = {
+        action: "waiterRequest/cancel",
+        waiterRequestId: request._id,
+        userId: "customer",
+        time: Date.now(),
+    }
+
     const update = await updateSession(
         restaurant._id,
         { _id: session._id, },
@@ -1118,7 +1243,8 @@ router.put("/request/cancel", customerRestaurant({}), customerSession({ waiterRe
             $set: {
                 "waiterRequests.$[request].active": false,
                 "waiterRequests.$[request].canceledTime": Date.now(),
-            }
+            },
+            $push: { timeline },
         },
         { arrayFilters: [{ "request._id": request._id }], projection: { _id: 1 } },
     );
@@ -1148,7 +1274,17 @@ export {
  * @param serviceFee - restaurant's service fee
  * @returns AmountAndDishes || ErrorResult
  */
-async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tipPercentage: number = 0, tip: number = 0, serviceFee?: { amount: number; type: 1 | 2 }) {
+async function calculateAmount(data: {
+    restaurantId: ObjectId;
+    ds: SessionDish[];
+    tipPercentage: number;
+    tip: number;
+    serviceFee?: { amount: number; type: 1 | 2 };
+    location: { country: string; state: string; };
+}) {
+
+    const { restaurantId, ds, tipPercentage, tip, serviceFee, location } = data;
+
     const dishesId: ObjectId[] = [];
 
 
@@ -1167,13 +1303,67 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tipPer
         }
         return null!;
     }
+    const getTax = (subtotal: number) => {
+        let tax: number = null!;
+        let title: string = null!;
+
+        if(location.country == "CA" || location.country == "ca") {
+            // AB - Alberta
+            // ON - Ontario
+            // BC - British Columbia
+            // MB - Manitoba
+            // NB - New Brunswick
+            // NL - Newfoundland and Labrador
+            // NT - Northwest Territories
+            // NS - Nova Scotia
+            // NU - Nanavut
+            // PE - Prince Edward Island
+            // QC - Quebec
+            // SK - Saskatchewan
+            // YT - Yukon
+
+            if(location.state == "ON") {
+                title = "HST";
+                tax = 0.13;
+            } else if(["AB", "NT", "NU", "YT"].includes(location.state)) {
+                title = "GST";
+                tax = 0.05;
+            } else if(location.state == "QC") {
+                title = "GST + QST";
+
+                // GST - %5
+                // QST - %9.975
+                tax = 0.14975;
+            } else if(location.state == "BC" || location.state == "MB") {
+                title = "GST + PST";
+                tax = 0.12;
+            } else if(location.state == "NB" || location.state == "NL" || location.state == "NS" || location.state == "PE") {
+                title = "HST";
+                tax = 0.15;
+            } else if(location.state == "SK") {
+                title = "GST + PST";
+                tax = 0.11;
+            }
+        } else {
+            return null;
+        }
+
+        return { tax: subtotal * tax, title };
+    }
 
     let subtotal = 0;
+    const dishesUpdate: any = {};
+    const dishesArrayFilter = [];
 
     const map = new Map<string, { name: string; amount: number; price: number; }>();
 
-    for (let d of ds) {
-        const dish = findDish(d.dishId);
+    for (let sessionDish of ds) {
+
+        const arrayFilter: any = {};
+        arrayFilter[`dish${sessionDish._id}._id`] = sessionDish._id;
+        dishesArrayFilter.push(arrayFilter);
+
+        const dish = findDish(sessionDish.dishId);
 
         if (!dish) {
             return null;
@@ -1187,14 +1377,16 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tipPer
             map.set(dish._id.toString(), { name: dish.info.name, price: dish.info.price, amount: 1 });
         }
 
-        if(dish.modifiers && d.modifiers) {
-            for(const modifier of dish.modifiers!) {
-                for(const sessionDishModifier of d.modifiers) {
+        if(dish.modifiers && sessionDish.modifiers) {
+            let modifierPrice = 0;
+            for(const sessionDishModifier of sessionDish.modifiers) {
+                for(const modifier of dish.modifiers!) {
                     if(modifier._id.equals(sessionDishModifier._id)) {
                         for(const sdmo of sessionDishModifier.selected) {
                             for(const modifierOption of modifier.options) {
                                 if(sdmo.equals(modifierOption._id)) {
                                     subtotal += modifierOption.price;
+                                    modifierPrice += modifierOption.price;
                                     break;
                                 }
                             }
@@ -1202,7 +1394,9 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tipPer
                         break;
                     }
                 }
+
             }
+            dishesUpdate[`dishes.$[dish${sessionDish._id}].info.price`] = dish.info.price + modifierPrice;
         }
 
 
@@ -1210,19 +1404,28 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tipPer
         subtotal += dish.info.price;
     }
 
-    const hst = subtotal * 0.13;
+    const tax = getTax(subtotal);
+    
+    if(!tax) {
+        return null;
+    }
+
+    
     const service = serviceFee ? serviceFee?.type == 1 ? serviceFee.amount : subtotal * serviceFee.amount / 100 : null!;
     const tipAmount = tipPercentage ? calculateTip(subtotal, tipPercentage) : null!;
-    const total = hst + subtotal + (service || 0) + (tipAmount || tip);
+    const total = tax.tax + subtotal + (service || 0) + (tipAmount || tip);
 
     return {
         money: {
-            subtotal: +subtotal.toFixed(2),
-            hst: +hst.toFixed(2),
-            total: +total.toFixed(2),
-            service: +service.toFixed(2),
-            tip: +Math.floor(tipAmount || tip),
+            subtotal: Math.ceil(subtotal),
+            tax: Math.ceil(tax.tax),
+            total: Math.ceil(total),
+            service: Math.ceil(service),
+            tip: Math.ceil(Math.floor(tipAmount || tip)),
+            taxTitle: tax.title,
         },
+        dishesUpdate,
+        dishesArrayFilter,
         dishes: Array.from(map.values()),
     };
 }

@@ -87,7 +87,7 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
         for(const c of folder.collections) {
             const collection = getCollection(c);
 
-            if(!collection) {
+            if(!collection || collection.dishes.length == 0) {
                 continue;
             }
 

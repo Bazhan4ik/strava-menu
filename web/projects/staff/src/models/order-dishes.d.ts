@@ -12,6 +12,12 @@ interface ConvertedSessionDish {
     id: string;
     status: "cooking" | "ordered" | "cooked";
 
+    order: {
+        type: string;
+        id: string;
+        title: string;
+    }
+
     dish: {
         name: string;
         image: any;
@@ -40,8 +46,16 @@ interface ConvertedSessionDish {
     };
 }
 
+interface Folder {
+    dishes: ConvertedSessionDish[];
+    sessionId: string;
+    type: string;
+    id: string;
+}
+
 
 
 export {
-    ConvertedSessionDish
+    ConvertedSessionDish,
+    Folder
 }

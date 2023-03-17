@@ -120,10 +120,16 @@ interface SessionInfo {
 }
 
 interface TimelineComponent {
-    action: "created" | "dish/add"; // action type
-    dishId?: ObjectId;       // NOT ID OF A DISH     IT IS UNIQUE ID NOT OF THE DISH ITSELF IT IS FOR TRACKING DISH IN THE ORDER
+    action: "created" | "comment" | "waiterRequest/create" | "payed" | "waiterRequest/cancel" | "tip/add" | "tip/remove" | "type" | "id" | "dish/add" | "dish/remove" | "dish/comment" | "dish/modifiers" | "page"; // what action happened
+    sessionDishId?: ObjectId; // id of a dish ordered, add if action "dish/add"
+    page?: string; // if a user visited a page
+    waiterRequestId?: ObjectId; // waiter request id
     userId: ObjectId | "customer"; // id of a user that did an action
+    amount?: number; // amount of the tip
     time: number; // time when action happened
+
+    collectionId?: ObjectId;
+    dishId?: ObjectId;
 }
 
 interface WaiterRequest {

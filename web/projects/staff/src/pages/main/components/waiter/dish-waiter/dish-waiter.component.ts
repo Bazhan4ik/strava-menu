@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { ConvertedSessionDish } from 'projects/staff/src/models/order-dishes';
@@ -5,7 +6,9 @@ import { ConvertedSessionDish } from 'projects/staff/src/models/order-dishes';
 @Component({
     selector: 'app-dish-waiter',
     templateUrl: './dish-waiter.component.html',
-    styleUrls: ['./dish-waiter.component.scss']
+    styleUrls: ['./dish-waiter.component.scss'],
+    standalone: true,
+    imports: [CommonModule],
 })
 export class DishWaiterComponent implements OnInit {
 

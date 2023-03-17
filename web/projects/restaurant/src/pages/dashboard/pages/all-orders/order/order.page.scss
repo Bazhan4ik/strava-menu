@@ -1,0 +1,89 @@
+.order-app {
+    .content {
+        .top {
+            height: 52px;
+            display: grid;
+            grid-template-columns: 35% 17% 17% 31%;
+            border-bottom: 1px solid var(--default-border-color);
+
+            .customer {
+                display: flex;
+                align-items: center;
+            }
+
+            .status, .total {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .date-location {
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                
+                .location,.date {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    
+                    span {
+                        margin: 0;
+                    }
+                    mat-icon {
+                        width: 16px;
+                        height: 16px;
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+        .payment {
+            margin-top: 24px;
+
+            .list {
+                display: flex;
+                align-items: center;
+
+                & > div {
+                    min-width: 96px;
+                    margin: 12px 0;
+                    padding: 8px 12px;
+                    border-left: 1px solid var(--default-border-color);
+                    // border-right: 1px solid var(--default-border-color);
+
+                }
+            }
+        }
+
+        .dishes {
+            margin-top: 24px;
+
+            .list {
+                .dish {
+                    height: 64px;
+                    width: 100%;
+                    display: grid;
+                    padding: 6px;
+                    grid-template-columns: 52px 1fr 96px;
+    
+                    .image {
+                        img {
+                            width: 52px;
+                            height: 52px;
+                            border-radius: var(--default-small-radius);
+                        }
+                    }
+                    .name-price {
+                        padding-left: 4px;
+                    }
+                    .modifiers {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { ObjectEncodingOptions } from "fs";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { logged } from "../../utils/middleware/auth.js";
@@ -21,7 +20,6 @@ interface ConvertedTable {
     sessions: { status: string; connected: string; amount: number; }[];
     total: number;
 }
-
 router.get("/", logged(), restaurantWorker({ tables: 1, }, { work: { manager: true } }), async (req, res) => {
     const { locationId } = req.params;
     const { restaurant } = res.locals as Locals;
@@ -68,8 +66,6 @@ router.get("/", logged(), restaurantWorker({ tables: 1, }, { work: { manager: tr
 
     const result: ConvertedTable[] = [];
     
-    console.log(sessions);
-
     for(const table of tables) {
         const tableSessions = sessionsOnTheTable(table.id);
 
@@ -83,9 +79,6 @@ router.get("/", logged(), restaurantWorker({ tables: 1, }, { work: { manager: tr
         });
         
     }
-
-
-    console.log(result);
 
 
     res.send(result);

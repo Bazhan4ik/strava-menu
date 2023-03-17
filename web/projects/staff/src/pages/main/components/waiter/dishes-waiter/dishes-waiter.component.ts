@@ -1,14 +1,18 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
 import { ConvertedSessionDish } from 'projects/staff/src/models/order-dishes';
 import { WaiterDishesData } from 'projects/staff/src/models/socket-waiter-dishes';
 import { SocketService } from 'projects/staff/src/services/socket.service';
 import { StaffService } from 'projects/staff/src/services/staff.service';
 import { Subscription } from "rxjs";
+import { DishWaiterComponent } from '../dish-waiter/dish-waiter.component';
 
 @Component({
     selector: 'app-dishes-waiter',
     templateUrl: './dishes-waiter.component.html',
-    styleUrls: ['./dishes-waiter.component.scss']
+    styleUrls: ['./dishes-waiter.component.scss'],
+    standalone: true,
+    imports: [CommonModule, DishWaiterComponent]
 })
 export class DishesWaiterComponent implements OnInit, OnDestroy {
     dishes: ConvertedSessionDish[];
@@ -24,7 +28,7 @@ export class DishesWaiterComponent implements OnInit, OnDestroy {
 
 
     async openDishModal(dish: ConvertedSessionDish) {
-        const { WaiterDishModal } = await import("./../../modals/waiter-dish/waiter-dish.modal");
+        const { WaiterDishModal } = await import("../../../modals/waiter-dish/waiter-dish.modal");
 
         const component = this.modalContainer.createComponent(WaiterDishModal);
 
@@ -68,6 +72,6 @@ export class DishesWaiterComponent implements OnInit, OnDestroy {
         this.dishes = result;
     }
     ngOnDestroy() {
-        
+        this.subscription?.unsubscribe();
     }
 }

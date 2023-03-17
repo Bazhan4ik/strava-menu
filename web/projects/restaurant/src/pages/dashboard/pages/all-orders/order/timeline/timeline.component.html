@@ -1,0 +1,30 @@
+<div class="app">
+    <div class="right">
+        <div class="title">
+            <span class="global-subtitle">
+                Timeline
+            </span>
+        </div>
+    </div>
+    <div class="left">
+        <div class="list">
+            <div *ngFor="let component of timeline" class="component">
+                <div class="circle">
+                    <span class="global-text {{ component.color }}">
+                        &#9679;
+                    </span>
+                </div>
+                <div class="time">
+                    <span class="global-text">
+                        {{ component.time }}
+                    </span>
+                </div>
+                <div class="description">
+                    <span class="global-text normal black">
+                        {{ component.description }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

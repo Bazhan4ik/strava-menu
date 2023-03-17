@@ -1,0 +1,51 @@
+.app {
+    margin-top: 24px;
+
+    display: grid;
+    grid-template-columns: 35% 65%;
+
+
+    .right {
+        
+    }
+
+    .left {
+        .component {
+            display: grid;
+            grid-template-columns: 28px 68px 1fr;
+            height: 32px;
+
+            .circle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                .global-text {
+                    font-size: 20px;
+                }
+
+                .green {
+                    color: var(--green);
+                }
+                .orange {
+                    color: var(--orange);
+                }
+                .gray {
+                    color: var(--gray-light)
+                }
+                .red {
+                    color: var(--red);
+                }
+            }
+            .time {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .description {
+                display: flex;
+                align-items: center;
+            }
+        }
+    }
+}

@@ -1,0 +1,97 @@
+.app {
+    .content {
+        .list {
+            .order {
+                display: grid;
+                grid-template-columns: 40% 20% 20% 20%;
+                height: 52px;
+                border-radius: var(--default-small-radius);
+                text-decoration: none;
+                padding: 8px;
+                transition: .2s all;
+
+                &:nth-child(even) {
+                    background-color: var(--default-on-background);
+                }
+
+                &:hover {
+                    box-shadow: var(--default-box-shadow);
+                }
+
+                .customer {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .avatar {
+                        display: flex;
+                        align-items: center;
+
+                        img {
+                            width: 32px;
+                            height: 32px;
+                            border-radius: 100%;
+                            outline: 1px solid var(--orange);
+                        }
+                    }
+                    .name {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+
+                .total {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .status {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .date {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 736px) {
+
+    .app {
+        .content {
+            .list {
+                .order {
+                    .order-info {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        
+                        .info {
+                            display: none;
+                        }
+                    }
+                    .dishes {
+                        .dish {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+
+                            .staff {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

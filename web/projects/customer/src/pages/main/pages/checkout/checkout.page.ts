@@ -43,7 +43,8 @@ export class CheckoutPage implements OnInit {
     money: {
         total: string;
         subtotal: string;
-        hst: string;
+        tax: string;
+        taxTitle: string;
         service: string;
         tip: string;
     }

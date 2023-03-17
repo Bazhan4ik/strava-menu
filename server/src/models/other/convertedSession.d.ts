@@ -13,6 +13,11 @@ interface ConvertedSessionDish {
     id: string;
     status: SessionDishStatus;
 
+    order: {
+        type: string;
+        id: string;
+    }
+
     dish: {
         name: string;
         image: any;
