@@ -1,0 +1,20 @@
+<div class="app">
+    <div class="content">
+        <div class="list" *ngIf="items && items.length > 0">
+            <app-item-waiter (click)="openItemModal(item)" *ngFor="let item of items" [sessionItem]="item"></app-item-waiter>
+        </div>
+        <div class="no-items" *ngIf="items && items.length == 0">
+            <span class="global-text big black bold">
+                No items
+            </span>
+        </div>
+        <div *ngIf="!items" class="global-loading height-124">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<ng-container #modalContainer></ng-container>

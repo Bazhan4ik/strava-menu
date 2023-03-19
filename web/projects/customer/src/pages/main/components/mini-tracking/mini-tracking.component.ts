@@ -5,15 +5,15 @@ import { RouterModule } from '@angular/router';
 import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
 import { Subscription } from 'rxjs';
-import { DishesEvent } from '../../models/socket';
+import { ItemsEvent } from '../../models/socket';
 
 
-interface Dish {
+interface Item {
     name: string;
     status: string;
     imageUrl: any;
     _id: string;
-    dishId: string;
+    itemId: string;
 }
 
 
@@ -33,26 +33,26 @@ export class MiniTrackingComponent implements OnInit, OnDestroy {
     ) { };
 
 
-    @Input() dishes: Dish[];
+    @Input() items: Item[];
 
 
     ngOnInit() {
 
 
-        this.subscription = this.service.$dishes.subscribe(data => {
-            if(data.types.includes("dishes/status")) {
-                for(let dish of this.dishes) {
-                    const { sessionDishId, status } = data.data as DishesEvent.status;
-                    if(dish._id == sessionDishId) {
-                        dish.status = status;
+        this.subscription = this.service.$items.subscribe(data => {
+            if(data.types.includes("items/status")) {
+                for(let item of this.items) {
+                    const { sessionItemId, status } = data.data as ItemsEvent.status;
+                    if(item._id == sessionItemId) {
+                        item.status = status;
                         break;
                     }
                 }
             }
         });
 
-        for(let dish of this.dishes) {
-            dish.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/dishes/" + dish.dishId + "/image";
+        for(let item of this.items) {
+            item.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/items/" + item.itemId + "/image";
         }
     }
     ngOnDestroy() {

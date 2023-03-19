@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { Modifier } from '../../models/dish';
+import { Modifier } from '../../models/item';
 
 interface ModifierModified extends Modifier {
     selected?: string[];

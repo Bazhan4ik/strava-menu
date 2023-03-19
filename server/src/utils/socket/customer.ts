@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { SessionDishStatus } from "../../models/session.js";
+import { SessionItemStatus } from "../../models/session.js";
 import { io } from "../../setup/setup.js";
 
 
@@ -7,12 +7,12 @@ function sendToCustomerPaymentSucceeded(restaurantId: ObjectId, locationId: Obje
     io.to(restaurantId.toString()).to(`${restaurantId}/${locationId}`).emit("customer", { types: ["payment", "payment/succeeded"], sessionId });
 }
 
-function sendToCustomerDishStatus(restaurantId: ObjectId, socketId: string, data: { sessionDishId: ObjectId; status: SessionDishStatus; }) {
-    io.to(restaurantId.toString()).to(socketId).emit("customer", { types: ["dishes", "dishes/status"], data });
+function sendToCustomerItemStatus(restaurantId: ObjectId, socketId: string, data: { sessionItemId: ObjectId; status: SessionItemStatus; }) {
+    io.to(restaurantId.toString()).to(socketId).emit("customer", { types: ["items", "items/status"], data });
 }
 
 
 export {
     sendToCustomerPaymentSucceeded,
-    sendToCustomerDishStatus,
+    sendToCustomerItemStatus,
 }

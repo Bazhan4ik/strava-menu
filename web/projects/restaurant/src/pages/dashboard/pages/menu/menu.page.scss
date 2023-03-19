@@ -1,0 +1,81 @@
+.app {
+    .header {
+        .buttons {
+            display: flex;
+            align-items: flex-end;
+        }
+    }
+    .content {
+        .sorting {
+            .days, .times {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                gap: 8px;
+
+                .day {
+                    min-height: 52px;
+                    background: none;
+                    border: 1px solid var(--default-border-color);
+                    border-radius: var(--default-border-radius);
+
+                    &.active {
+                        border: 2px solid var(--orange);
+                    }
+                }
+            }
+            .times {
+                margin-top: 8px;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+
+                .time {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 52px;
+                    background: none;
+                    border: 1px solid var(--default-border-color);
+                    border-radius: var(--default-border-radius);
+
+                    .smaller {
+                        margin: 0;
+                    }
+
+                    &.active {
+                        border: 2px solid var(--orange);
+                    }
+                }
+            }
+        }
+        .top {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+
+            .tabs {
+                display: flex;
+                gap: 4px;
+                padding-bottom: 8px;
+    
+                a {
+                    padding: 2px 8px;
+                    border-radius: 0;
+    
+                    &:hover {
+                        scale: none;
+                    }
+    
+                    &.active {
+                        border-bottom: 3px solid var(--orange);
+                    }
+                }
+            }
+
+            .buttons {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+    }
+}

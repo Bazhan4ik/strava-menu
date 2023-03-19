@@ -42,7 +42,7 @@
             <textarea type="text" class="global-input vertical" [(ngModel)]="description"></textarea>
         </div>
 
-        <div class="dishes">
+        <div class="items">
             <div class="header">
                 <div class="title">
                     <span class="global-text bold big">
@@ -55,21 +55,21 @@
                     </button>
                 </div>
             </div>
-            <div class="list" *ngIf="dishes && dishes.length > 0">
-                <div class="dish" (click)="removeDish(dish.id)" *ngFor="let dish of dishes">
+            <div class="list" *ngIf="items && items.length > 0">
+                <div class="item" (click)="removeDish(item.id)" *ngFor="let item of items">
                     <div class="image">
-                        <img [src]="dish.image" alt="">
+                        <img [src]="item.image" alt="">
                     </div>
                     <div class="name">
                         <span class="global-text big black bold">
-                            {{ dish.name }}
+                            {{ item.name }}
                         </span>
                     </div>
                 </div>
             </div>
-            <div *ngIf="!dishes || dishes.length == 0" class="no-dishes">
+            <div *ngIf="!items || items.length == 0" class="no-items">
                 <span class="global-text">
-                    No dishes selected
+                    No items selected
                 </span>
             </div>
         </div>

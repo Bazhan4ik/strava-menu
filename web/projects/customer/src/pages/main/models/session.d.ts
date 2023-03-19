@@ -4,7 +4,7 @@ interface Session {
     id: string;
     type: "dinein" | "takeout";
 
-    dishes: { _id: string; dishId: string; comment: string; }[];
+    items: { _id: string; itemId: string; comment: string; }[];
 
     waiterRequest: {
         _id: string;

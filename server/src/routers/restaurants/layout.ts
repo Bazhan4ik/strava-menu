@@ -2,8 +2,8 @@ import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { LayoutElement } from "../../models/restaurant.js";
-import { getDish, getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
+import { getItem, getItems } from "../../utils/items.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { bulkRestaurant, updateRestaurant } from "../../utils/restaurant.js";
@@ -28,15 +28,15 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const convertDishes = async (ids: ObjectId[]) => {
-        const dishes = await getDishes(restaurant._id, { _id: { $in: ids } }, { projection: { id: 1, _id: 1, info: { name: 1, price: 1 } }}).toArray();
+    const convertItems = async (ids: ObjectId[]) => {
+        const items = await getItems(restaurant._id, { _id: { $in: ids } }, { projection: { id: 1, _id: 1, info: { name: 1, price: 1 } }}).toArray();
         const result = [];
-        for(const dish of dishes) {
+        for(const item of items) {
             result.push({
-                name: dish.info.name,
-                price: dish.info.price,
-                id: dish.id,
-                _id: dish._id,
+                name: item.info.name,
+                price: item.info.price,
+                id: item.id,
+                _id: item._id,
             });
         }
         return result;
@@ -44,7 +44,7 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
     const getCollection = async (id: ObjectId) => {
         for(const collection of restaurant.collections) {
             if(collection._id.equals(id)) {
-                return { ...collection, image: null, dishes: await convertDishes(collection.dishes) };
+                return { ...collection, image: null, items: await convertItems(collection.items) };
             }
         }
         return null;
@@ -67,20 +67,20 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
             }
         }
     }
-    const getDishForElement = async (id: ObjectId) => {
-        const dish = await getDish(restaurant._id, { _id: id }, { projection: { info: { name: 1, price: 1, description: 1 } } });
+    const getItemForElement = async (id: ObjectId) => {
+        const item = await getItem(restaurant._id, { _id: id }, { projection: { info: { name: 1, price: 1, description: 1 } } });
 
-        if(!dish) {
+        if(!item) {
             return null!;
         }
 
-        return { ...dish.info, _id: dish._id };
+        return { ...item.info, _id: item._id };
     }
 
     const result = [];
     for(const element of restaurant.layout) {
         const el: any = {
-            name: element.type == "collection" ? "Collection" : element.type == "dish" ? "Dish" : "Folder",
+            name: element.type == "collection" ? "Collection" : element.type == "item" ? "Item" : "Folder",
             _id: element._id,
             type: element.type,
             position: element.position,
@@ -94,11 +94,11 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
             el.data = { collection: await getCollection(element.data.id) };
         } else if(element.type == "folder") {
             el.data = { folder: getFolder(element.data.id) };
-        } else if(element.type == "dish") {
-            el.data = { dish: await getDishForElement(element.data.id) };
+        } else if(element.type == "item") {
+            el.data = { item: await getItemForElement(element.data.id) };
         }
 
-        if(!el.data.collection && !el.data.folder && !el.data.dish) {
+        if(!el.data.collection && !el.data.folder && !el.data.item) {
             delete el.data;
 
             updateRestaurant(
@@ -119,7 +119,7 @@ router.post("/", logged(), restaurantWorker({ layout: 1 }), async (req, res) => 
     const { restaurant } = res.locals as Locals;
 
 
-    if(!type || typeof type != "string" || !["collection", "folder", "dish"].includes(type)) {
+    if(!type || typeof type != "string" || !["collection", "folder", "item"].includes(type)) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
     if(!restaurant.layout) {
@@ -141,7 +141,7 @@ router.post("/", logged(), restaurantWorker({ layout: 1 }), async (req, res) => 
         { projection: { _id: 1 } },
     );
 
-    res.send({ updated: update.ok == 1, element: {...newElement, name: type == "collection" ? "Collection" : type == "dish" ? "Dish" : "Folder" } });
+    res.send({ updated: update.ok == 1, element: {...newElement, name: type == "collection" ? "Collection" : type == "item" ? "Item" : "Folder" } });
 });
 router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1 }), async (req, res) => {
     const { collectionId, elementId } = req.body;
@@ -158,15 +158,15 @@ router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1
     }
 
 
-    const convertDishes = async (ids: ObjectId[]) => {
-        const dishes = await getDishes(restaurant._id, { _id: { $in: ids } }, { projection: { id: 1, _id: 1, info: { name: 1, price: 1 } }}).toArray();
+    const convertItems = async (ids: ObjectId[]) => {
+        const items = await getItems(restaurant._id, { _id: { $in: ids } }, { projection: { id: 1, _id: 1, info: { name: 1, price: 1 } }}).toArray();
         const result = [];
-        for(const dish of dishes) {
+        for(const item of items) {
             result.push({
-                name: dish.info.name,
-                price: dish.info.price,
-                id: dish.id,
-                _id: dish._id,
+                name: item.info.name,
+                price: item.info.price,
+                id: item.id,
+                _id: item._id,
             });
         }
 
@@ -204,7 +204,7 @@ router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1
     }
 
     if(layout.data?.id.equals(collection._id)) {
-        return res.send({ updated: true, collection: { ...collection, dishes: await convertDishes(collection.dishes), image: collection.image?.buffer } });
+        return res.send({ updated: true, collection: { ...collection, items: await convertItems(collection.items), image: collection.image?.buffer } });
     }
 
 
@@ -215,33 +215,33 @@ router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1
     );
 
     if(update.ok == 1) {
-        return res.send({ updated: true, collection: { ...collection, dishes: await convertDishes(collection.dishes), image: collection.image?.buffer } });
+        return res.send({ updated: true, collection: { ...collection, items: await convertItems(collection.items), image: collection.image?.buffer } });
     }
 
     res.send({ updated: false });
 });
-router.put("/dish", logged(), restaurantWorker({ layout: 1 }), async (req, res) => {
-    const { dishId, elementId } = req.body;
+router.put("/item", logged(), restaurantWorker({ layout: 1 }), async (req, res) => {
+    const { itemId, elementId } = req.body;
     const { restaurant } = res.locals as Locals;
     
-    if(!dishId || !elementId) {
+    if(!itemId || !elementId) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
-    if(typeof dishId != "string" || typeof elementId != "string" || dishId.length != 24 || elementId.length != 24) {
+    if(typeof itemId != "string" || typeof elementId != "string" || itemId.length != 24 || elementId.length != 24) {
         return res.status(422).send({ reason: "InvalidInput" });
     }
     if(!restaurant.layout) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const getElementDish = async () => {
-        const dish = await getDish(restaurant._id, { _id: id(dishId) }, { projection: { info: { description: 1, name: 1, price: 1 } } });
+    const getElementItem = async () => {
+        const item = await getItem(restaurant._id, { _id: id(itemId) }, { projection: { info: { description: 1, name: 1, price: 1 } } });
 
-        if(!dish) {
+        if(!item) {
             return null;
         }
         
-        return { ...dish.info, _id: dish._id };
+        return { ...item.info, _id: item._id };
     }
     const getElement = () => {
         for(const element of restaurant.layout) {
@@ -252,10 +252,10 @@ router.put("/dish", logged(), restaurantWorker({ layout: 1 }), async (req, res) 
         return null;
     }
 
-    const dish = await getElementDish();
+    const item = await getElementItem();
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
     }
 
     const layout = getElement();
@@ -263,23 +263,23 @@ router.put("/dish", logged(), restaurantWorker({ layout: 1 }), async (req, res) 
         return res.status(404).send({ reason: "ElementNotFound" });
     }
 
-    if(layout.type != "dish") {
+    if(layout.type != "item") {
         return res.status(403).send({ reason: "WrongType" });
     }
 
-    if(layout.data?.id.equals(dish._id)) {
-        return res.send({ updated: true, dish });
+    if(layout.data?.id.equals(item._id)) {
+        return res.send({ updated: true, item });
     }
 
 
     const update = await updateRestaurant(
         { _id: restaurant._id },
-        { $set: { "layout.$[element].data": { id: dish._id } } },
+        { $set: { "layout.$[element].data": { id: item._id } } },
         { arrayFilters: [ { "element._id": layout._id } ], projection: { _id: 1 } }
     );
 
     if(update.ok == 1) {
-        return res.send({ updated: true, dish });
+        return res.send({ updated: true, item });
     }
 
     res.send({ updated: false });

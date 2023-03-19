@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ConvertedSessionDish, Folder } from 'projects/staff/src/models/order-dishes';
-import { DishCookComponent } from '../../components/cook/dish-cook/dish-cook.component';
+import { ConvertedSessionItem, Folder } from 'projects/staff/src/models/order-items';
+import { ItemCookComponent } from '../../components/cook/item-cook/item-cook.component';
 
 @Component({
     selector: 'app-folder',
     templateUrl: './folder-cook.modal.html',
     styleUrls: ['./folder-cook.modal.scss'],
     standalone: true,
-    imports: [CommonModule, DishCookComponent, MatIconModule],
+    imports: [CommonModule, ItemCookComponent, MatIconModule],
 })
 export class FolderCookModal {
 
@@ -17,29 +17,29 @@ export class FolderCookModal {
     @Output() leave = new EventEmitter();
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
 
-    async openDishModal(dish: ConvertedSessionDish) {
-        const { CookDishModal } = await import("../cook-dish/cook-dish.modal");
+    async openItemModal(item: ConvertedSessionItem) {
+        const { CookItemModal } = await import("../cook-item/cook-item.modal");
 
 
-        const component = this.modalContainer.createComponent(CookDishModal);
+        const component = this.modalContainer.createComponent(CookItemModal);
 
-        component.instance.sessionDish = dish;
+        component.instance.sessionItem = item;
 
 
         component.instance.leave.subscribe((a: "done" | "taken") => {
             if(a == "taken") {
-                for(let i in this.folder.dishes) {
-                    if(this.folder.dishes[i]._id == dish._id) {
+                for(let i in this.folder.items) {
+                    if(this.folder.items[i]._id == item._id) {
                         
-                        if(dish.takenInterval) {
+                        if(item.takenInterval) {
                             return;
                         }
 
-                        dish.takenInterval = setInterval(() => {
-                            dish.time.taken!.minutes++;
-                            if(dish.time.taken?.minutes == 60) {
-                                dish.time.taken.hours++;
-                                dish.time.taken.minutes = 0;
+                        item.takenInterval = setInterval(() => {
+                            item.time.taken!.minutes++;
+                            if(item.time.taken?.minutes == 60) {
+                                item.time.taken.hours++;
+                                item.time.taken.minutes = 0;
                             }
                         }, 60000);
 
@@ -48,19 +48,19 @@ export class FolderCookModal {
                     }
                 }
             } else if(a == "done") {
-                for(let i in this.folder.dishes) {
-                    if(this.folder.dishes[i]._id == dish._id) {
-                        this.folder.dishes.splice(+i, 1);
+                for(let i in this.folder.items) {
+                    if(this.folder.items[i]._id == item._id) {
+                        this.folder.items.splice(+i, 1);
                         break;
                     }
                 }
-                if(this.folder.dishes.length == 0) {
+                if(this.folder.items.length == 0) {
                     return this.leave.emit("done");
                 }
             } else if(a == "removed") {
-                for(let i in this.folder.dishes) {
-                    if(this.folder.dishes[i]._id == dish._id) {
-                        this.folder.dishes.splice(+i, 1);
+                for(let i in this.folder.items) {
+                    if(this.folder.items[i]._id == item._id) {
+                        this.folder.items.splice(+i, 1);
                         break;
                     }
                 }

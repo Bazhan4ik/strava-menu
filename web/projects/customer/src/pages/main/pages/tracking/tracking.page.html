@@ -14,26 +14,26 @@
             </div>
         </div>
         <div class="content">
-            <div class="dishes" *ngIf="logged && loaded">
-                <div class="dish" *ngFor="let dish of dishes">
+            <div class="items" *ngIf="logged && loaded">
+                <div class="item" *ngFor="let item of items">
                     <div class="image">
-                        <img [ngSrc]="dish.imageUrl" width="160" height="160" alt="">
+                        <img [ngSrc]="item.imageUrl" width="160" height="160" alt="">
                     </div>
                     <div class="name-status">
                         <div class="name">
                             <span class="global-text big black bold">
-                                {{ dish.name }}
+                                {{ item.name }}
                             </span>
                         </div>
                         <div class="status">
-                            <span *ngIf="dish.status != 'ordered'"
-                                  [class.orange]="dish.status == 'cooked'" 
-                                  [class.green]="dish.status == 'served'" 
-                                  [class.purple]="dish.status == 'cooking'"
-                                  [class.red]="dish.status == 'removed'">
-                                {{ dish.status }}
+                            <span *ngIf="item.status != 'ordered'"
+                                  [class.orange]="item.status == 'cooked'" 
+                                  [class.green]="item.status == 'served'" 
+                                  [class.purple]="item.status == 'cooking'"
+                                  [class.red]="item.status == 'removed'">
+                                {{ item.status }}
                             </span>
-                            <span *ngIf="dish.status == 'ordered'" class="gray">
+                            <span *ngIf="item.status == 'ordered'" class="gray">
                                 waiting
                             </span>
                         </div>

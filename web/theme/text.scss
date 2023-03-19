@@ -17,6 +17,9 @@
     font-family: var(--text-font);
     margin: 4px 0;
 
+    &.smaller {
+        font-size: 12px;
+    }
     &.small {
         font-size: 13px;
     }

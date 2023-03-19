@@ -10,7 +10,7 @@ interface CollectionInfo {
     id: string;
 }
 
-interface Dish {
+interface Item {
     name: string;
     id: string;
     image: any;
@@ -24,7 +24,7 @@ interface Dish {
 export class CollectionPage implements OnInit {
 
     collection: CollectionInfo;
-    dishes: Dish[];
+    items: Item[];
 
     image = "./../../../../../../../../global-resources/images/no-image.svg";
 
@@ -47,18 +47,18 @@ export class CollectionPage implements OnInit {
 
         const result:{
             collection: CollectionInfo;
-            dishes: Dish[];
+            items: Item[];
         } = await this.service.get("menu/collections", collectionId);
 
         this.collection = result.collection;
-        this.dishes = result.dishes;
+        this.items = result.items;
 
         if(this.collection.image) {
             this.image = getImage(this.collection.image);
         }
 
-        for(let dish of this.dishes) {
-            dish.image = getImage(dish.image) || "./../../../../../../../../global-resources/images/no-image.svg";
+        for(let item of this.items) {
+            item.image = getImage(item.image) || "./../../../../../../../../global-resources/images/no-image.svg";
         }
 
         console.log(result);

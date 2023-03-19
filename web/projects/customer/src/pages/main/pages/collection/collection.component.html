@@ -19,8 +19,8 @@
                 {{ collection.description }}
             </span>
         </div>
-        <div class="dishes" *ngIf="collection">
-            <app-dish *ngFor="let dishId of collection.dishes" [dishObjectId]="dishId"></app-dish>
+        <div class="items" *ngIf="collection">
+            <app-item *ngFor="let itemId of collection.items" [itemObjectId]="itemId"></app-item>
         </div>
     
     

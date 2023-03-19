@@ -18,11 +18,11 @@
         <div class="requests" *ngIf="restaurant.pages.requests">
             <app-waiter-requests></app-waiter-requests>
         </div>
-        <div class="dishes-cook" *ngIf="restaurant.pages.cook">
+        <div class="items-cook" *ngIf="restaurant.pages.cook">
             <div class="block-header">
                 <div class="title">
                     <span class="global-subtitle">
-                        Dishes to cook
+                        Items to cook
                     </span>
                 </div>
                 <div class="buttons">
@@ -36,11 +36,11 @@
                 <ng-container #cookBodyContainer></ng-container>
             </div>
         </div>
-        <div class="dishes-serve" *ngIf="restaurant.pages.waiter">
+        <div class="items-serve" *ngIf="restaurant.pages.waiter">
             <div class="block-header">
                 <div class="title">
                     <span class="global-subtitle">
-                        Dishes to serve
+                        Items to serve
                     </span>
                 </div>
                 <div class="buttons">

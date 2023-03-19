@@ -8,14 +8,14 @@ import { getImage } from 'projects/restaurant/src/utils/getImage';
 
 
 
-interface Dish {
+interface Item {
     name: string;
     price: number;
     image: any;
     _id: string;
     comment: string;
-    dishObjectId: string;
-    dishId: string;
+    itemObjectId: string;
+    itemId: string;
 }
 interface OrderInfo {
     id: string;
@@ -38,9 +38,13 @@ interface Settings {
     standalone: true,
 })
 export class PreviewPage implements OnInit {
+    constructor(
+        private service: CustomerService,
+        private router: Router,
+    ) {};
 
     subtotal: number;
-    dishes: Dish[] = [];
+    items: Item[] = [];
     info: OrderInfo;
     settings: Settings;
     address: string;
@@ -48,15 +52,13 @@ export class PreviewPage implements OnInit {
     loading: boolean = false;
 
     errors = {
-        dishes: false,
+        items: false,
         type: false,
     }
 
+    backUrl: string;
 
-    constructor(
-        private service: CustomerService,
-        private router: Router,
-    ) {};
+
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
 
@@ -79,23 +81,23 @@ export class PreviewPage implements OnInit {
         });
     }
 
-    async updateModifiers(dish: Dish) {
+    async updateModifiers(item: Item) {
         const { ModifiersModalModal } = await import("./../../components/modifiers-modal/modifiers-modal.modal");
 
         const component = this.modalContainer.createComponent(ModifiersModalModal);
 
-        component.instance.dishId = dish.dishObjectId;
-        component.instance.sessionDishId = dish._id;
+        component.instance.itemId = item.itemObjectId;
+        component.instance.sessionItemId = item._id;
 
         component.instance.leave.subscribe(async (m: any) => {
             if(m) {
 
-                const update: any = await this.service.put({ modifiers: m }, "session/dish", dish._id, `modifiers?dishId=${dish.dishObjectId}`);
+                const update: any = await this.service.put({ modifiers: m }, "session/item", item._id, `modifiers?itemId=${item.itemObjectId}`);
 
                 if(update.updated) {
-                    this.subtotal -= dish.price;
-                    dish.price = update.newPrice;
-                    this.subtotal += dish.price;
+                    this.subtotal -= item.price;
+                    item.price = update.newPrice;
+                    this.subtotal += item.price;
                 }
 
             }
@@ -104,57 +106,57 @@ export class PreviewPage implements OnInit {
 
     }
 
-    async dishMore(ev: any, dish: Dish) {
+    async itemMore(ev: any, item: Item) {
         
         const popoverPosition = ev.target.getBoundingClientRect(ev.target);
 
-        const { DishMoreModal } = await import("./modals/dish-more/dish-more.modal");
+        const { ItemMoreModal } = await import("./modals/item-more/item-more.modal");
 
-        const component = this.modalContainer.createComponent(DishMoreModal);
+        const component = this.modalContainer.createComponent(ItemMoreModal);
 
         component.instance.position = { top: `${popoverPosition.top - 6}px`, left: `${popoverPosition.left - 160}px` };
-        component.instance.isComment = !!dish.comment;
+        component.instance.isComment = !!item.comment;
 
 
         component.instance.leave.subscribe(async (action: string) => {
             if(action == "comment") {
-                const newComment = await this.getComment(dish.comment);
+                const newComment = await this.getComment(item.comment);
 
                 if(newComment) {
                    
-                    const update: any = await this.service.put({ comment: newComment }, "session/dish", dish._id, "comment");
+                    const update: any = await this.service.put({ comment: newComment }, "session/item", item._id, "comment");
                     
                     if(update.updated) {
-                        dish.comment = newComment;
+                        item.comment = newComment;
 
                         if(newComment == "remove") {
-                            dish.comment = null!;
+                            item.comment = null!;
                         }
                     }
                 }
             } else if(action == "remove") {
-                const update: any = await this.service.delete("session/dish", dish._id);
+                const update: any = await this.service.delete("session/item", item._id);
 
                 if(update.updated) {
-                    for(let i in this.dishes) {
-                        if(this.dishes[i]._id == dish._id) {
-                            this.dishes.splice(+i, 1);
-                            this.subtotal -= dish.price;
+                    for(let i in this.items) {
+                        if(this.items[i]._id == item._id) {
+                            this.items.splice(+i, 1);
+                            this.subtotal -= item.price;
                             break;
                         }
                     }
 
-                    for(let i in this.service.session.dishes) {
-                        if(this.service.session.dishes[i]._id == dish._id) {
-                            this.service.session.dishes.splice(+i, 1);
+                    for(let i in this.service.session.items) {
+                        if(this.service.session.items[i]._id == item._id) {
+                            this.service.session.items.splice(+i, 1);
                             break;
                         }
                     }
                 }
             } else if(action == "more") {
-                this.router.navigate([this.service.restaurant.id, this.service.locationId, dish.dishId]);
+                this.router.navigate([this.service.restaurant.id, this.service.locationId, "item", item.itemId], { queryParams: { back: this.backUrl } });
             } else if(action == "modifiers") {
-                this.updateModifiers(dish);
+                this.updateModifiers(item);
             }
 
             component.destroy();
@@ -198,12 +200,12 @@ export class PreviewPage implements OnInit {
 
     checkout() {
         let pass = true;
-        if(!this.dishes || this.dishes.length == 0) {
-            this.errors.dishes = true;
+        if(!this.items || this.items.length == 0) {
+            this.errors.items = true;
 
             pass = false;
         } else {
-            this.errors.dishes = false;
+            this.errors.items = false;
         }
         if(this.info.type == "dinein" && !this.info.id) {
             this.errors.type = true;
@@ -244,7 +246,7 @@ export class PreviewPage implements OnInit {
 
     async ngOnInit() {
         const result: {
-            dishes: Dish[];
+            items: Item[];
             info: OrderInfo;
             subtotal: number;
             address: string;
@@ -255,16 +257,18 @@ export class PreviewPage implements OnInit {
             return;
         }
 
+        this.backUrl = this.router.url;
+
         this.info = result.info;
         this.subtotal = result.subtotal;
         this.settings = result.settings;
         this.address = result.address;
         
 
-        for(let dish of result.dishes) {
-            this.dishes.push({
-                ...dish,
-                image: getImage(dish.image) || "./../../../../../../../global-resources/images/no-image.svg",
+        for(let item of result.items) {
+            this.items.push({
+                ...item,
+                image: getImage(item.image) || "./../../../../../../../global-resources/images/no-image.svg",
             });
         }
 

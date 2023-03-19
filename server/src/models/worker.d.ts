@@ -21,7 +21,7 @@ interface WorkerSettings {
         removing?: boolean;
     }
 
-    dishes?: {
+    items?: {
         available?: boolean; // if one of the optoins below are true other is true, other lets worker see the list of dishes, dishes info, dishes statistics
 
         removing?: boolean;

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
-import { SessionDish } from "../../models/session.js";
-import { getDish, getDishes } from "../../utils/dishes.js";
+import { SessionItem } from "../../models/session.js";
+import { getItem, getItems } from "../../utils/items.js";
 import { id } from "../../utils/id.js";
 import { waiterManualOrder, waiterSession } from "../../utils/middleware/waiterManualOrder.js";
 import { confirmSession, createSession, getSession, getSessions, updateSession } from "../../utils/sessions.js";
@@ -28,10 +28,10 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
     let session = await getSession(
         restaurant._id,
         { "customer.by": "staff", "customer.onBehalf": user._id, status: "ordering", },
-        { projection: { dishes: 1, } },
+        { projection: { items: 1, } },
     );
 
-    let dishesSelected = 0;
+    let itemsSelected = 0;
     
     if(!session) {
         session = {
@@ -41,7 +41,7 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
                 onBehalf: user._id,
                 socketId,
             },
-            dishes: [],
+            items: [],
             info: {
                 id: null!,
                 type: "dinein",
@@ -64,14 +64,14 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
     const getCollection = (id: ObjectId) => {
         for(const collection of restaurant.collections) {
             if(collection._id.equals(id)) {
-                dishesIds.push(...collection.dishes);
+                itemsIds.push(...collection.items);
                 return collection;
             }
         }
         return null!;
     }
 
-    const dishesIds: ObjectId[] = [];
+    const itemsIds: ObjectId[] = [];
     const result = [];
 
     
@@ -87,7 +87,7 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
         for(const c of folder.collections) {
             const collection = getCollection(c);
 
-            if(!collection || collection.dishes.length == 0) {
+            if(!collection || collection.items.length == 0) {
                 continue;
             }
 
@@ -98,41 +98,41 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
     }
 
 
-    const dishes = await getDishes(restaurant._id, { _id: { $in: dishesIds } }, { projection: { info: { name: 1, price: 1, }, modifiers: { _id: 1 }, id: 1, _id: 1, } }).toArray();
-    const dishesMap = new Map<string, any>();
-    for(const dish of dishes) {
-        (dish as any).amount = 0;
-        for(const sessionDish of session.dishes) {
-            if(dish._id.equals(sessionDish.dishId)) {
-                dishesSelected++;
-                (dish as any).amount++;
+    const items = await getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { info: { name: 1, price: 1, }, modifiers: { _id: 1 }, id: 1, _id: 1, } }).toArray();
+    const itemsMap = new Map<string, any>();
+    for(const item of items) {
+        (item as any).amount = 0;
+        for(const sessionItem of session.items) {
+            if(item._id.equals(sessionItem.itemId)) {
+                itemsSelected++;
+                (item as any).amount++;
             }
         }
-        dishesMap.set(dish._id.toString(), {...dish, hasModifiers: !!dish.modifiers && dish.modifiers.length! > 0 });
+        itemsMap.set(item._id.toString(), {...item, hasModifiers: !!item.modifiers && item.modifiers.length! > 0 });
     }
 
-    res.send({ folders: result, dishes: Object.fromEntries(dishesMap.entries()), dishesSelected, });
+    res.send({ folders: result, items: Object.fromEntries(itemsMap.entries()), itemsSelected, });
 });
 
-router.post("/dish", waiterManualOrder({}, { }), waiterSession({ info: { type: 1 } }), async (req, res) => {
+router.post("/item", waiterManualOrder({}, { }), waiterSession({ info: { type: 1 } }), async (req, res) => {
     const { restaurant, session } = res.locals as Locals;
-    const { dishId, comment, modifiers } = req.body;
+    const { itemId, comment, modifiers } = req.body;
 
-    if(!dishId || typeof dishId != "string" || dishId.length != 24 || (comment && typeof comment != "string")) {
+    if(!itemId || typeof itemId != "string" || itemId.length != 24 || (comment && typeof comment != "string")) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
 
-    const dish = await getDish(
+    const item = await getItem(
         restaurant._id,
-        { _id: id(dishId) },
+        { _id: id(itemId) },
         { projection: { modifiers: { _id: 1, required: 1, options: { _id: 1, } } } }
     );
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
     }
 
-    const dishGeneratedId = () => {
+    const itemGeneratedId = () => {
 
         // 3 random numbers at the end
         const rand = Math.floor(Math.random() * 900 + 100).toString();
@@ -153,8 +153,8 @@ router.post("/dish", waiterManualOrder({}, { }), waiterSession({ info: { type: 1
     const checkModifiers = () => {
         const result: { _id: ObjectId; selected: ObjectId[] }[] = [];
 
-        for(let modifierIndex = 0; modifierIndex < dish!.modifiers!.length!; modifierIndex++) {
-            const modifier = dish!.modifiers![modifierIndex];
+        for(let modifierIndex = 0; modifierIndex < item!.modifiers!.length!; modifierIndex++) {
+            const modifier = item!.modifiers![modifierIndex];
 
             const m = findModifier(modifier._id);
 
@@ -214,13 +214,13 @@ router.post("/dish", waiterManualOrder({}, { }), waiterSession({ info: { type: 1
     }
 
 
-    const newDish: SessionDish = {
+    const newItem: SessionItem = {
         _id: id(),
-        dishId: id(dishId),
+        itemId: id(itemId),
         modifiers: convertedModifiers,
         info: {
             comment,
-            id: dishGeneratedId(),
+            id: itemGeneratedId(),
         },
         status: "ordered",
     };
@@ -228,69 +228,69 @@ router.post("/dish", waiterManualOrder({}, { }), waiterSession({ info: { type: 1
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $push: { dishes: newDish } },
+        { $push: { items: newItem } },
         { projection: { _id: 1 } }
     );
 
 
     res.send({ updated: update.ok == 1 });
 });
-router.put("/dish/comment", waiterManualOrder({}, {}), waiterSession({ }), async (req, res) => {
-    const { sessionDishId, comment } = req.body;
+router.put("/item/comment", waiterManualOrder({}, {}), waiterSession({ }), async (req, res) => {
+    const { sessionItemId, comment } = req.body;
     const { restaurant, session } = res.locals as Locals;
 
-    if(!sessionDishId || !comment || typeof sessionDishId != "string" || sessionDishId.length != 24 || typeof comment != "string") {
+    if(!sessionItemId || !comment || typeof sessionItemId != "string" || sessionItemId.length != 24 || typeof comment != "string") {
         return res.status(400).send({ reason: "InvalidInput" });
     }
 
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "dishes.$[dish].info.comment": comment } },
-        { arrayFilters: [ { "dish._id": id(sessionDishId) } ], projection: { _id: 1 } }
+        { $set: { "items.$[item].info.comment": comment } },
+        { arrayFilters: [ { "item._id": id(sessionItemId) } ], projection: { _id: 1 } }
     );
 
 
     res.send({ updated: update.ok == 1 });
 });
-router.delete("/dish/:sessionDishId", waiterManualOrder({}, {}), waiterSession({ dishes: { _id: 1 } }), async (req, res) => {
+router.delete("/item/:sessionItemId", waiterManualOrder({}, {}), waiterSession({ items: { _id: 1 } }), async (req, res) => {
     const { restaurant, session } = res.locals as Locals;
-    const { sessionDishId } = req.params;
+    const { sessionItemId } = req.params;
 
 
-    if(sessionDishId.length != 24) {
+    if(sessionItemId.length != 24) {
         return res.status(400).send({ reason: "InvalidId" });
     }
-    if(!session.dishes) {
+    if(!session.items) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $pull: { dishes: { _id: id(sessionDishId) } } },
+        { $pull: { items: { _id: id(sessionItemId) } } },
         { projection: { _id: 1 } },
     );
 
     res.send({ updated: update.ok == 1 });
 });
-router.put("/dish/modifiers", waiterManualOrder({}, {}), async (req, res) => {
-    const { sessionDishId, dishId } = req.query;
+router.put("/item/modifiers", waiterManualOrder({}, {}), async (req, res) => {
+    const { sessionItemId, itemId } = req.query;
     const { modifiers } = req.body;
     const { restaurant } = res.locals as Locals;
 
-    if(typeof sessionDishId != "string" || sessionDishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidSessionDishId" });
+    if(typeof sessionItemId != "string" || sessionItemId.length != 24) {
+        return res.status(400).send({ reason: "InvalidSessionItemId" });
     }
-    if(typeof dishId != "string" || dishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidDishId" });
+    if(typeof itemId != "string" || itemId.length != 24) {
+        return res.status(400).send({ reason: "InvalidItemId" });
     }
 
 
 
-    const dish = await getDish(
+    const item = await getItem(
         restaurant._id,
-        { _id: id(dishId) },
+        { _id: id(itemId) },
         { projection: { modifiers: { _id: 1, required: 1, options: { _id: 1, } } } },
     )
 
@@ -306,8 +306,8 @@ router.put("/dish/modifiers", waiterManualOrder({}, {}), async (req, res) => {
     const checkModifiers = () => {
         const result: { _id: ObjectId; selected: ObjectId[] }[] = [];
 
-        for(let modifierIndex = 0; modifierIndex < dish!.modifiers!.length!; modifierIndex++) {
-            const modifier = dish!.modifiers![modifierIndex];
+        for(let modifierIndex = 0; modifierIndex < item!.modifiers!.length!; modifierIndex++) {
+            const modifier = item!.modifiers![modifierIndex];
 
             const m = findModifier(modifier._id);
 
@@ -368,19 +368,19 @@ router.put("/dish/modifiers", waiterManualOrder({}, {}), async (req, res) => {
 
     const update = await updateSession(
         restaurant._id,
-        { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
-        { $set: { "dishes.$[dish].modifiers": convertedModifiers } },
-        { arrayFilters: [{ "dish._id": id(sessionDishId) }], projection: { _id: 1 } },
+        { items: { $elemMatch: { _id: id(sessionItemId) } } },
+        { $set: { "items.$[item].modifiers": convertedModifiers } },
+        { arrayFilters: [{ "item._id": id(sessionItemId) }], projection: { _id: 1 } },
     );
 
     res.send({ updated: update.ok == 1 });
 });
 
-router.get("/checkout", waiterManualOrder({}, { locations: { settings: 1, _id: 1 } }), waiterSession({ info: 1, dishes: { _id: 1, modifiers: 1, info: { comment: 1, }, dishId: 1, } }), async (req, res) => {
+router.get("/checkout", waiterManualOrder({}, { locations: { settings: 1, _id: 1 } }), waiterSession({ info: 1, items: { _id: 1, modifiers: 1, info: { comment: 1, }, itemId: 1, } }), async (req, res) => {
     const { restaurant, location, session } = res.locals as Locals;
     
 
-    if(!restaurant.locations || !session.dishes) {
+    if(!restaurant.locations || !session.items) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
@@ -392,14 +392,14 @@ router.get("/checkout", waiterManualOrder({}, { locations: { settings: 1, _id: 1
         }
         return null;
     }
-    const convertDishesAndCalculateMoney = async () => {
-        if(session.dishes.length == 0) {
-            return { status: 400, reason: "InvalidDishes" };
+    const convertItemsAndCalculateMoney = async () => {
+        if(session.items.length == 0) {
+            return { status: 400, reason: "InvalidItems" };
         }
-        const result = await calculateAmount(restaurant._id, session.dishes, session.payment?.money?.tip, restaurantLocation!.settings.serviceFee!);
+        const result = await calculateAmount(restaurant._id, session.items, session.payment?.money?.tip, restaurantLocation!.settings.serviceFee!);
 
         if (!result) {
-            return { status: 500, reason: "InvalidDishes" };
+            return { status: 500, reason: "InvalidItems" };
         }
         if (!result || !result.money.total) {
             return { status: 403, reason: "InvalidAmount" };
@@ -418,12 +418,12 @@ router.get("/checkout", waiterManualOrder({}, { locations: { settings: 1, _id: 1
     }
 
 
-    const calcres = await convertDishesAndCalculateMoney();
+    const calcres = await convertItemsAndCalculateMoney();
     if ((typeof (calcres as any).status == "number")) {
         return res.status((calcres as any).status || 500).send({ reason: (calcres as any).reason || "InvalidError" });
     } else {
         result.money = (calcres as any).money;
-        result.dishes = (calcres as any).dishes;
+        result.items = (calcres as any).items;
     }
 
     result.order = {
@@ -565,26 +565,26 @@ router.post("/payed", waiterManualOrder({}), waiterSession({ }), async (req, res
     res.send({ updated: result });
 });
 
-router.get("/modifiers/:dishId", waiterManualOrder({ }), async (req, res) => {
-    const { dishId } = req.params;
-    const { sessionDishId } = req.query;
+router.get("/modifiers/:itemId", waiterManualOrder({ }), async (req, res) => {
+    const { itemId } = req.params;
+    const { sessionItemId } = req.query;
     const { restaurant } = res.locals as Locals;
 
-    if(dishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidDishId" });
+    if(itemId.length != 24) {
+        return res.status(400).send({ reason: "InvalidItemId" });
     }
-    if(sessionDishId && (typeof sessionDishId != "string" || sessionDishId.length != 24)) {
-        return res.status(400).send({ reason: "InvalidSessionDishId" });
+    if(sessionItemId && (typeof sessionItemId != "string" || sessionItemId.length != 24)) {
+        return res.status(400).send({ reason: "InvalidSessionItemId" });
     }
 
-    const dish = await getDish(
+    const item = await getItem(
         restaurant._id,
-        { _id: id(dishId) },
+        { _id: id(itemId) },
         { projection: { modifiers: 1 } },
     );
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
     }
 
     const getModifierSubtitle = (o: string, a: number) => {
@@ -615,7 +615,7 @@ router.get("/modifiers/:dishId", waiterManualOrder({ }), async (req, res) => {
                 _id: ObjectId;
             }[];
         }[] = [];
-        for(const modifier of dish!.modifiers!) {
+        for(const modifier of item!.modifiers!) {
             result.push({
                 toSelect: modifier.amountOfOptions,
                 toSelectAmount: modifier.amountToSelect,
@@ -631,42 +631,42 @@ router.get("/modifiers/:dishId", waiterManualOrder({ }), async (req, res) => {
 
     const modifiers = getModifiers();
 
-    if(!sessionDishId) {
+    if(!sessionItemId) {
         return res.send({ modifiers });
     }
 
 
     const session = await getSession(
         restaurant._id,
-        { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
-        { projection: { dishes: { _id: 1, modifiers: 1 } } }
+        { items: { $elemMatch: { _id: id(sessionItemId) } } },
+        { projection: { items: { _id: 1, modifiers: 1 } } }
     );
 
     if(!session) {
         return res.status(404).send({ reason: "SessionNotFound" });
     }
 
-    const findDish = () => {
-        for(const dish of session.dishes) {
-            if(dish._id.equals(sessionDishId)) {
-                return dish;
+    const findItem = () => {
+        for(const item of session.items) {
+            if(item._id.equals(sessionItemId)) {
+                return item;
             }
         }
         return null;
     }
 
-    const sessionDish = findDish();
-    if(!sessionDish) {
-        return res.status(404).send({ reason: "SessionDishNotFound" });
+    const sessionItem = findItem();
+    if(!sessionItem) {
+        return res.status(404).send({ reason: "SessionItemNotFound" });
     }
-    if(!sessionDish.modifiers) {
+    if(!sessionItem.modifiers) {
         return res.send({ modifiers });
     }
 
     for(const modifier of modifiers) {
-        for(const sessionDishModifier of sessionDish.modifiers!) {
-            if(modifier._id.equals(sessionDishModifier._id)) {
-                (modifier as any).selected = sessionDishModifier.selected;
+        for(const sessionItemModifier of sessionItem.modifiers!) {
+            if(modifier._id.equals(sessionItemModifier._id)) {
+                (modifier as any).selected = sessionItemModifier.selected;
                 break;
             }
         }
@@ -681,30 +681,30 @@ export {
 }
 
 
-async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: number = 0, serviceFee?: { amount: number; type: 1 | 2 }) {
-    const dishesId: ObjectId[] = [];
+async function calculateAmount(restaurantId: ObjectId, sessionItems: SessionItem[], tip: number = 0, serviceFee?: { amount: number; type: 1 | 2 }) {
+    const itemsIds: ObjectId[] = [];
 
 
-    for (let dish of ds) {
-        dishesId.push(dish.dishId);
+    for (let item of sessionItems) {
+        itemsIds.push(item.itemId);
     }
 
-    const dishes = await getDishes(restaurantId, { _id: { $in: dishesId } }, { projection: { library: { preview: 1, }, modifiers: { _id: 1, options: { price: 1, _id: 1, } }, info: { price: 1, name: 1, }, } }).toArray();
+    const items = await getItems(restaurantId, { _id: { $in: itemsIds } }, { projection: { library: { preview: 1, }, modifiers: { _id: 1, options: { price: 1, _id: 1, } }, info: { price: 1, name: 1, }, } }).toArray();
 
-    const convertedDishes: {
+    const convertedItems: {
         name: string;
         price: number;
         image: any;
         _id: ObjectId;
-        dishId: ObjectId;
+        itemId: ObjectId;
         comment: string;
     }[] = [];
 
 
-    const findDish = (dishId: ObjectId) => {
-        for (let dish of dishes) {
-            if (dish._id.equals(dishId)) {
-                return dish;
+    const findItem = (itemId: ObjectId) => {
+        for (let item of items) {
+            if (item._id.equals(itemId)) {
+                return item;
             }
         }
         return null!;
@@ -712,21 +712,21 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
 
     let subtotal = 0;
 
-    for (let d of ds) {
-        const dish = findDish(d.dishId);
+    for (let it of sessionItems) {
+        const item = findItem(it.itemId);
 
-        if (!dish) {
+        if (!item) {
             return null;
         }
 
-        if(dish.modifiers && d.modifiers) {
-            for(const modifier of dish.modifiers!) {
-                for(const sessionDishModifier of d.modifiers) {
-                    if(modifier._id.equals(sessionDishModifier._id)) {
-                        for(const sdmo of sessionDishModifier.selected) {
+        if(item.modifiers && it.modifiers) {
+            for(const modifier of item.modifiers!) {
+                for(const sessionItemModifier of it.modifiers) {
+                    if(modifier._id.equals(sessionItemModifier._id)) {
+                        for(const sdmo of sessionItemModifier.selected) {
                             for(const modifierOption of modifier.options) {
                                 if(sdmo.equals(modifierOption._id)) {
-                                    dish.info.price += modifierOption.price;
+                                    item.info.price += modifierOption.price;
                                     break;
                                 }
                             }
@@ -737,16 +737,16 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
             }
         }
 
-        convertedDishes.push({
-            name: dish.info?.name,
-            price: dish.info?.price,
-            image: dish.library?.preview,
-            dishId: dish._id,
-            _id: d._id,
-            comment: d.info?.comment,
+        convertedItems.push({
+            name: item.info?.name,
+            price: item.info?.price,
+            image: item.library?.preview,
+            itemId: item._id,
+            _id: it._id,
+            comment: it.info?.comment,
         });
 
-        subtotal += dish.info.price;
+        subtotal += item.info.price;
     }
 
     const hst = subtotal * 0.13;
@@ -762,6 +762,6 @@ async function calculateAmount(restaurantId: ObjectId, ds: SessionDish[], tip: n
             service: Math.floor(service),
             tip: Math.floor(tip),
         },
-        dishes: convertedDishes,
+        items: convertedItems,
     };
 }

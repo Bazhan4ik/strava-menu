@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, Output, EventEmitter, ViewChild, ViewContainerRef, ComponentRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { Modifier } from '../../models/dish';
+import { Modifier } from '../../models/item';
 import { ModifiersComponent } from '../modifiers/modifiers.component';
 
 @Component({
@@ -24,8 +24,8 @@ export class ModifiersModalModal implements OnInit {
     ) { };
 
 
-    @Input() dishId: string;
-    @Input() sessionDishId: string;
+    @Input() itemId: string;
+    @Input() sessionItemId: string;
     @Output() leave = new EventEmitter();
 
     @ViewChild("container", { read: ViewContainerRef }) container: ViewContainerRef;
@@ -49,7 +49,7 @@ export class ModifiersModalModal implements OnInit {
 
 
     async ngOnInit() {
-        const result: any = await this.service.get({ dishId: this.dishId, sessionDishId: this.sessionDishId }, "modifiers");
+        const result: any = await this.service.get({ itemId: this.itemId, sessionItemId: this.sessionItemId }, "modifiers");
 
         
         this.modifiers = result.modifiers;

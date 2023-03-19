@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { CollectionComponent } from './components/collection/collection.component';
-import { DishComponent } from './components/dish/dish.component';
+import { ItemComponent } from './components/item/item.component';
 import { FolderComponent } from './components/folder/folder.component';
 
 
@@ -16,7 +16,7 @@ interface LayoutElement {
             id: string;
             name: string;
             _id: string;
-            dishes: { name: string; price: number; id: string; _id: string; }[];
+            items: { name: string; price: number; id: string; _id: string; }[];
         }
         folder?: {
             name: string;
@@ -26,10 +26,10 @@ interface LayoutElement {
                 name: string;
                 id: string;
                 _id: string;
-                dishes: string[];
+                items: string[];
             }[];
         }
-        dish?: {
+        item?: {
             name: string;
             price: number;
             description: string;
@@ -69,25 +69,25 @@ export class CustomerLayoutPage implements OnInit {
         // const [{ FolderComponent }, { CollectionComponent }, { DishComponent }] = await Promise.all([
         //     import("./components/folder/folder.component"),
         //     import("./components/collection/collection.component"),
-        //     import("./components/dish/dish.component")
+        //     import("./components/item/item.component")
         // ]);
 
         for(const [index, element] of this.elements.entries()) {
 
-            if(!element.data?.folder && !element.data?.collection && !element.data.dish) {
+            if(!element.data?.folder && !element.data?.collection && !element.data?.item) {
                 continue;
             }
 
             element.position = index + 1;
 
-            const component = this.phone.createComponent(element.type == "collection" ? CollectionComponent : element.type == "dish" ? DishComponent : FolderComponent as any);
+            const component = this.phone.createComponent(element.type == "collection" ? CollectionComponent : element.type == "item" ? ItemComponent : FolderComponent as any);
 
             if(element.type == "collection") {
                 ((component.instance as unknown) as CollectionComponent).collection = element.data.collection!;
             } else if(element.type == "folder") {
                 (component.instance as FolderComponent).folder = element.data.folder!;
-            } else if(element.type == "dish") {
-                (component.instance as DishComponent).dish = element.data.dish!;
+            } else if(element.type == "item") {
+                (component.instance as ItemComponent).item = element.data.item!;
             }
 
             this.components.push(component);
@@ -100,7 +100,8 @@ export class CustomerLayoutPage implements OnInit {
 
         const component = this.modalContainer.createComponent(AddCollectionsModal);
 
-        component.instance.selected = [{ _id: element.data?.id, name: null!, image: null! }];
+        // component.instance.selected = [{ _id: element.data?.id, name: null!, image: null! }];
+        component.instance.ids = [element.data?.id];
         component.instance.one = true;
 
 
@@ -157,30 +158,30 @@ export class CustomerLayoutPage implements OnInit {
             component.destroy();
         });
     }
-    async selectDish(element: LayoutElement) {
-        const { SelectDishesModal } = await import("./../../components/select-dishes/select-dishes.modal");
+    async selectItem(element: LayoutElement) {
+        const { SelectItemsModal } = await import("../../components/select-items/select-items.modal");
 
-        const component = this.modalContainer.createComponent(SelectDishesModal);
+        const component = this.modalContainer.createComponent(SelectItemsModal);
 
         if(element.data) {
-            component.instance.ids = [element.data?.dish?._id!];
+            component.instance.ids = [element.data?.item?._id!];
         }
         component.instance.one = true;
 
 
-        component.instance.leave.subscribe(async (dishes: any) => {
+        component.instance.leave.subscribe(async (items: any) => {
             component.destroy();
 
-            if(dishes[0]) {
-                const dish = dishes[0];
+            if(items[0]) {
+                const item = items[0];
 
-                const update: { updated: boolean; dish: { name: string; description: string; _id: string; price: number; }} = await this.service.put({ dishId: dish._id, elementId: element._id }, "layout", "dish")
+                const update: { updated: boolean; item: { name: string; description: string; _id: string; price: number; }} = await this.service.put({ itemId: item._id, elementId: element._id }, "layout", "item")
 
                 if(update.updated) {
                     if(element.data) {
-                        element.data.dish = update.dish;
+                        element.data.item = update.item;
                     } else {
-                        element.data = { id: update.dish._id, dish: update.dish};
+                        element.data = { id: update.item._id, item: update.item};
                     }
                     this.updateLayout();
                 }
@@ -194,8 +195,8 @@ export class CustomerLayoutPage implements OnInit {
             this.selectCollection(element);
         } else if(element.type == "folder") {
             this.selectFolder(element);
-        } else if(element.type == "dish") {
-            this.selectDish(element);
+        } else if(element.type == "item") {
+            this.selectItem(element);
         }
     }
     async deleteElement(element: LayoutElement) {

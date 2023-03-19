@@ -1,0 +1,24 @@
+<div class="app">
+    <a class="image" routerLink="../item/{{ item.id }}">
+        <img [ngSrc]="imageUrl" width="128" height="128">
+    </a>
+    <a class="info" routerLink="../item/{{ item.id }}">
+        <div class="name-price">
+            <div class="name">
+                <span class="global-text big black bold">
+                    {{ item.info.name }}
+                </span>
+            </div>
+            <div class="price">
+                <span class="global-text">
+                    ${{ item.info.price / 100 }}
+                </span>
+            </div>
+        </div>
+        <div class="description">
+            <span class="global-text">
+                {{ item.info.description }}
+            </span>
+        </div>
+    </a>
+</div>

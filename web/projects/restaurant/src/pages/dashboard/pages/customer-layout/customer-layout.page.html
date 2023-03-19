@@ -48,8 +48,8 @@
                         <span *ngIf="element.data && element.type == 'folder'" class="global-text small">
                             {{ element.data.folder?.name }}
                         </span>
-                        <span *ngIf="element.data && element.type == 'dish'" class="global-text small">
-                            {{ element.data.dish?.name }}
+                        <span *ngIf="element.data && element.type == 'item'" class="global-text small">
+                            {{ element.data.item?.name }}
                         </span>
                         <div *ngIf="!element.data" class="no-data">
                             <button (click)="selectCollection(element)" *ngIf="element.type == 'collection'" class="button">
@@ -58,8 +58,8 @@
                             <button (click)="selectFolder(element)" *ngIf="element.type == 'folder'" class="button">
                                 <mat-icon>add</mat-icon> Select folder
                             </button>
-                            <button (click)="selectDish(element)" *ngIf="element.type == 'dish'" class="button">
-                                <mat-icon>add</mat-icon> Select dish
+                            <button (click)="selectItem(element)" *ngIf="element.type == 'item'" class="button">
+                                <mat-icon>add</mat-icon> Select item
                             </button>
                         </div>
                     </div>

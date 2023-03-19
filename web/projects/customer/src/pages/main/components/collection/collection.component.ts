@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Collection } from '../../models/collection';
-import { DishComponent } from '../dish/dish.component';
+import { DishComponent } from '../item/item.component';
 
 @Component({
     selector: 'app-collection',

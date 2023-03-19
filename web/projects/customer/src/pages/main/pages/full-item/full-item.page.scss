@@ -1,0 +1,140 @@
+.full-item-app {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    .box-wrap {
+        width: 100%;
+        min-height: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .box {
+        max-width: 504px;
+        min-height: 100%;
+        width: 100vw;
+        padding-bottom: 100px;
+        border-left: 2px solid var(--default-border-color);
+        border-right: 2px solid var(--default-border-color);
+
+
+        .header {
+            max-width: 500px;
+            width: 100vw;
+            position: relative;
+    
+            .image {
+                width: 100%;
+                height: 248px;
+                img {
+                    width: 100%;
+                    height: 248px;
+                    object-fit: cover;
+                }
+            }
+    
+            #back-button {
+                background-color: var(--gray-light);
+                position: absolute;
+                height: 32px;
+                width: 32px;
+                top: 12px;
+                z-index: 1;
+                left: 12px;
+            }
+        };
+    
+        .item {
+            padding: 24px;
+    
+            .info {
+                .name-price {
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: space-between;
+                }
+                .description {
+                    margin-top: 24px;
+                }
+            }
+        }
+
+        .buy {
+            margin-top: 32px;
+
+            .buy-button {
+                margin-top: 24px;
+                width: 100%;
+                height: 44px;
+                padding: 4px;
+                border-radius: 44px;
+                border: 1px solid var(--default-border-color);
+                display: grid;
+                grid-template-columns: 36px 1fr 76px;
+                
+                .circle-button {
+                    height: 36px;
+                    width: 36px;
+                    border-radius: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: none;
+
+                    &.add, &.comment {
+                        background-color: var(--black);
+                        mat-icon {
+                            color: var(--gray-light);
+                        }
+                    }
+
+                    mat-icon {
+                        height: 18px;
+                        width: 18px;
+                        font-size: 18px;
+                    }
+
+                    // .global-loading {
+                    //     width: 100%;
+                    //     height: 100%;
+                    //     & > div {
+                    //         width: 20px;
+                    //         height: 20px;
+                    //         border: 2px solid var(--default-border-color);
+                    //         margin: 0;
+                    //     }
+                    // }
+                }
+                .comment {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .count {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .buttons {
+                    align-items: center;
+                    gap: 4px;
+                    display: flex;
+                }
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 640px) {
+    .full-item-app {
+        .box-wrap {
+            .box {
+                border-left: none;
+                border-right: none;
+            }
+        }
+    }
+}

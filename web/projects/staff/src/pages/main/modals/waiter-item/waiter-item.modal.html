@@ -1,0 +1,121 @@
+<div class="app modal-app">
+    <div class="box">
+        <div class="header">
+            <div class="title">
+                <button class="icon-button" (click)="close()">
+                    <mat-icon>
+                        close
+                    </mat-icon>
+                </button>
+            </div>
+            <div class="buttons">
+                <button (click)="served()" class="orange-button button">
+                    Served
+                </button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="item">
+                <div class="name-id">
+                    <div class="name">
+                        <span class="global-text bigger black bold">
+                            {{ sessionItem.item.name }}
+                        </span>
+                    </div>
+                    <div class="id">
+                        <span class="global-text big bold">
+                            #{{ sessionItem.id }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modifiers">
+                <div *ngIf="modifiers && modifiers.length > 0" class="list">
+                    <div *ngFor="let modifier of modifiers" class="modifier">
+                        <div class="name">
+                            <span class="global-text normal">
+                                {{ modifier.name }}:
+                            </span>
+                        </div>
+                        <div class="selected">
+                            <div *ngFor="let selected of modifier.selected" class="option">
+                                <span class="global-text" >
+                                    {{ selected }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!modifiers" class="global-loading height-124 small">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="session-info">
+                <div *ngIf="session" class="type">
+                    <span class="global-text big black bold">
+                        <span *ngIf="session.type == 'takeout'">
+                            Takeout
+                        </span>
+                        <span *ngIf="session.type == 'dinein'">
+                            Table 
+                        </span>
+                    </span>
+                    <span class="global-text bold">
+                        #{{ session.id }}
+                    </span>
+                </div>
+                <div *ngIf="!session" class="global-loading">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="info">
+                <div *ngIf="sessionItem.time.ordered as ordered" class="ordered">
+                    <div *ngIf="sessionItem.people.customer" class="customer user">
+                        <img [src]="customerAvatar" class="global-avatar small outline" alt="">
+                        <span class="global-text big black bold">
+                            {{ sessionItem.people.customer.name }}
+                        </span>
+                    </div>
+                    <div class="time">
+                        <span class="global-text black">
+                            Ordered 
+                            <span *ngIf="ordered.hours" class="hours global-text bold black">
+                                {{ ordered.hours }} hrs
+                            </span>
+                            <span class="minutes global-text bold black">
+                                {{ ordered.minutes }} min
+                            </span>
+                            ago
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="sessionItem.time.taken as taken" class="taken">
+                    <div *ngIf="sessionItem.people.cook" class="customer user">
+                        <img [src]="cookAvatar" class="global-avatar small outline" alt="">
+                        <span class="global-text big black bold">
+                            {{ sessionItem.people.cook.name }}
+                        </span>
+                    </div>
+                    <div class="time">
+                        <span class="global-text black">
+                            Cooked the item 
+                            <span *ngIf="taken.hours" class="hours global-text bold black">
+                                {{ taken.hours }} hrs
+                            </span>
+                            <span class="minutes global-text bold black">
+                                {{ taken.minutes }} min
+                            </span>
+                            ago
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -26,7 +26,7 @@ export class AddCollectionPage implements OnInit {
     image = "./../../../../../../../../global-resources/images/no-image.svg";
     imageUpdated: boolean = false;
 
-    dishes: Dish[] = [];
+    items: Dish[] = [];
 
     constructor(
         private service: RestaurantService,
@@ -53,25 +53,25 @@ export class AddCollectionPage implements OnInit {
     }
 
     removeDish(id: string) {
-        for(let i in this.dishes) {
-            if(this.dishes[i].id == id) {
-                this.dishes.splice(+i, 1);
+        for(let i in this.items) {
+            if(this.items[i].id == id) {
+                this.items.splice(+i, 1);
                 break;
             }
         }
     }
 
     async addDishes() {
-        const { SelectDishesModal } = await import("../../../components/select-dishes/select-dishes.modal");
+        const { SelectItemsModal } = await import("../../../components/select-items/select-items.modal");
 
-        const component = this.modalContainer.createComponent(SelectDishesModal);
+        const component = this.modalContainer.createComponent(SelectItemsModal);
 
-        component.instance.selected = this.dishes;
+        component.instance.selected = this.items;
 
         
-        component.instance.leave.subscribe((dishes: Dish[]) => {
-            if(dishes) {
-                this.dishes = dishes;
+        component.instance.leave.subscribe((items: Dish[]) => {
+            if(items) {
+                this.items = items;
             }
             component.destroy();
         });
@@ -87,7 +87,7 @@ export class AddCollectionPage implements OnInit {
         const result: any = await this.service.post({
             name: this.name,
             description: this.description,
-            dishes: this.dishes,
+            items: this.items,
             image: this.imageUpdated ? this.image : null,
         }, "menu/collections");
 

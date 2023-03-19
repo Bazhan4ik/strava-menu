@@ -1,24 +1,24 @@
 import { ObjectId } from "mongodb";
-import { SessionDishStatus } from "../session.js";
+import { SessionItemStatus } from "../session.js";
 import { Time } from "./time.js";
 
 
 
-interface ConvertedSessionDish {
+interface ConvertedSessionItem {
     _id: ObjectId;
-    dishId: ObjectId;
+    itemId: ObjectId;
     sessionId: ObjectId;
     comment: string;
     orderComment: string;
     id: string;
-    status: SessionDishStatus;
+    status: SessionItemStatus;
 
     order: {
         type: string;
         id: string;
     }
 
-    dish: {
+    item: {
         name: string;
         image: any;
     };
@@ -44,5 +44,5 @@ interface ConvertedSessionDish {
 
 
 export {
-    ConvertedSessionDish
+    ConvertedSessionItem
 }

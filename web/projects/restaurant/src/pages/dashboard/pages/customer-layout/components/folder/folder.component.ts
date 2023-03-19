@@ -17,7 +17,7 @@ export class FolderComponent implements OnInit {
             name: string;
             id: string;
             _id: string;
-            dishes: string[];
+            items: string[];
         }[]
     };
 

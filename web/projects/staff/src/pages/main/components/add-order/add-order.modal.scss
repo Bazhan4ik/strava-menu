@@ -67,8 +67,8 @@
                                 }
                             }
 
-                            .dishes {
-                                .dish {
+                            .items {
+                                .item {
                                     width: 100%;
                                     padding: 8px 12px;
                                     display: flex;
@@ -76,7 +76,7 @@
                                     justify-content: space-between;
                                     height: 64px;
 
-                                    .dish-info {
+                                    .item-info {
                                         display: flex;
                                         align-items: center;
                                         height: 100%;

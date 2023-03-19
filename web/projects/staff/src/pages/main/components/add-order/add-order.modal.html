@@ -15,7 +15,7 @@
             </div>
             <div class="button">
                 <button (click)="goCheckout()" class="orange-button button">
-                    {{ dishesSelected }}
+                    {{ itemsSelected }}
                     Checkout
                     <mat-icon>
                         arrow_forward
@@ -54,21 +54,21 @@
                                     </button>
                                 </div>
                             </button>
-                            <div class="dishes" *ngIf="collection.open && folder.open">
-                                <div *ngFor="let dishId of collection.dishes" class="dish">
-                                    <div class="dish-info">
+                            <div class="items" *ngIf="collection.open && folder.open">
+                                <div *ngFor="let itemId of collection.items" class="item">
+                                    <div class="item-info">
                                         <div class="image">
-                                            <img [src]="dishes[dishId].image" alt="">
+                                            <img [src]="items[itemId].image" alt="">
                                         </div>
                                         <div class="name-price">
                                             <div class="name">
                                                 <span class="global-text big black">
-                                                    {{ dishes[dishId].info.name }}
+                                                    {{ items[itemId].info.name }}
                                                 </span>
                                             </div>
                                             <div class="price">
                                                 <span class="global-text">
-                                                    {{ dishes[dishId].info.price / 100 }}
+                                                    {{ items[itemId].info.price / 100 }}
                                                 </span>
                                             </div>
                                         </div>
@@ -76,15 +76,15 @@
                                     <div class="buttons">
                                         <div class="amount">
                                             <span class="global-text big bold">
-                                                {{ dishes[dishId].amount }}
+                                                {{ items[itemId].amount }}
                                             </span>
                                         </div>
-                                        <button (click)="addComment(dishId)" class="icon-button">
+                                        <button (click)="addComment(itemId)" class="icon-button">
                                             <mat-icon>
                                                 message
                                             </mat-icon>
                                         </button>
-                                        <button (click)="addDish(dishId)" class="icon-button">
+                                        <button (click)="addItem(itemId)" class="icon-button">
                                             <mat-icon>
                                                 add
                                             </mat-icon>

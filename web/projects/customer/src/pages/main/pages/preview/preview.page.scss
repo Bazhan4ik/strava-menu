@@ -92,10 +92,10 @@
             }
         }
     
-        .dishes {
+        .items {
             padding: 24px 0;
     
-            .dish {
+            .item {
                 width: 100%;
                 display: flex;
                 justify-content: space-between;
@@ -139,7 +139,7 @@
                             display: flex;
                             align-items: center;
     
-                            .dish-comment {
+                            .item-comment {
                                 margin: 0;
     
                                 .dot {
@@ -176,7 +176,7 @@
             }
         }
     
-        .no-dishes {
+        .no-items {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -229,8 +229,8 @@
     .preview-app {
         .box {
             border: none;
-            .dishes {
-                .dish {
+            .items {
+                .item {
                     .right {
                         button {
                             display: inline-block;

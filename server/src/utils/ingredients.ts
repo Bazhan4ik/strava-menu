@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { ingredients } from "../../resources/data/ingredients.js";
-import { Ingredient } from "../models/dish.js";
+import { Ingredient } from "../models/item.js";
 import { Ingredients } from "../models/restaurant.js";
-import { getDish } from "./dishes.js";
+import { getItem } from "./items.js";
 import { updateRestaurant } from "./restaurant.js";
 
 function getIngredients(parse: Ingredient[]) {
@@ -32,20 +32,20 @@ function getIngredients(parse: Ingredient[]) {
     
 }
 
-async function updateIngredientsUsage(restaurantId: ObjectId, dishId: ObjectId) {
+async function updateIngredientsUsage(restaurantId: ObjectId, itemId: ObjectId) {
     try {
         
-        const dish = await getDish(restaurantId, { _id: dishId }, { projection: { ingredients: 1 } });
+        const item = await getItem(restaurantId, { _id: itemId }, { projection: { ingredients: 1 } });
 
-        if(!dish || !dish.ingredients || dish.ingredients.length == 0) {
+        if(!item || !item.ingredients || item.ingredients.length == 0) {
             return;
         }
 
         const $inc: any = {};
         const arrayFilters: any[] = [];
 
-        for(let i in dish.ingredients) {
-            const ingredient = dish.ingredients[i];
+        for(let i in item.ingredients) {
+            const ingredient = item.ingredients[i];
 
             $inc[`ingredients.current.$[ingredient${i}].amount`] = ingredient.amount;
             arrayFilters.push({ });

@@ -38,8 +38,8 @@ const routes: Routes = [
             },
 
             {
-                path: "dish/:dishId",
-                loadComponent: () => import("./pages/full-dish/full-dish.page").then(c => c.FullDishPage),
+                path: "item/:itemId",
+                loadComponent: () => import("./pages/full-item/full-item.page").then(c => c.FullItemPage),
             },
             {
                 path: "**",

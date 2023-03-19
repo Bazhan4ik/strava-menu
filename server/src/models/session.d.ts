@@ -8,8 +8,8 @@ type SessionType = "dinein" | "takeout";
 /**
  * 
  * @ordering - when user is not payed for the order yet
- * @progress - when user payed for the order and the order has some dishes not finished yet
- * @done - when all the dishes were cooked and served
+ * @progress - when user payed for the order and the order has some items not finished yet
+ * @done - when all the items were cooked and served
  * @removed - when order was removed, should have Order.removed property
  * 
  */
@@ -17,14 +17,14 @@ type SessionStatus = "ordering" | "progress" | "done" | "removed";
 
 /**
  * 
- * @ordered - when the dish is not cooked yet, when the customer adds dish to the session it should be "ordered" status even though the order is not confirmed yet
- * @cooking - when a cook took the dish. cook has to click TAKE button. the dish is not cooked yet.
- * @cooked - when the dish is cooked and is ready to be served
- * @served - when the waiter served the dish    --    final status
- * @removed - when someone deleted the dish. should have Dish.removed property
+ * @ordered - when the item is not cooked yet, when the customer adds item to the session it should be "ordered" status even though the order is not confirmed yet
+ * @cooking - when a cook took the item. cook has to click TAKE button. the item is not cooked yet.
+ * @cooked - when the item is cooked and is ready to be served
+ * @served - when the waiter served the item    --    final status
+ * @removed - when someone deleted the item. should have item.removed property
  * 
  */
-type SessionDishStatus = "ordered" | "cooking" | "cooked" | "served" | "removed";
+type SessionItemStatus = "ordered" | "cooking" | "cooked" | "served" | "removed";
 
 /**
  * 
@@ -36,30 +36,30 @@ type SessionDishStatus = "ordered" | "cooking" | "cooked" | "served" | "removed"
 type WaiterRequestReason = "cash" | "payment" | "refund" | "other";
 
 
-interface SessionDish {
+interface SessionItem {
     _id: ObjectId;
-    dishId: ObjectId; // object id of the dish
-    status: SessionDishStatus; // status of the dish
+    itemId: ObjectId; // object id of the item
+    status: SessionItemStatus; // status of the item
     
     staff?: {
-        cook?: ObjectId; // final cook of the dish
-        waiter?: ObjectId; // final waiter of the dish
+        cook?: ObjectId; // final cook of the item
+        waiter?: ObjectId; // final waiter of the item
     }
     
     info: {
         name?: string;
         price?: number;
-        comment: string; // comment the customer left for the dish
-        id?: string; // for staff to track the dish easier
+        comment: string; // comment the customer left for the item
+        id?: string; // for staff to track the item easier
     }
 
     modifiers?: { _id: ObjectId; selected: ObjectId[]; }[];
 
 
     timing?: {
-        taken?: number; // the the dish was taken to cook
-        cooked?: number; // when the dish was cooked
-        served?: number; // when the dish was served to the customer
+        taken?: number; // the the item was taken to cook
+        cooked?: number; // when the item was cooked
+        served?: number; // when the item was served to the customer
     };
 
     removed?: {
@@ -78,8 +78,8 @@ interface SessionPayment {
     selectedTipPercentage: number;
     money?: {
         hst: number; // tax amount
-        subtotal: number; // subtotal, dishes price
-        total: number; // total is price of all the dishes and tax
+        subtotal: number; // subtotal, items price
+        total: number; // total is price of all the items and tax
         service?: number; // service fee, set on restaurant's dashboard
         tip?: number; // amount of tip
     };
@@ -90,7 +90,7 @@ interface SessionTiming {
     connected?: number; // when user connected
 
     done?: {
-        time: number; // when the last dish was served
+        time: number; // when the last item was served
         feedback?: {
             text?: string; // feedback from the customer
             rating?: number; // rating out of 5 by the customer
@@ -99,7 +99,7 @@ interface SessionTiming {
 
     removed?: {
         time: number; // when removed
-        reason: string | "dishes"; // reason
+        reason: string | "items"; // reason
         userId: ObjectId; // who removed
     };
 }
@@ -120,8 +120,8 @@ interface SessionInfo {
 }
 
 interface TimelineComponent {
-    action: "created" | "comment" | "waiterRequest/create" | "payed" | "waiterRequest/cancel" | "tip/add" | "tip/remove" | "type" | "id" | "dish/add" | "dish/remove" | "dish/comment" | "dish/modifiers" | "page"; // what action happened
-    sessionDishId?: ObjectId; // id of a dish ordered, add if action "dish/add"
+    action: "created" | "comment" | "waiterRequest/create" | "payed" | "waiterRequest/cancel" | "tip/add" | "tip/remove" | "type" | "id" | "item/add" | "item/remove" | "item/comment" | "item/modifiers" | "page"; // what action happened
+    sessionItemId?: ObjectId; // id of a item ordered, add if action "item/add"
     page?: string; // if a user visited a page
     waiterRequestId?: ObjectId; // waiter request id
     userId: ObjectId | "customer"; // id of a user that did an action
@@ -129,7 +129,7 @@ interface TimelineComponent {
     time: number; // time when action happened
 
     collectionId?: ObjectId;
-    dishId?: ObjectId;
+    itemId?: ObjectId;
 }
 
 interface WaiterRequest {
@@ -162,7 +162,7 @@ interface Session {
 
     payment?: SessionPayment;
     
-    dishes: SessionDish[]; // dishes ordered
+    items: SessionItem[]; // items ordered
 
     waiterRequests: WaiterRequest[]; // waiter requests
 
@@ -172,9 +172,9 @@ interface Session {
 
 export {
     Session,
-    SessionDish,
+    SessionItem,
     WaiterRequestReason,
-    SessionDishStatus,
+    SessionItemStatus,
     SessionStatus,
     SessionType,
     TimelineComponent,

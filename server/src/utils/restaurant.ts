@@ -1,5 +1,5 @@
 import { AnyBulkWriteOperation, Filter, FindOneAndUpdateOptions, FindOptions, UpdateFilter } from "mongodb";
-import { dishesDBName, mainDBName, ordersDBName, sessionsDBName } from "../config.js";
+import { itemsDBName, mainDBName, ordersDBName, sessionsDBName } from "../config.js";
 import { Restaurant } from "../models/restaurant.js";
 import { WorkerSettings } from "../models/worker.js";
 import { client } from "../setup/mongodb.js";
@@ -15,7 +15,7 @@ async function createRestaurant(newRestaurant: Restaurant) {
             updateUser({ _id: newRestaurant.info.owner }, { $push: { restaurants: { restaurantId: newRestaurant._id, redirectTo: "dashboard" } } }, { projection: { _id: 1, } }),
             client.db(ordersDBName).createCollection(newRestaurant._id.toString()),   
             client.db(sessionsDBName).createCollection(newRestaurant._id.toString()),   
-            client.db(dishesDBName).createCollection(newRestaurant._id.toString()),   
+            client.db(itemsDBName).createCollection(newRestaurant._id.toString()),   
         ])
 
         return added.acknowledged;

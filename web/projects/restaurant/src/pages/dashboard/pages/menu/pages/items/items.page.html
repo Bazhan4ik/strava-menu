@@ -1,0 +1,35 @@
+<div class="app">
+    <div class="global-loading height-124" *ngIf="!items">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div *ngIf="items && items.length < 1" class="no-items">
+        <span class="global-text bold black big">
+            Add your first item
+        </span>
+    </div>
+    <div class="items" *ngIf="items && items.length > 0">
+        <a *ngFor="let item of items" routerLink="{{ item.id }}" class="item">
+            <div class="image">
+                <img [src]="item.imageConverted" alt="">
+            </div>
+            <div class="info">
+                <div class="name">
+                    <span class="text global-text bigger black">
+                        {{ item.name }}
+                    </span>
+                </div>
+                <div class="price">
+                    <span class="text global-text normal">
+                        ${{ item.price / 100 }}
+                    </span>
+                </div>
+            </div>
+            <div (click)="$event.stopPropagation()" class="visibility">
+                <ion-toggle color="orange" [checked]="item.status == 'visible'" mode="ios" (ionChange)="onVisibilityChange($event, item.id)"></ion-toggle>
+            </div>
+        </a>
+    </div>
+</div>

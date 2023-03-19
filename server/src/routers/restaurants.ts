@@ -65,7 +65,7 @@ router.get("/", logged(), restaurantWorker({ info: { name: 1, id: 1, }, staff: {
         tables: boolean;
         layout: boolean;
     } = {
-        menu: settings.dishes?.available! || settings.isOwner!,
+        menu: settings.items?.available! || settings.isOwner!,
         settings: settings.settings?.available! || settings.isOwner!,
         analytics: settings.isOwner!,
         customers: settings.customers?.available! || settings.isOwner!,

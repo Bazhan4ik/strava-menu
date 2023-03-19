@@ -26,7 +26,7 @@ interface Dish {
 })
 export class EditCollectionPage implements OnInit {
     collection: Collection;
-    dishes: Dish[] = [];
+    items: Dish[] = [];
 
     image: string = "./../../../../../../../../global-resources/images/no-image.svg";
     name: string;
@@ -46,25 +46,25 @@ export class EditCollectionPage implements OnInit {
 
 
     removeDish(id: string) {
-        for(let i in this.dishes) {
-            if(this.dishes[i].id == id) {
-                this.dishes.splice(+i, 1);
+        for(let i in this.items) {
+            if(this.items[i].id == id) {
+                this.items.splice(+i, 1);
                 break;
             }
         }
     }
 
     async addDishes() {
-        const { SelectDishesModal } = await import("../../../components/select-dishes/select-dishes.modal");
+        const { SelectItemsModal } = await import("../../../components/select-items/select-items.modal");
 
-        const component = this.modalContainer.createComponent(SelectDishesModal);
+        const component = this.modalContainer.createComponent(SelectItemsModal);
 
-        component.instance.selected = this.dishes;
+        component.instance.selected = this.items;
 
         
-        component.instance.leave.subscribe((dishes: Dish[]) => {
-            if(dishes) {
-                this.dishes = dishes;
+        component.instance.leave.subscribe((items: Dish[]) => {
+            if(items) {
+                this.items = items;
             }
             component.destroy();
         });
@@ -93,7 +93,7 @@ export class EditCollectionPage implements OnInit {
         }
 
         const update = {
-            dishes: this.dishes.map(d => { return { id: d.id, _id: d._id } }),
+            items: this.items.map(d => { return { id: d.id, _id: d._id } }),
             name: this.name,
             description: this.description,
             image: this.imageUpdated ? this.image : null!,
@@ -122,17 +122,17 @@ export class EditCollectionPage implements OnInit {
 
         const result: {
             collection: Collection;
-            dishes: Dish[];
+            items: Dish[];
         } = await this.service.get("menu/collections", collectionId);
 
         console.log(result);
         
-        for(let dish of result.dishes) {
-            this.dishes.push({
-                name: dish.name,
-                id: dish.id,
-                _id: dish._id,
-                image: getImage(dish.image) || "./../../../../../../../../global-resources/images/no-image.svg",
+        for(let item of result.items) {
+            this.items.push({
+                name: item.name,
+                id: item.id,
+                _id: item._id,
+                image: getImage(item.image) || "./../../../../../../../../global-resources/images/no-image.svg",
             });
         }
 

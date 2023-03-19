@@ -9,12 +9,12 @@
         justify-content: space-between;
     }
 
-    .dishes {
+    .items {
         padding-left: 24px;
         display: flex;
         gap: 12px;
 
-        .dish {
+        .item {
             width: 152px;
 
             .image {
@@ -65,7 +65,7 @@
             padding: 8px 12px;
         }
 
-        .dishes {
+        .items {
             padding: 0 12px;
         }
     }

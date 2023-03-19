@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { ModifiersComponent } from './modifiers/modifiers.component';
 
 
-interface Dish {
+interface Item {
     image: any;
     id: string;
     amount: number;
@@ -25,7 +25,7 @@ interface Collection {
     id: string;
     image: any;
     open: boolean;
-    dishes: string[];
+    items: string[];
 }
 
 interface Folder {
@@ -47,10 +47,10 @@ interface Folder {
 })
 export class AddOrderModal implements OnInit {
     
-    dishesSelected: number;
+    itemsSelected: number;
     folders: Folder[];
     loading = false;
-    dishes: { [dishId: string]: Dish };
+    items: { [itemId: string]: Item };
 
     constructor(
         private service: StaffService,
@@ -73,11 +73,11 @@ export class AddOrderModal implements OnInit {
         this.folders[fi].collections[ci].open = !!!this.folders[fi].collections[ci].open;
     }
 
-    getModifiers(dishId: string) {
+    getModifiers(itemId: string) {
         return new Promise(async resolve => {
             this.loading = true;
 
-            const result: any = await this.service.get("order/modifiers", dishId);
+            const result: any = await this.service.get("order/modifiers", itemId);
 
             const component = this.modalContainer.createComponent(ModifiersComponent);
 
@@ -96,38 +96,38 @@ export class AddOrderModal implements OnInit {
         });
     }
 
-    async addDish(dishId: string, comment?: string) {
+    async addItem(itemId: string, comment?: string) {
 
-        const dish = this.dishes[dishId];
+        const item = this.items[itemId];
         
         let modifiers: any = [];
 
-        if(dish.hasModifiers) {
-            modifiers = await this.getModifiers(dishId);
+        if(item.hasModifiers) {
+            modifiers = await this.getModifiers(itemId);
 
             if(!modifiers) {
                 return;
             }
         }
 
-        const update: any = await this.service.post({ dishId, comment, modifiers }, "order/dish");
+        const update: any = await this.service.post({ itemId, comment, modifiers }, "order/item");
 
-        this.dishes[dishId].amount++;
-        this.dishesSelected++;
+        this.items[itemId].amount++;
+        this.itemsSelected++;
 
         if(!update.updated) {
-            this.dishes[dishId].amount--;
-            this.dishesSelected--;
+            this.items[itemId].amount--;
+            this.itemsSelected--;
         }
     }
-    async addComment(dishId: string) {
-        const { DishCommentModal } = await import("./dish-comment/dish-comment.modal");
+    async addComment(itemId: string) {
+        const { ItemCommentModal } = await import("./item-comment/item-comment.modal");
 
-        const component = this.modalContainer.createComponent(DishCommentModal);
+        const component = this.modalContainer.createComponent(ItemCommentModal);
 
         component.instance.leave.subscribe((comment: string) => {
             if(comment) {
-                this.addDish(dishId, comment);
+                this.addItem(itemId, comment);
             }
             component.destroy();
         });
@@ -139,10 +139,10 @@ export class AddOrderModal implements OnInit {
 
         const component = this.modalContainer.createComponent(CheckoutModal);
 
-        component.instance.leave.subscribe((a: { type: string; dishId: string; }) => {
+        component.instance.leave.subscribe((a: { type: string; itemId: string; }) => {
             if(a?.type == "amount") {
-                this.dishesSelected--;
-                this.dishes[a.dishId].amount--;
+                this.itemsSelected--;
+                this.items[a.itemId].amount--;
                 return;
             } else if(a?.type == "payed") {
                 this.close();
@@ -153,14 +153,14 @@ export class AddOrderModal implements OnInit {
 
 
     async ngOnInit() {
-        const result: { folders: Folder[]; dishes: any; dishesSelected: number; } = await this.service.initManualOrdering(await firstValueFrom(this.socket.socketId()));
+        const result: { folders: Folder[]; items: any; itemsSelected: number; } = await this.service.initManualOrdering(await firstValueFrom(this.socket.socketId()));
 
         this.folders = result.folders;
-        this.dishes = result.dishes;
-        this.dishesSelected = result.dishesSelected;
+        this.items = result.items;
+        this.itemsSelected = result.itemsSelected;
 
-        for(const id of Object.keys(this.dishes)) {
-            this.dishes[id].image = getImage(this.dishes[id].image) || "./../../../../../../../global-resources/images/no-image.svg";
+        for(const id of Object.keys(this.items)) {
+            this.items[id].image = getImage(this.items[id].image) || "./../../../../../../../global-resources/images/no-image.svg";
         }
     }
 }

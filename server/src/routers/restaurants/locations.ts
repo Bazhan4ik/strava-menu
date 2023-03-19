@@ -47,7 +47,7 @@ router.post("/", logged(), restaurantWorker({  stripe: { card: 1 } }, { location
                     allowOrderingOnline: true,
                     allowTakeOut: false,
                     allowDineIn: true,
-                    maxDishes: 0,
+                    maxItems: 0,
                 },
                 methods: {
                     card: restaurant.stripe?.card == "enabled",

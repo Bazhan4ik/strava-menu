@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectorRef, ViewContainerRef, ViewChild } from '@angular/core';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
-import { ConvertedSessionDish, Folder } from 'projects/staff/src/models/order-dishes';
-import { CookDishesData } from 'projects/staff/src/models/socket-cook-dishes';
+import { ConvertedSessionItem, Folder } from 'projects/staff/src/models/order-items';
+import { CookItemsData } from 'projects/staff/src/models/socket-cook-items';
 import { SocketService } from 'projects/staff/src/services/socket.service';
 import { StaffService } from 'projects/staff/src/services/staff.service';
 import { Subscription } from "rxjs";
@@ -52,36 +52,36 @@ export class FoldersCookComponent {
 
     async ngOnInit() {
 
-        this.subscription = this.socket.$cookDishes.subscribe(res => {
-            if(res.types.includes("dishes/new")) {
-                const dishes = res.data as CookDishesData.add;
+        this.subscription = this.socket.$cookItems.subscribe(res => {
+            if(res.types.includes("items/new")) {
+                const items = res.data as CookItemsData.add;
 
                 this.folders.push({
-                    dishes: dishes.map(dish => { return {...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } } }),
-                    type: dishes[0].order.type,
-                    id: dishes[0].order.id,
-                    sessionId: dishes[0].sessionId,
+                    items: items.map(item => { return {...item, item: { ...item.item, image: getImage(item.item.image) } } }),
+                    type: items[0].order.type,
+                    id: items[0].order.id,
+                    sessionId: items[0].sessionId,
                 });
-            } else if(res.types.includes("dishes/take")) {
-                const { sessionId, sessionDishId, cook } = res.data as CookDishesData.take;
+            } else if(res.types.includes("items/take")) {
+                const { sessionId, sessionItemId, cook } = res.data as CookItemsData.take;
 
                 for(const folder of this.folders) {
                     if(folder.sessionId == sessionId) {
-                        for(let dish of folder.dishes) {
-                            if(dish._id == sessionDishId) {
-                                dish.status = "cooking";
-                                dish.people.cook = cook;
-                                dish.time.taken = { hours: 0, minutes: 0, nextMinute: null! };
+                        for(let item of folder.items) {
+                            if(item._id == sessionItemId) {
+                                item.status = "cooking";
+                                item.people.cook = cook;
+                                item.time.taken = { hours: 0, minutes: 0, nextMinute: null! };
         
-                                if(dish.takenInterval) {
+                                if(item.takenInterval) {
                                     return;
                                 }
         
-                                dish.takenInterval = setInterval(() => {
-                                    dish.time.taken!.minutes++;
-                                    if(dish.time.taken!.minutes == 60) {
-                                        dish.time.taken!.minutes = 0;
-                                        dish.time.taken!.hours++;
+                                item.takenInterval = setInterval(() => {
+                                    item.time.taken!.minutes++;
+                                    if(item.time.taken!.minutes == 60) {
+                                        item.time.taken!.minutes = 0;
+                                        item.time.taken!.hours++;
                                     }
                                 }, 60000);
                             }
@@ -89,19 +89,19 @@ export class FoldersCookComponent {
                         break;
                     }
                 }
-            } else if(res.types.includes("dishes/quit")) {
-                const { sessionId, sessionDishId } = res.data as CookDishesData.quit;
+            } else if(res.types.includes("items/quit")) {
+                const { sessionId, sessionItemId } = res.data as CookItemsData.quit;
 
                 for(const folder of this.folders) {
                     if(folder.sessionId == sessionId) {
-                        for(let dish of folder.dishes) {
-                            if(dish._id == sessionDishId) {
-                                dish.status = "ordered";
-                                dish.time.taken = null!;
+                        for(let item of folder.items) {
+                            if(item._id == sessionItemId) {
+                                item.status = "ordered";
+                                item.time.taken = null!;
         
-                                clearInterval(dish.takenInterval);
-                                clearInterval(dish.takenTimeout);
-                                dish.takenInterval = null;
+                                clearInterval(item.takenInterval);
+                                clearInterval(item.takenTimeout);
+                                item.takenInterval = null;
                                 break;
                             }
                         }
@@ -109,18 +109,18 @@ export class FoldersCookComponent {
                     }
                 }
 
-            } else if(res.types.includes("dishes/done")) {
-                const { sessionId, sessionDishId } = res.data as CookDishesData.done;
+            } else if(res.types.includes("items/done")) {
+                const { sessionId, sessionItemId } = res.data as CookItemsData.done;
 
                 for(const [index, folder] of this.folders.entries()) {
                     if(folder.sessionId == sessionId) {
-                        for(let i in folder.dishes) {
-                            if(folder.dishes[i]._id == sessionDishId) {
-                                folder.dishes.splice(+i, 1);
+                        for(let i in folder.items) {
+                            if(folder.items[i]._id == sessionItemId) {
+                                folder.items.splice(+i, 1);
                                 break;
                             }
                         }
-                        if(folder.dishes.length == 0) {
+                        if(folder.items.length == 0) {
                             this.folders.splice(index, 1);
                         }
                         break;
@@ -131,26 +131,26 @@ export class FoldersCookComponent {
             }
         });
         
-        const dishes: ConvertedSessionDish[] = await this.service.get("cook/dishes");
+        const items: ConvertedSessionItem[] = await this.service.get("cook/items");
 
         this.folders = [];
 
-        for(const dish of dishes) {
+        for(const item of items) {
             let addFolder = true;
             for(const folder of this.folders) {
-                if(folder.sessionId == dish.sessionId) {
-                    folder.dishes.push({...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } });
+                if(folder.sessionId == item.sessionId) {
+                    folder.items.push({...item, item: { ...item.item, image: getImage(item.item.image) } });
                     addFolder = false;
                     break;
                 }
             }
             if(addFolder) {
-                this.folders.push({ dishes: [{...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } }], type: dish.order.type, id: dish.order.id, sessionId: dish.sessionId });
+                this.folders.push({ items: [{...item, item: { ...item.item, image: getImage(item.item.image) } }], type: item.order.type, id: item.order.id, sessionId: item.sessionId });
             }
         }
 
 
-        console.log(dishes);
+        console.log(items);
     }
     ngOnDestroy() {
         this.subscription?.unsubscribe();

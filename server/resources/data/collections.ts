@@ -28,7 +28,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Appetizers",
         id: "appetizers",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -36,7 +36,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Entrees",
         id: "entrees",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -44,7 +44,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Beverages",
         id: "beverages",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -52,7 +52,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Desserts",
         id: "desserts",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -60,7 +60,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Sides",
         id: "sides",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -68,7 +68,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Soups",
         id: "soups",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -76,7 +76,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Salads",
         id: "salads",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -91,7 +91,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Breakfast",
         id: "breakfast",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -99,7 +99,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Brunch",
         id: "brunch",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -107,7 +107,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Lunch",
         id: "lunch",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -115,7 +115,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Dinner",
         id: "dinner",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,
@@ -123,7 +123,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
     {
         name: "Late Night",
         id: "late-night",
-        dishes: [],
+        items: [],
         description: null!,
         _id: id(),
         image: null!,

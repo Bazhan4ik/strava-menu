@@ -1,9 +1,8 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
-import { SessionDish, SessionType, TimelineComponent, WaiterRequest } from "../../models/session.js";
+import { SessionItem, SessionType, TimelineComponent, WaiterRequest } from "../../models/session.js";
 import { stripe } from "../../setup/stripe.js";
-import { getDish, getDishes } from "../../utils/dishes.js";
 import { id } from "../../utils/id.js";
 import { customerSession } from "../../utils/middleware/customerSession.js";
 import { customerRestaurant } from "../../utils/middleware/customerRestaurant.js";
@@ -14,8 +13,7 @@ import { convertTime, getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
 import { Location } from "../../models/restaurant.js";
 import Stripe from "stripe";
-import { Time } from "../../models/other/time.js";
-import { dishesDBName } from "../../config.js";
+import { getItem, getItems } from "../../utils/items.js";
 
 
 const router = Router({ mergeParams: true });
@@ -28,9 +26,9 @@ router.get("/",
     customerSession({
         info: 1,
         waiterRequests: 1,
-        dishes: {
+        items: {
             _id: 1,
-            dishId: 1,
+            itemId: 1,
             info: 1
         },
     }, {}, false),
@@ -128,12 +126,12 @@ router.get("/",
                     location: location._id,
                 },
                 status: "ordering",
-                dishes: [],
+                items: [],
                 waiterRequests: [],
             });
 
             response.session = {
-                dishes: [],
+                items: [],
                 id: table?.toString()!,
                 type: location.settings.customers?.allowDineIn ? "dinein" : "takeout",
             };
@@ -177,7 +175,7 @@ router.get("/",
 
             response.session = {
                 info: session.info,
-                dishes: session.dishes.map(d => { return { dishId: d.dishId, _id: d._id, comment: d.info.comment } }),
+                items: session.items.map(d => { return { itemId: d.itemId, _id: d._id, comment: d.info.comment } }),
                 waiterRequest: await getWaiterRequest(),
             }
 
@@ -263,22 +261,22 @@ router.put("/comment", customerRestaurant({}), customerSession({ info: { comment
 
 
 
-router.post("/dish", customerRestaurant({}), customerSession({ info: { type: 1, id: 1 } }, { info: { name: { last: 1 } } }), async (req, res) => {
+router.post("/item", customerRestaurant({}), customerSession({ info: { type: 1, id: 1 } }, { info: { name: { last: 1 } } }), async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
-    const { dishId, comment, modifiers } = req.body;
+    const { itemId, comment, modifiers } = req.body;
 
-    if (!dishId) {
-        return res.status(400).send({ reason: "DishIdNotProvided" });
+    if (!itemId) {
+        return res.status(400).send({ reason: "itemIdNotProvided" });
     }
 
-    if (typeof dishId != "string" || dishId.length != 24 || (comment && typeof comment != "string")) {
+    if (typeof itemId != "string" || itemId.length != 24 || (comment && typeof comment != "string")) {
         return res.status(422).send({ reason: "InvalidInput" });
     }
 
 
-    const dish = await getDish(
+    const item = await getItem(
         restaurant._id,
-        { _id: id(dishId) },
+        { _id: id(itemId) },
         { projection: {
             modifiers: {
                 _id: 1,
@@ -290,13 +288,13 @@ router.post("/dish", customerRestaurant({}), customerSession({ info: { type: 1, 
         } }
     );
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
     }
-    if(modifiers && !dish.modifiers) {
+    if(modifiers && !item.modifiers) {
         return res.status(500).send({ reason: "InvalidError" });
     }
-    if(!modifiers && dish.modifiers) {
+    if(!modifiers && item.modifiers) {
         return res.status(400).send({ reason: "ModifiersNotProvided" });
     }
 
@@ -312,8 +310,8 @@ router.post("/dish", customerRestaurant({}), customerSession({ info: { type: 1, 
     const checkModifiers = () => {
         const result: { _id: ObjectId; selected: ObjectId[] }[] = [];
 
-        for(let modifierIndex = 0; modifierIndex < dish.modifiers!.length!; modifierIndex++) {
-            const modifier = dish.modifiers![modifierIndex];
+        for(let modifierIndex = 0; modifierIndex < item.modifiers!.length!; modifierIndex++) {
+            const modifier = item.modifiers![modifierIndex];
 
             const m = findModifier(modifier._id);
 
@@ -367,7 +365,7 @@ router.post("/dish", customerRestaurant({}), customerSession({ info: { type: 1, 
 
         return result;
     }
-    const dishGeneratedId = () => {
+    const itemGeneratedId = () => {
 
         // 3 random numbers at the end
         const rand = Math.floor(Math.random() * 900 + 100).toString();
@@ -385,39 +383,39 @@ router.post("/dish", customerRestaurant({}), customerSession({ info: { type: 1, 
         return res.status(400).send({ reason: "InvalidModifiers" });
     }
 
-    const newDish: SessionDish = {
-        dishId: id(dishId),
+    const newItem: SessionItem = {
+        itemId: id(itemId),
         _id: id(),
         status: "ordered",
         modifiers: convertedModifiers,
         info: {
             comment: comment || null!,
-            id: dishGeneratedId(),
+            id: itemGeneratedId(),
         },
     };
 
     const timeline: TimelineComponent = {
-        action: "dish/add",
+        action: "item/add",
         userId: "customer",
         time: Date.now(),
-        sessionDishId: newDish._id,
+        sessionItemId: newItem._id,
     }
 
 
     const update = await updateSession(
         restaurant._id,
         { _id: session._id, },
-        { $push: { dishes: newDish, timeline: timeline } },
+        { $push: { items: newItem, timeline: timeline } },
         { projection: { _id: 1, } }
     );
 
 
     res.send({
-        insertedId: newDish._id,
+        insertedId: newItem._id,
     });
 });
-router.put("/dish/:orderDishId/comment", customerRestaurant({}), customerSession({ dishes: { _id: 1, info: { comment: 1 } } }, {}), async (req, res) => {
-    const { orderDishId } = req.params;
+router.put("/item/:orderitemId/comment", customerRestaurant({}), customerSession({ items: { _id: 1, info: { comment: 1 } } }, {}), async (req, res) => {
+    const { orderitemId } = req.params;
     const { session, restaurant } = res.locals as Locals;
     let { comment } = req.body;
 
@@ -429,9 +427,9 @@ router.put("/dish/:orderDishId/comment", customerRestaurant({}), customerSession
         return res.status(422).send({ reason: "InvalidInput" });
     }
 
-    for (let dish of session.dishes) {
-        if (dish._id.equals(orderDishId)) {
-            if (dish.info.comment == comment) {
+    for (let item of session.items) {
+        if (item._id.equals(orderitemId)) {
+            if (item.info.comment == comment) {
                 return res.send({ updated: true });
             }
         }
@@ -442,44 +440,44 @@ router.put("/dish/:orderDishId/comment", customerRestaurant({}), customerSession
     }
 
     const timeline: TimelineComponent = {
-        action: "dish/comment",
+        action: "item/comment",
         time: Date.now(),
-        sessionDishId: id(orderDishId),
+        sessionItemId: id(orderitemId),
         userId: "customer",
     };
 
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "dishes.$[dish].info.comment": comment }, $push: timeline },
-        { arrayFilters: [{ "dish._id": id(orderDishId) }] }
+        { $set: { "items.$[item].info.comment": comment }, $push: timeline },
+        { arrayFilters: [{ "item._id": id(orderitemId) }] }
     );
 
     res.send({ updated: update.ok == 1 });
 });
-router.delete("/dish/:orderDishId", customerRestaurant({}), customerSession({ dishes: { _id: 1, dishId: 1 }}, {}), async (req, res) => {
-    const { orderDishId } = req.params;
+router.delete("/item/:orderitemId", customerRestaurant({}), customerSession({ items: { _id: 1, itemId: 1 }}, {}), async (req, res) => {
+    const { orderitemId } = req.params;
     const { restaurant, session } = res.locals as Locals;
 
-    if (!orderDishId || orderDishId.length != 24) {
+    if (!orderitemId || orderitemId.length != 24) {
         return res.status(400).send({ reason: "InvalidId" });
     }
-    if(!session.dishes) {
+    if(!session.items) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const getDishId = () => {
-        for(const sdish of session.dishes) {
-            if(sdish._id.equals(orderDishId)) {
-                return sdish.dishId;
+    const getitemId = () => {
+        for(const sitem of session.items) {
+            if(sitem._id.equals(orderitemId)) {
+                return sitem.itemId;
             }
         }
         return null;
     }
 
     const timeline: TimelineComponent = {
-        action: "dish/remove",
-        dishId: getDishId()!,
+        action: "item/remove",
+        itemId: getitemId()!,
         time: Date.now(),
         userId: "customer",
     };
@@ -488,7 +486,7 @@ router.delete("/dish/:orderDishId", customerRestaurant({}), customerSession({ di
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $pull: { "dishes": { _id: id(orderDishId) } }, $push: { timeline } },
+        { $pull: { "items": { _id: id(orderitemId) } }, $push: { timeline } },
         { projection: { _id: 1 } }
     );
 
@@ -496,17 +494,17 @@ router.delete("/dish/:orderDishId", customerRestaurant({}), customerSession({ di
         updated: update.ok == 1,
     });
 });
-router.put("/dish/:sessionDishId/modifiers", customerRestaurant({}), customerSession({ }, { }), async (req, res) => {
-    const { sessionDishId } = req.params;
+router.put("/item/:sessionItemId/modifiers", customerRestaurant({}), customerSession({ }, { }), async (req, res) => {
+    const { sessionItemId } = req.params;
     const { modifiers } = req.body;
-    const { dishId } = req.query;
+    const { itemId } = req.query;
     const { restaurant, session } = res.locals as Locals;
 
-    if(sessionDishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidSessionDishId" });
+    if(sessionItemId.length != 24) {
+        return res.status(400).send({ reason: "InvalidSessionitemId" });
     }
-    if(typeof dishId != "string" || dishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidDishId" });
+    if(typeof itemId != "string" || itemId.length != 24) {
+        return res.status(400).send({ reason: "InvaliditemId" });
     }
 
     const findModifier = (id: ObjectId) => {
@@ -520,8 +518,8 @@ router.put("/dish/:sessionDishId/modifiers", customerRestaurant({}), customerSes
     const checkModifiers = () => {
         const result: { _id: ObjectId; selected: ObjectId[] }[] = [];
 
-        for(let modifierIndex = 0; modifierIndex < dish!.modifiers!.length!; modifierIndex++) {
-            const modifier = dish!.modifiers![modifierIndex];
+        for(let modifierIndex = 0; modifierIndex < item!.modifiers!.length!; modifierIndex++) {
+            const modifier = item!.modifiers![modifierIndex];
 
             const m = findModifier(modifier._id);
 
@@ -576,24 +574,24 @@ router.put("/dish/:sessionDishId/modifiers", customerRestaurant({}), customerSes
         return result;
     }
     
-    const dish = await getDish(
+    const item = await getItem(
         restaurant._id,
-        { _id: id(dishId) },
+        { _id: id(itemId) },
         { projection: { info: { price: 1 }, modifiers: { _id: 1, required: 1, options: { _id: 1, price: 1 } } } }
     );
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
     }
 
-    let newPrice = dish?.info.price;
+    let newPrice = item?.info.price;
 
     const convertedModifiers = checkModifiers();
 
 
     const timeline: TimelineComponent = {
-        action: "dish/modifiers",
-        sessionDishId: id(sessionDishId),
+        action: "item/modifiers",
+        sessionItemId: id(sessionItemId),
         userId: "customer",
         time: Date.now(),
     }
@@ -602,18 +600,18 @@ router.put("/dish/:sessionDishId/modifiers", customerRestaurant({}), customerSes
     const update = await updateSession(
         restaurant._id,
         { _id: session._id },
-        { $set: { "dishes.$[dish].modifiers": convertedModifiers }, $push: { timeline } },
-        { arrayFilters: [ { "dish._id": id(sessionDishId) } ] }
+        { $set: { "items.$[item].modifiers": convertedModifiers }, $push: { timeline } },
+        { arrayFilters: [ { "item._id": id(sessionItemId) } ] }
     );
 
     res.send({ newPrice, updated: update.ok == 1 });
 });
 
 
-router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1: 1, settings: { customers: 1, } } }), customerSession({ dishes: 1, info: 1 }, {}), async (req, res) => {
+router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1: 1, settings: { customers: 1, } } }), customerSession({ items: 1, info: 1 }, {}), async (req, res) => {
     const { restaurant, session, user } = res.locals as Locals;
 
-    const dishesId: ObjectId[] = [];
+    const itemsId: ObjectId[] = [];
 
     if (!restaurant.locations) {
         return res.status(500).send({ reason: "InvalidError" });
@@ -633,18 +631,18 @@ router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1:
     }
 
 
-    for (let dish of session.dishes) {
-        dishesId.push(dish.dishId);
+    for (let item of session.items) {
+        itemsId.push(item.itemId);
     }
 
-    const dishes = await getDishes(restaurant._id, { _id: { $in: dishesId } }, { projection: { info: { name: 1, price: 1, }, modifiers: { _id: 1, options: { _id: 1, price: 1 } }, id: 1, library: { preview: 1, } } }).toArray();
+    const items = await getItems(restaurant._id, { _id: { $in: itemsId } }, { projection: { info: { name: 1, price: 1, }, modifiers: { _id: 1, options: { _id: 1, price: 1 } }, id: 1, library: { preview: 1, } } }).toArray();
 
-    const convertedDishes = [];
+    const convertedItemes = [];
 
-    const findDish = (dishId: ObjectId) => {
-        for (let dish of dishes) {
-            if (dish._id.equals(dishId)) {
-                return dish;
+    const findItem = (itemId: ObjectId) => {
+        for (let item of items) {
+            if (item._id.equals(itemId)) {
+                return item;
             }
         }
         return null!;
@@ -652,23 +650,23 @@ router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1:
 
     let subtotal = 0;
 
-    for (let d of session.dishes) {
-        const dish = findDish(d.dishId);
+    for (let d of session.items) {
+        const item = findItem(d.itemId);
 
-        if (!dish) {
+        if (!item) {
 
-            updateSession(restaurant._id, { _id: session._id }, { $pull: { dishes: { dishId: d.dishId } } }, { noResponse: true });
+            updateSession(restaurant._id, { _id: session._id }, { $pull: { items: { itemId: d.itemId } } }, { noResponse: true });
 
             continue;
         }
 
         let modifiersPrice = 0;
 
-        if(dish.modifiers && d.modifiers) {
-            for(const modifier of dish.modifiers!) {
-                for(const sessionDishModifier of d.modifiers) {
-                    if(modifier._id.equals(sessionDishModifier._id)) {
-                        for(const sdmo of sessionDishModifier.selected) {
+        if(item.modifiers && d.modifiers) {
+            for(const modifier of item.modifiers!) {
+                for(const sessionItemModifier of d.modifiers) {
+                    if(modifier._id.equals(sessionItemModifier._id)) {
+                        for(const sdmo of sessionItemModifier.selected) {
                             for(const modifierOption of modifier.options) {
                                 if(sdmo.equals(modifierOption._id)) {
                                     modifiersPrice += modifierOption.price;
@@ -682,24 +680,24 @@ router.get("/preview", customerRestaurant({ locations: { _id: 1, city: 1, line1:
             }
         }
 
-        convertedDishes.push({
-            name: dish.info.name,
-            price: dish.info.price + modifiersPrice,
-            image: dish.library?.preview,
-            dishId: dish.id,
-            dishObjectId: dish._id,
+        convertedItemes.push({
+            name: item.info.name,
+            price: item.info.price + modifiersPrice,
+            image: item.library?.preview,
+            itemId: item.id,
+            itemObjectId: item._id,
             _id: d._id,
             comment: d.info.comment
         });
 
-        subtotal += dish.info.price + modifiersPrice;
+        subtotal += item.info.price + modifiersPrice;
 
     }
 
 
 
     res.send({
-        dishes: convertedDishes,
+        items: convertedItemes,
         subtotal,
         info: session.info,
         address: `${location.city}, ${location.line1}`,
@@ -881,9 +879,9 @@ router.delete("/tip", customerRestaurant({}), customerSession({}, {}), async (re
 
 
 
-class AmountAndDishes {
+class AmountAndItemes {
     money!: { subtotal: number; tax: number; taxTitle: string; total: number; tip: number; service: number; };
-    dishes!: { name: string; amount: number; price: number; }[];
+    items!: { name: string; amount: number; price: number; }[];
 }
 class ErrorResult {
     status!: number;
@@ -909,7 +907,7 @@ router.get("/checkout",
         {
             payment: 1,
             info: { location: 1, type: 1, },
-            dishes: { dishId: 1, _id: 1, modifiers: 1, },
+            items: { itemId: 1, _id: 1, modifiers: 1, },
         },
         {
             stripeCustomerId: 1,
@@ -945,13 +943,13 @@ router.get("/checkout",
                 return { status: 404, reason: "LocationNotFound" };
             }
         }
-        const convertDishesAndCalculateMoney = async () => {
-            if(session.dishes.length == 0) {
-                return { status: 500, reason: "InvalidDishes" };
+        const convertItemesAndCalculateMoney = async () => {
+            if(session.items.length == 0) {
+                return { status: 500, reason: "InvalidItemes" };
             }
             const result = await calculateAmount({
                 restaurantId: restaurant._id,
-                ds: session.dishes,
+                ds: session.items,
                 tipPercentage: session.payment?.selectedTipPercentage || 0,
                 tip: session.payment?.money?.tip || 0,
                 serviceFee: location.settings.serviceFee!,
@@ -959,7 +957,7 @@ router.get("/checkout",
             });
 
             if (!result) {
-                return { status: 500, reason: "InvalidDishes" };
+                return { status: 500, reason: "InvalidItemes" };
             }
             if (!result || !result.money.total) {
                 return { status: 403, reason: "InvalidAmount" };
@@ -1068,10 +1066,10 @@ router.get("/checkout",
 
 
         let location: Location = null!;
-        let money: AmountAndDishes["money"] = null!;
-        let dishes: AmountAndDishes["dishes"] = null!;
-        let dishesUpdate: any = null!;
-        let dishesArrayFilter: any = null!;
+        let money: AmountAndItemes["money"] = null!;
+        let items: AmountAndItemes["items"] = null!;
+        let itemsUpdate: any = null!;
+        let itemsArrayFilter: any = null!;
         let paymentData: SuccessfulPaymentDataResult = null!;
 
         const error = findError();
@@ -1086,14 +1084,14 @@ router.get("/checkout",
             return res.status(500).send({ reason: "InvalidError" });
         }
 
-        const calcres = await convertDishesAndCalculateMoney();
+        const calcres = await convertItemesAndCalculateMoney();
         if (calcres instanceof ErrorResult || (typeof (calcres as any).status == "number")) {
             return res.status((calcres as ErrorResult).status || 500).send({ reason: (calcres as ErrorResult).reason || "InvalidError" })
         } else {
             money = (calcres as any).money;
-            dishes = (calcres as any).dishes;
-            dishesArrayFilter = (calcres as any).dishesArrayFilter;
-            dishesUpdate = (calcres as any).dishesUpdate;
+            items = (calcres as any).items;
+            itemsArrayFilter = (calcres as any).itemsArrayFilter;
+            itemsUpdate = (calcres as any).itemsUpdate;
         }
 
         if(location.settings.methods?.card) {
@@ -1113,7 +1111,7 @@ router.get("/checkout",
                 total: (money.total / 100).toFixed(2),
                 taxTitle: money.taxTitle,
             },
-            dishes,
+            items,
             country: location.country,
             payWithCard: location.settings.methods?.card,
             payWithCash: location.settings.methods?.cash && session.info.type != "takeout",
@@ -1139,10 +1137,10 @@ router.get("/checkout",
                     "payment.paymentIntentId": paymentData?.paymentIntentId,
                     "payment.setupIntentId": paymentData?.setupIntent,
                     "payment.money": money,
-                    ...dishesUpdate,
+                    ...itemsUpdate,
                 }
             },
-            { projection: { _id: 1 }, arrayFilters: dishesArrayFilter }
+            { projection: { _id: 1 }, arrayFilters: itemsArrayFilter }
         );
     });
 
@@ -1268,15 +1266,15 @@ export {
 /**
  * 
  * @param restaurantId 
- * @param ds - selected dishes, should be provided to get dishes' prices and calculate money
- * @param tipPercentage - if tip added, and tip is some percents it should be recalculated because of new dishes could be added or removed
+ * @param ds - selected items, should be provided to get items' prices and calculate money
+ * @param tipPercentage - if tip added, and tip is some percents it should be recalculated because of new items could be added or removed
  * @param tip - amount of tip, if it was custom, it will not be recalculated
  * @param serviceFee - restaurant's service fee
- * @returns AmountAndDishes || ErrorResult
+ * @returns AmountAndItemes || ErrorResult
  */
 async function calculateAmount(data: {
     restaurantId: ObjectId;
-    ds: SessionDish[];
+    ds: SessionItem[];
     tipPercentage: number;
     tip: number;
     serviceFee?: { amount: number; type: 1 | 2 };
@@ -1285,20 +1283,20 @@ async function calculateAmount(data: {
 
     const { restaurantId, ds, tipPercentage, tip, serviceFee, location } = data;
 
-    const dishesId: ObjectId[] = [];
+    const itemsId: ObjectId[] = [];
 
 
-    for (let dish of ds) {
-        dishesId.push(dish.dishId);
+    for (let item of ds) {
+        itemsId.push(item.itemId);
     }
 
-    const dishes = await getDishes(restaurantId, { _id: { $in: dishesId } }, { projection: { modifiers: { _id: 1, options: { _id: 1, price: 1, } }, info: { price: 1, name: 1, }, } }).toArray();
+    const items = await getItems(restaurantId, { _id: { $in: itemsId } }, { projection: { modifiers: { _id: 1, options: { _id: 1, price: 1, } }, info: { price: 1, name: 1, }, } }).toArray();
 
 
-    const findDish = (dishId: ObjectId) => {
-        for (let dish of dishes) {
-            if (dish._id.equals(dishId)) {
-                return dish;
+    const findItem = (itemId: ObjectId) => {
+        for (let item of items) {
+            if (item._id.equals(itemId)) {
+                return item;
             }
         }
         return null!;
@@ -1352,37 +1350,37 @@ async function calculateAmount(data: {
     }
 
     let subtotal = 0;
-    const dishesUpdate: any = {};
-    const dishesArrayFilter = [];
+    const itemsUpdate: any = {};
+    const itemsArrayFilter = [];
 
     const map = new Map<string, { name: string; amount: number; price: number; }>();
 
-    for (let sessionDish of ds) {
+    for (let sessionItem of ds) {
 
         const arrayFilter: any = {};
-        arrayFilter[`dish${sessionDish._id}._id`] = sessionDish._id;
-        dishesArrayFilter.push(arrayFilter);
+        arrayFilter[`item${sessionItem._id}._id`] = sessionItem._id;
+        itemsArrayFilter.push(arrayFilter);
 
-        const dish = findDish(sessionDish.dishId);
+        const item = findItem(sessionItem.itemId);
 
-        if (!dish) {
+        if (!item) {
             return null;
         }
 
-        if (map.has(dish._id.toString())) {
-            const entry = map.get(dish._id.toString())!;
+        if (map.has(item._id.toString())) {
+            const entry = map.get(item._id.toString())!;
 
-            map.set(dish._id.toString(), { ...entry, price: entry.price + dish.info.price, amount: entry.amount + 1 });
+            map.set(item._id.toString(), { ...entry, price: entry.price + item.info.price, amount: entry.amount + 1 });
         } else {
-            map.set(dish._id.toString(), { name: dish.info.name, price: dish.info.price, amount: 1 });
+            map.set(item._id.toString(), { name: item.info.name, price: item.info.price, amount: 1 });
         }
 
-        if(dish.modifiers && sessionDish.modifiers) {
+        if(item.modifiers && sessionItem.modifiers) {
             let modifierPrice = 0;
-            for(const sessionDishModifier of sessionDish.modifiers) {
-                for(const modifier of dish.modifiers!) {
-                    if(modifier._id.equals(sessionDishModifier._id)) {
-                        for(const sdmo of sessionDishModifier.selected) {
+            for(const sessionItemModifier of sessionItem.modifiers) {
+                for(const modifier of item.modifiers!) {
+                    if(modifier._id.equals(sessionItemModifier._id)) {
+                        for(const sdmo of sessionItemModifier.selected) {
                             for(const modifierOption of modifier.options) {
                                 if(sdmo.equals(modifierOption._id)) {
                                     subtotal += modifierOption.price;
@@ -1396,12 +1394,12 @@ async function calculateAmount(data: {
                 }
 
             }
-            dishesUpdate[`dishes.$[dish${sessionDish._id}].info.price`] = dish.info.price + modifierPrice;
+            itemsUpdate[`items.$[item${sessionItem._id}].info.price`] = item.info.price + modifierPrice;
         }
 
 
 
-        subtotal += dish.info.price;
+        subtotal += item.info.price;
     }
 
     const tax = getTax(subtotal);
@@ -1424,9 +1422,9 @@ async function calculateAmount(data: {
             tip: Math.ceil(Math.floor(tipAmount || tip)),
             taxTitle: tax.title,
         },
-        dishesUpdate,
-        dishesArrayFilter,
-        dishes: Array.from(map.values()),
+        itemsUpdate,
+        itemsArrayFilter,
+        items: Array.from(map.values()),
     };
 }
 

@@ -5,8 +5,8 @@ import { MainRoutingModule } from './main-routing.module';
 import { WaiterRequestsComponent } from './components/waiter-requests/waiter-requests.component';
 import { MainPage } from './main.page';
 import { WaiterRequestComponent } from './components/waiter-request/waiter-request.component';
-import { DishesCookComponent } from './components/cook/dishes-cook/dishes-cook.component';
-import { DishCookComponent } from './components/cook/dish-cook/dish-cook.component';
+import { ItemsCookComponent } from './components/cook/items-cook/items-cook.component';
+import { ItemCookComponent } from './components/cook/item-cook/item-cook.component';
 import { MatIconModule } from '@angular/material/icon';
 
 
@@ -15,11 +15,11 @@ import { MatIconModule } from '@angular/material/icon';
         WaiterRequestsComponent,
         MainPage,
         WaiterRequestComponent,
-        DishesCookComponent,
+        ItemsCookComponent,
     ],
     imports: [
         CommonModule,
-        DishCookComponent,
+        ItemCookComponent,
         MainRoutingModule,
         MatIconModule,
     ]

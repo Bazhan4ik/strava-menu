@@ -8,7 +8,7 @@ interface Collection {
     id: string;
     _id: string;
     image: any;
-    dishes: number;
+    items: number;
 }
 interface Folder {
     name: string;
@@ -45,7 +45,8 @@ export class FolderPage implements OnInit {
 
         const component = this.modalContainer.createComponent(AddCollectionsModal);
 
-        component.instance.selected = this.collections;
+        // component.instance.selected = this.collections;
+        component.instance.ids = this.collections.map(c => c._id);
 
         component.instance.leave.subscribe(async (collections: Collection[]) => {
             if(collections) {
@@ -54,7 +55,7 @@ export class FolderPage implements OnInit {
                 const update: any = await this.service.put({ collections: collections.map(c => c._id ) }, "menu/folders", this.folder.id, "collections");
 
                 if(update.updated) {
-                    this.collections = collections.map(c => { return { ...c, dishes: typeof c.dishes == "number" ? c.dishes : (c.dishes as any).length }});
+                    this.collections = collections.map(c => { return { ...c, items: typeof c.items == "number" ? c.items : (c.items as any).length }});
                 }
 
                 this.loading = false;

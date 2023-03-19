@@ -39,7 +39,7 @@ interface PaymentMethod {
 })
 export class CheckoutPage implements OnInit {
 
-    dishes: Dish[];
+    items: Dish[];
     money: {
         total: string;
         subtotal: string;
@@ -257,7 +257,7 @@ export class CheckoutPage implements OnInit {
     async ngOnInit() {
         let result: {
             money: any;
-            dishes: Dish[];
+            items: Dish[];
             email: string,
             payWithCash: boolean;
             payWithCard: boolean;
@@ -293,7 +293,7 @@ export class CheckoutPage implements OnInit {
             value20: (this.calculateTip(+this.money.subtotal * 100, 20) / 100).toFixed(2),
             selected: result.selectedTip
         }
-        this.dishes = result.dishes;
+        this.items = result.items;
         this.elementsOptions.clientSecret = result.paymentData.clientSecret;
 
         if (result.email) {

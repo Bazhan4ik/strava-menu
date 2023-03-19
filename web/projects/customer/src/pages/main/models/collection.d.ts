@@ -1,7 +1,7 @@
 
 interface Collection {
     name: string;
-    dishes: string[];
+    items: string[];
     id: string;
     redirectable: boolean;
     image?: any;

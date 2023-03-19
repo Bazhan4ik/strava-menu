@@ -2,12 +2,11 @@ import { Filter, FindOneAndUpdateOptions, FindOptions, ObjectId, UpdateFilter, U
 import { sessionsDBName } from "../config.js";
 import { Session, TimelineComponent } from "../models/session.js";
 import { client } from "../setup/mongodb.js";
-import { convertSessionDishes } from "./convertSessionDishes.js";
+import { convertSessionItems } from "./convertSessionItems.js";
 import { id } from "./id.js";
-import { restaurantWorker } from "./middleware/restaurant.js";
 import { updateOrders } from "./orders.js";
 import { sendToCustomerPaymentSucceeded } from "./socket/customer.js";
-import { sendToStaffNewOrder } from "./socket/dishes.js";
+import { sendToStaffNewOrder } from "./socket/items.js";
 import { getDelay } from "./time.js";
 
 
@@ -153,14 +152,14 @@ async function confirmSession(data: {
             }, $push: {
                 timeline
             } },
-            { projection: { dishes: 1, customer: { customerId: 1, }, info: { location: 1, comment: 1, id: 1, type: 1, } } }
+            { projection: { items: 1, customer: { customerId: 1, }, info: { location: 1, comment: 1, id: 1, type: 1, } } }
         );
 
-        const convertedOrderDishes = await convertSessionDishes({
+        const convertedOrderItems = await convertSessionItems({
             restaurantId: id(restaurantId),
             sessionId: id(sessionId),
             ordered: getDelay(Date.now()),
-            sessionDishes: result.value?.dishes!,
+            sessionItems: result.value?.items!,
             skip: [],
             customerId: result.value?.customer.customerId!,
             comment: result.value?.info.comment,
@@ -168,7 +167,7 @@ async function confirmSession(data: {
             id: result.value?.info.id!,
         });
 
-        sendToStaffNewOrder(id(restaurantId), result.value?.info.location!, convertedOrderDishes);
+        sendToStaffNewOrder(id(restaurantId), result.value?.info.location!, convertedOrderItems);
         sendToCustomerPaymentSucceeded(id(restaurantId), result.value?.info.location!, id(sessionId));
 
         return result.ok == 1;

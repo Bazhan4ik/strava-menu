@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, Input, Output, ViewContainerRef, EventEmitter } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ConvertedSessionDish, Folder } from 'projects/staff/src/models/order-dishes';
-import { DishWaiterComponent } from '../../components/waiter/dish-waiter/dish-waiter.component';
+import { ConvertedSessionItem, Folder } from 'projects/staff/src/models/order-items';
+import { ItemWaiterComponent } from '../../components/waiter/item-waiter/item-waiter.component';
 
 @Component({
     selector: 'app-folder-waiter',
     templateUrl: './folder-waiter.modal.html',
     styleUrls: ['./folder-waiter.modal.scss'],
     standalone: true,
-    imports: [CommonModule, DishWaiterComponent, MatIconModule],
+    imports: [CommonModule, ItemWaiterComponent, MatIconModule],
 })
 export class FolderWaiterModal {
 
@@ -21,23 +21,23 @@ export class FolderWaiterModal {
         this.leave.emit();
     }
 
-    async openDishModal(dish: ConvertedSessionDish) {
-        const { WaiterDishModal } = await import("../waiter-dish/waiter-dish.modal");
+    async openItemModal(item: ConvertedSessionItem) {
+        const { WaiterItemModal } = await import("../waiter-item/waiter-item.modal");
 
-        const component = this.modalContainer.createComponent(WaiterDishModal);
+        const component = this.modalContainer.createComponent(WaiterItemModal);
 
-        component.instance.sessionDish = dish;
+        component.instance.sessionItem = item;
 
         component.instance.leave.subscribe((served: boolean) => {
             if (served) {
-                for (let i in this.folder.dishes) {
-                    if (this.folder.dishes[i]._id == dish._id) {
-                        this.folder.dishes.splice(+i, 1);
+                for (let i in this.folder.items) {
+                    if (this.folder.items[i]._id == item._id) {
+                        this.folder.items.splice(+i, 1);
                         break;
                     }
                 }
 
-                if (this.folder.dishes.length == 0) {
+                if (this.folder.items.length == 0) {
                     this.leave.emit(true);
                 }
             }

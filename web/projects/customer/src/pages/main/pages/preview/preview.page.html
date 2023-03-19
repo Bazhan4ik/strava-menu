@@ -72,23 +72,23 @@
                     <input [value]="info.comment || ''" placeholder="Leave a comment..." (focus)="setComment()" class="global-input">
                 </div>
             </div>
-            <div *ngIf="dishes && dishes.length > 0" class="dishes">
-                <div class="dish" *ngFor="let dish of dishes">
-                    <a class="left" routerLink="../{{ dish.dishId }}">
+            <div *ngIf="items && items.length > 0" class="items">
+                <div class="item" *ngFor="let item of items">
+                    <a class="left" routerLink="../../item/{{ item.itemId }}" [queryParams]="{ back: backUrl }">
                         <div class="image">
-                            <img [src]="dish.image" alt="">
+                            <img [src]="item.image" alt="">
                         </div>
                         <div class="name-price">
                             <div class="name">
                                 <span class="global-text big bold black">
-                                    {{ dish.name }}
+                                    {{ item.name }}
                                 </span>
                             </div>
                             <div class="price">
                                 <span class="global-text">
-                                    ${{ dish.price / 100 }}
+                                    ${{ item.price / 100 }}
                                 </span>
-                                <div *ngIf="dish.comment" class="dish-comment global-text">
+                                <div *ngIf="item.comment" class="item-comment global-text">
                                     <span class="dot">
                                         &#9679;
                                     </span>
@@ -98,7 +98,7 @@
                         </div>
                     </a>
                     <div class="right">
-                        <button class="button-icon" (click)="dishMore($event, dish)">
+                        <button class="button-icon" (click)="itemMore($event, item)">
                             <mat-icon>
                                 more_vert
                             </mat-icon>
@@ -106,9 +106,9 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="dishes && dishes.length == 0 && info" [class.red]="errors.dishes" class="no-dishes">
+            <div *ngIf="items && items.length == 0 && info" [class.red]="errors.items" class="no-items">
                 <span class="global-text big black bold">
-                    Add dishes to your order
+                    Add items to your order
                 </span>
             </div>
             <div class="subtotal" *ngIf="subtotal || subtotal === 0">

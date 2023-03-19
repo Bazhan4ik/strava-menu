@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ViewContainerRef, } from '@angular/core';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
-import { ConvertedSessionDish, Folder } from 'projects/staff/src/models/order-dishes';
-import { WaiterDishesData } from 'projects/staff/src/models/socket-waiter-dishes';
+import { ConvertedSessionItem, Folder } from 'projects/staff/src/models/order-items';
+import { WaiterItemsData } from 'projects/staff/src/models/socket-waiter-items';
 import { SocketService } from 'projects/staff/src/services/socket.service';
 import { StaffService } from 'projects/staff/src/services/staff.service';
 import { Subscription } from 'rxjs';
-import { DishWaiterComponent } from '../dish-waiter/dish-waiter.component';
 
 
 
@@ -52,24 +51,24 @@ export class FoldersWaiterComponent {
     }
 
 
-    // async openDishModal(dish: ConvertedSessionDish) {
-    //     const { WaiterDishModal } = await import("../../../modals/waiter-dish/waiter-dish.modal");
+    // async openItemsModal(item: ConvertedSessionItems) {
+    //     const { WaiterItemsModal } = await import("../../../modals/waiter-item/waiter-item.modal");
 
-    //     const component = this.modalContainer.createComponent(WaiterDishModal);
+    //     const component = this.modalContainer.createComponent(WaiterItemsModal);
 
-    //     component.instance.sessionDish = dish;
+    //     component.instance.sessionItems = item;
 
     //     component.instance.leave.subscribe((served: boolean) => {
     //         if(served) {
     //             for(const [index, folder] of this.folders.entries()) {
-    //                 if(folder.sessionId == dish.sessionId) {
-    //                     for(let i in folder.dishes) {
-    //                         if(folder.dishes[i]._id == dish._id) {
-    //                             folder.dishes.splice(+i, 1);
+    //                 if(folder.sessionId == item.sessionId) {
+    //                     for(let i in folder.items) {
+    //                         if(folder.items[i]._id == item._id) {
+    //                             folder.items.splice(+i, 1);
     //                             break;
     //                         }
     //                     }
-    //                     if(folder.dishes.length == 0) {
+    //                     if(folder.items.length == 0) {
     //                         this.folders.splice(index, 1);
     //                     }
     //                     break;
@@ -83,30 +82,30 @@ export class FoldersWaiterComponent {
 
 
     async ngOnInit() {
-        this.subscription = this.socket.$waiterDishes.subscribe(res => {
-            if(res.types.includes("dishes/add")) {
-                const dish = res.data as WaiterDishesData.add;
+        this.subscription = this.socket.$waiterItems.subscribe(res => {
+            if(res.types.includes("items/add")) {
+                const item = res.data as WaiterItemsData.add;
                 
                 let addFolder = true;
                 for(const folder of this.folders) {
-                    if(folder.sessionId == dish.sessionId) {
+                    if(folder.sessionId == item.sessionId) {
                         addFolder = false;
-                        folder.dishes.push({ ...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } });
+                        folder.items.push({ ...item, item: { ...item.item, image: getImage(item.item.image) } });
                         break;
                     }
                 }
                 if(addFolder) {
-                    this.folders.push({ type: dish.order.type, id: dish.order.id, dishes: [{ ...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } }], sessionId: dish.sessionId });
+                    this.folders.push({ type: item.order.type, id: item.order.id, items: [{ ...item, item: { ...item.item, image: getImage(item.item.image) } }], sessionId: item.sessionId });
                 }
 
-            } else if(res.types.includes("dishes/serve")) {
-                const { sessionId, sessionDishId } = res.data as WaiterDishesData.serve;
+            } else if(res.types.includes("items/serve")) {
+                const { sessionId, sessionItemId } = res.data as WaiterItemsData.serve;
 
                 for(const folder of this.folders) {
                     if(folder.sessionId == sessionId) {
-                        for(let i in folder.dishes) {
-                            if(folder.dishes[i]._id == sessionDishId) {
-                                folder.dishes.splice(+i, 1);
+                        for(let i in folder.items) {
+                            if(folder.items[i]._id == sessionItemId) {
+                                folder.items.splice(+i, 1);
                                 break;
                             }
                         }
@@ -116,21 +115,21 @@ export class FoldersWaiterComponent {
         });
 
 
-        const dishes: ConvertedSessionDish[] = await this.service.get("waiter/dishes");
+        const items: ConvertedSessionItem[] = await this.service.get("waiter/items");
 
         this.folders = [];
 
-        for(const dish of dishes) {
+        for(const item of items) {
             let addFolder = true;
             for(const folder of this.folders) {
-                if(folder.sessionId == dish.sessionId) {
+                if(folder.sessionId == item.sessionId) {
                     addFolder = false;
-                    folder.dishes.push({ ...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } });
+                    folder.items.push({ ...item, item: { ...item.item, image: getImage(item.item.image) } });
                     break;
                 }
             }
             if(addFolder) {
-                this.folders.push({ type: dish.order.type, id: dish.order.id, dishes: [{ ...dish, dish: { ...dish.dish, image: getImage(dish.dish.image) } }], sessionId: dish.sessionId });
+                this.folders.push({ type: item.order.type, id: item.order.id, items: [{ ...item, item: { ...item.item, image: getImage(item.item.image) } }], sessionId: item.sessionId });
             }
         }
 

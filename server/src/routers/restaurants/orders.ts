@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
-import { Dish } from "../../models/dish.js";
 import { Locals } from "../../models/general.js";
 import { Time } from "../../models/other/time.js";
-import { SessionDish, SessionPayment } from "../../models/session.js";
-import { getDishes } from "../../utils/dishes.js";
+import { SessionPayment } from "../../models/session.js";
 import { id } from "../../utils/id.js";
+import { getItems } from "../../utils/items.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { getOrder, getOrders } from "../../utils/orders.js";
@@ -109,7 +108,7 @@ interface ConvertedOrder {
     method: SessionPayment["method"];
     date: string;
     status: string;
-    dishes: {
+    items: {
         image: string;
         name: string;
         price: number;
@@ -140,13 +139,13 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
     }
 
     const userIds: ObjectId[] = [];
-    const dishesIds: ObjectId[] = [];
+    const itemsIds: ObjectId[] = [];
 
     const getIds = () => {
         userIds.push(order.customer.customerId!, order.customer.onBehalf!);
-        for (const dish of order.dishes) {
-            dishesIds.push(dish.dishId);
-            userIds.push(dish.staff?.cook!, dish.staff?.waiter!);
+        for (const item of order.items) {
+            itemsIds.push(item.itemId);
+            userIds.push(item.staff?.cook!, item.staff?.waiter!);
         }
     }
     //    \/
@@ -155,23 +154,23 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
 
         return Promise.all([
             getUsers({ _id: { $in: userIds } }, { projection: { info: { name: 1, }, avatar: { buffer: 1 } } }).toArray(),
-            getDishes(restaurant._id, { _id: { $in: dishesIds } }, { projection: { info: { name: 1, }, library: { preview: 1 } } }).toArray(),
+            getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { info: { name: 1, }, library: { preview: 1 } } }).toArray(),
         ]);
     }
     //    \/
     const getMaps = async () => {
-        const [users, dishes] = await getDataFromDB();
+        const [users, items] = await getDataFromDB();
 
         const usersMap = new Map<string, { name: string; }>();
         for (const user of users) {
             usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}` });
         }
-        const dishesMap = new Map<string, { name: string; price: number; image: any; }>();
-        for (const dish of dishes) {
-            dishesMap.set(dish._id.toString(), { name: dish.info.name, price: dish.info.price, image: dish.library?.preview! });
+        const itemsMap = new Map<string, { name: string; price: number; image: any; }>();
+        for (const item of items) {
+            itemsMap.set(item._id.toString(), { name: item.info.name, price: item.info.price, image: item.library?.preview! });
         }
 
-        return { usersMap, dishesMap };
+        return { usersMap, itemsMap };
     }
 
     const getLocationName = () => {
@@ -183,31 +182,31 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
         return null!;
     }
 
-    const convertDishes = () => {
-        const result: ConvertedOrder["dishes"] = [];
-        for (const dish of order.dishes) {
-            const d = dishesMap.get(dish.dishId.toString()) || { name: dish.info.name!, price: dish.info.price!, image: null!, };
+    const convertItems = () => {
+        const result: ConvertedOrder["items"] = [];
+        for (const item of order.items) {
+            const d = itemsMap.get(item.itemId.toString()) || { name: item.info.name!, price: item.info.price!, image: null!, };
 
             result.push({
                 name: d.name,
-                price: dish.info.price!,
+                price: item.info.price!,
                 image: d.image!,
-                modifiers: dish.modifiers?.length!,
+                modifiers: item.modifiers?.length!,
                 staff: {
-                    waiter: usersMap.get(dish.staff?.waiter?.toString()!)!,
-                    cook: usersMap.get(dish.staff?.cook?.toString()!)!,
+                    waiter: usersMap.get(item.staff?.waiter?.toString()!)!,
+                    cook: usersMap.get(item.staff?.cook?.toString()!)!,
                 }
             });
         }
         return result;
     }
 
-    const { dishesMap, usersMap } = await getMaps();
+    const { itemsMap, usersMap } = await getMaps();
 
     // get ids
     // get from db
     // convert to maps
-    // convert to converted dishes
+    // convert to converted items
 
 
 
@@ -219,7 +218,7 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
         money: order.payment?.money,
         method: order.payment?.method,
         date: convertTime(order.timing.ordered, { hour: "2-digit", minute: "2-digit", month: "short", day: "2-digit" }),
-        dishes: convertDishes(),
+        items: convertItems(),
         status: order.status,
         location: getLocationName(),
     }
@@ -241,10 +240,8 @@ router.get("/:orderId/timeline", logged(), restaurantWorker({ collections: 1 }, 
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const order = await getOrder(restaurant._id, { _id: id(orderId) }, { projection: { timeline: 1, dishes: { _id: 1, dishId: 1, } } });
+    const order = await getOrder(restaurant._id, { _id: id(orderId) }, { projection: { timeline: 1, items: { _id: 1, itemId: 1, } } });
 
-
-    console.log(order);
 
     if (!order) {
         return res.status(404).send({ reason: "OrderNotFound" });
@@ -267,35 +264,35 @@ router.get("/:orderId/timeline", logged(), restaurantWorker({ collections: 1 }, 
         return result;
     }
     const getMaps = async () => {
-        const dishIds = [];
+        const itemsIds = [];
         const collectionIds = [];
         for(const component of order.timeline) {
-            if(component.dishId) {
-                dishIds.push(component.dishId);
+            if(component.itemId) {
+                itemsIds.push(component.itemId);
             } else if(component.collectionId) {
                 collectionIds.push(component.collectionId);
-            } else if(component.sessionDishId) {
-                for(const dish of order.dishes) {
-                    if(dish._id.equals(component.sessionDishId)) {
-                        dishIds.push(dish.dishId);
-                        component.dishId = dish.dishId;
+            } else if(component.sessionItemId) {
+                for(const item of order.items) {
+                    if(item._id.equals(component.sessionItemId)) {
+                        itemsIds.push(item.itemId);
+                        component.itemId = item.itemId;
                         break;
                     }
                 }
             }
         }
 
-        const dishes = await getDishes(restaurant._id, { _id: { $in: dishIds } }, { projection: { info: { name: 1 } } }).toArray();
+        const items = await getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { info: { name: 1 } } }).toArray();
 
-        const dishMap = new Map<string, { name: string }>();
+        const itemsMap = new Map<string, { name: string }>();
 
-        for(const dish of dishes) {
-            dishMap.set(dish._id.toString(), { name: dish.info.name });
+        for(const item of items) {
+            itemsMap.set(item._id.toString(), { name: item.info.name });
         }
 
         const collectionMap = getCollectionsMap(collectionIds);
 
-        return { dishMap, collectionMap };
+        return { itemsMap, collectionMap };
     }
 
 
@@ -305,7 +302,7 @@ router.get("/:orderId/timeline", logged(), restaurantWorker({ collections: 1 }, 
         color: string;
     }[] = [];
 
-    const { dishMap, collectionMap } = await getMaps();
+    const { itemsMap, collectionMap } = await getMaps();
 
     for (const component of order.timeline) {
 
@@ -315,17 +312,17 @@ router.get("/:orderId/timeline", logged(), restaurantWorker({ collections: 1 }, 
             case "comment":
                 result.push({ description: "Comment added to the order", color: "gray", time: timef.format(component.time) });
                 break;
-            case "dish/add":
-                result.push({ description: `Dish (${dishMap.get(component.dishId?.toString()!)?.name}) added`, color: "green", time: timef.format(component.time) });
+            case "item/add":
+                result.push({ description: `Item (${itemsMap.get(component.itemId?.toString()!)?.name}) added`, color: "green", time: timef.format(component.time) });
                 break;
-            case "dish/remove":
-                result.push({ description: `Dish (${dishMap.get(component.dishId?.toString()!)?.name}) removed`, color: "red", time: timef.format(component.time) });
+            case "item/remove":
+                result.push({ description: `Item (${itemsMap.get(component.itemId?.toString()!)?.name}) removed`, color: "red", time: timef.format(component.time) });
                 break;
-            case "dish/comment":
-                result.push({ description: `Comment of a dish (${dishMap.get(component.dishId?.toString()!)?.name}) changed`, color: "gray", time: timef.format(component.time) });
+            case "item/comment":
+                result.push({ description: `Comment of an item (${itemsMap.get(component.itemId?.toString()!)?.name}) changed`, color: "gray", time: timef.format(component.time) });
                 break;
-            case "dish/modifiers":
-                result.push({ description: `Modifiers of a dish (${dishMap.get(component.dishId?.toString()!)?.name}) changed`, color: "gray", time: timef.format(component.time) });
+            case "item/modifiers":
+                result.push({ description: `Modifiers of an item (${itemsMap.get(component.itemId?.toString()!)?.name}) changed`, color: "gray", time: timef.format(component.time) });
                 break;
             case "type":
                 result.push({ description: "Order type changed", color: "gray", time: timef.format(component.time) });
@@ -351,8 +348,8 @@ router.get("/:orderId/timeline", logged(), restaurantWorker({ collections: 1 }, 
             case "page":
                 if(component.page == "collection") {
                     result.push({ description: `Collection (${collectionMap.get(component.collectionId!.toString())?.name}) page was visited`, color: "gray", time: timef.format(component.time) });
-                } else if(component.page == "dish") {
-                    result.push({ description: `Dish (${dishMap.get(component.dishId!.toString())?.name}) page was visited`, color: "gray", time: timef.format(component.time) });
+                } else if(component.page == "item") {
+                    result.push({ description: `Item (${itemsMap.get(component.itemId!.toString())?.name}) page was visited`, color: "gray", time: timef.format(component.time) });
                 }
                 break;
         }

@@ -4,13 +4,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 import { StaffService } from 'projects/staff/src/services/staff.service';
 
-interface Dish {
+interface Item {
     name: string;
     price: number;
     image: any;
     _id: string;
     comment: string;
-    dishId: string;
+    itemId: string;
 }
 interface Money {
     total: number;
@@ -33,7 +33,7 @@ interface OrderInfo {
 })
 export class CheckoutModal implements OnInit {
 
-    dishes: Dish[];
+    items: Item[];
     money: Money;
     order: OrderInfo;
 
@@ -51,13 +51,13 @@ export class CheckoutModal implements OnInit {
         this.leave.emit();
     }
 
-    async changeModifiers(dishId: string, sessionDishId: string) {
+    async changeModifiers(itemId: string, sessionItemId: string) {
         this.loading = true;
         const { ModifiersComponent } = await import("./../modifiers/modifiers.component");
 
         const component = this.modalContainer.createComponent(ModifiersComponent);
 
-        const result: any = await this.service.get(`order/modifiers/${dishId}?sessionDishId=${sessionDishId}`)
+        const result: any = await this.service.get(`order/modifiers/${itemId}?sessionItemId=${sessionItemId}`)
 
         component.instance.modifiers = result.modifiers;
 
@@ -67,7 +67,7 @@ export class CheckoutModal implements OnInit {
             if(m) {
                 this.loading = true;
 
-                const result: any = await this.service.put({ modifiers: m }, `order/dish/modifiers?sessionDishId=${sessionDishId}&dishId=${dishId}`);
+                const result: any = await this.service.put({ modifiers: m }, `order/item/modifiers?sessionItemId=${sessionItemId}&itemId=${itemId}`);
 
                 if(result.updated) {
                     this.ngOnInit();
@@ -79,31 +79,31 @@ export class CheckoutModal implements OnInit {
     }
 
     async addComment(id: string) {
-        const { DishCommentModal } = await import("./../dish-comment/dish-comment.modal");
+        const { ItemCommentModal } = await import("../item-comment/item-comment.modal");
 
-        let dish: Dish = null!;
-        for(const d of this.dishes) {
+        let item: Item = null!;
+        for(const d of this.items) {
             if(d._id == id) {
-                dish = d;
+                item = d;
                 break;
             }
         }
-        if(!dish) {
+        if(!item) {
             return;
         }
 
-        const component = this.modalContainer.createComponent(DishCommentModal);
+        const component = this.modalContainer.createComponent(ItemCommentModal);
 
-        component.instance.comment = dish.comment;
+        component.instance.comment = item.comment;
 
         component.instance.leave.subscribe(async (comment: string) => {
             if(comment) {
-                dish.comment = comment;
+                item.comment = comment;
 
-                const update: any = await this.service.put({ sessionDishId: id, comment }, "order/dish/comment");
+                const update: any = await this.service.put({ sessionItemId: id, comment }, "order/item/comment");
 
                 if(!update.updated) {
-                    dish.comment = null!;
+                    item.comment = null!;
                 }
             }
 
@@ -111,21 +111,21 @@ export class CheckoutModal implements OnInit {
         });
     }
 
-    async removeDish(id: string) {
+    async removeItem(id: string) {
         this.loading = true;
-        for(const d in this.dishes) {
-            if(this.dishes[d]._id == id) {
-                this.leave.emit({ type: "amount", dishId: this.dishes[d].dishId });
-                this.dishes.splice(+d, 1);
+        for(const d in this.items) {
+            if(this.items[d]._id == id) {
+                this.leave.emit({ type: "amount", itemId: this.items[d].itemId });
+                this.items.splice(+d, 1);
                 break;
             }
         }
 
-        if(this.dishes.length == 0) {
+        if(this.items.length == 0) {
             this.close();
         }
 
-        const update = await this.service.delete("order", "dish", id);
+        const update = await this.service.delete("order", "item", id);
 
         this.ngOnInit();
     }
@@ -160,22 +160,22 @@ export class CheckoutModal implements OnInit {
 
     async ngOnInit() {
         try {
-            const result: { dishes: Dish[]; money: Money; order: OrderInfo; } = await this.service.get("order/checkout");
+            const result: { items: Item[]; money: Money; order: OrderInfo; } = await this.service.get("order/checkout");
 
             
             this.order = result.order;
             this.money = result.money;
-            this.dishes = [];
-            for(const dish of result.dishes) {
-                this.dishes.push({
-                    ...dish,
-                    image: getImage(dish.image) || "./../../../../../../../../global-resources/images/no-image.svg",
+            this.items = [];
+            for(const item of result.items) {
+                this.items.push({
+                    ...item,
+                    image: getImage(item.image) || "./../../../../../../../../global-resources/images/no-image.svg",
                 });
             }
     
         } catch (e: any) {
             if(e.status == 400) {
-                if(e.error.reason == "InvalidDishes") {
+                if(e.error.reason == "InvalidItems") {
                     this.close();
                 }
             }

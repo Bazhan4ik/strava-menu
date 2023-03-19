@@ -39,11 +39,11 @@
             padding-bottom: 24px;
             height: 100%;
     
-            .dishes {
+            .items {
                 width: 324px;
                 margin-top: 24px;
     
-                .dish {
+                .item {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
@@ -302,6 +302,7 @@
 @media screen and (max-width: 640px) {
     .checkout-app {
         .box {
+            border: none;
             .payment {
                 width: 100%;
     

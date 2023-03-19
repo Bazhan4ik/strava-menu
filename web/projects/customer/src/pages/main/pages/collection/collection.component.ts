@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { DishesService } from 'projects/customer/src/services/dishes.service';
-import { DishComponent } from '../../components/dish/dish.component';
+import { ItemsService } from 'projects/customer/src/services/items.service';
+import { DishComponent } from '../../components/item/item.component';
 import { Collection } from '../../models/collection';
 
 @Component({
@@ -17,12 +17,12 @@ import { Collection } from '../../models/collection';
 export class CollectionComponent implements OnInit {
 
     collection: Collection;
-    dishes: string[]
+    items: string[]
 
     constructor(
         private service: CustomerService,
         private router: Router,
-        private dishesService: DishesService,
+        private itemsService: ItemsService,
         private route: ActivatedRoute,
     ) { };
 
@@ -36,13 +36,22 @@ export class CollectionComponent implements OnInit {
             return;
         }
 
-        const result: any = await this.service.get({}, "collections", collectionId);
+        let result: any;
 
-        console.log(result.dishes);
+        try {
+            result = await this.service.get({}, "collections", collectionId);
+        } catch (e: any) {
+            if(e.status == 403) {
+                this.router.navigate([this.service.restaurant.id, this.service.locationId, "home"]);
+                return;
+            }
+        }
+
+        console.log(result.items);
 
         this.collection = result.collection;
-        this.dishesService.dishes = { ...this.dishesService.dishes, ...result.dishes };
+        this.itemsService.items = { ...this.itemsService.items, ...result.items };
 
-        console.log(this.dishesService.dishes);
+        console.log(this.itemsService.items);
     }
 }

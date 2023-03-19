@@ -262,6 +262,12 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
 
     const parsedName = name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase();
 
+
+    const { folders, collections } = getDefaultCollections();
+    const collectionIds = [];
+    for(const collection of collections) {
+        collectionIds.push(collection._id);
+    }
     const newRestaurant: Restaurant = {
         _id: id(),
         info: {
@@ -269,6 +275,23 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
             id: parsedName,
             name: name,
             created: Date.now(),
+        },
+        sorting: {
+            days: {
+                0: { items: [], collections: collectionIds },
+                1: { items: [], collections: collectionIds },
+                2: { items: [], collections: collectionIds },
+                3: { items: [], collections: collectionIds },
+                4: { items: [], collections: collectionIds },
+                5: { items: [], collections: collectionIds },
+                6: { items: [], collections: collectionIds },
+            },
+            times: {
+                morning: { items: [], collections: collectionIds },
+                afternoon: { items: [], collections: collectionIds },
+                evening: { items: [], collections: collectionIds },
+                night: { items: [], collections: collectionIds },
+            }
         },
         ingredients: {
             current: getEmptyIngredients(),
@@ -278,7 +301,8 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
         locations: [],
         customers: [],
         tables: {},
-        ...getDefaultCollections(),
+        collections,
+        folders,
         stripe: {
             card: "pending",
             payouts: "pending",

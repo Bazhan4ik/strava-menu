@@ -11,7 +11,7 @@ export class CollectionComponent implements OnInit {
         id: string;
         name: string;
         _id: string;
-        dishes: { name: string; price: number; id: string; _id: string; }[];
+        items: { name: string; price: number; id: string; _id: string; }[];
     }
 
 

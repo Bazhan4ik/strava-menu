@@ -21,7 +21,7 @@ const routes: Routes = [
 
             {
                 path: "menu",
-                loadChildren: () => import("./pages/all-dishes/menu/menu.module").then(m => m.MenuModule),
+                loadChildren: () => import("./pages/menu/menu.module").then(m => m.MenuModule),
             }
             
 
@@ -29,16 +29,16 @@ const routes: Routes = [
 
 
             {
-                path: "menu/dishes/add",
-                loadChildren: () => import("./pages/all-dishes/add-dish/add-dish.module").then(m => m.AddDishModule),
+                path: "menu/items/add",
+                loadChildren: () => import("./pages/all-items/add-item/add-item.module").then(m => m.AddItemModule),
             },
             {
-                path: "menu/dishes/:dishId",
-                loadChildren: () => import("./pages/all-dishes/dish/dish.module").then(m => m.DishModule),
+                path: "menu/items/:itemId",
+                loadChildren: () => import("./pages/all-items/item/item.module").then(m => m.ItemModule),
             },
             {
-                path: "menu/dishes/:dishId/edit",
-                loadChildren: () => import("./pages/all-dishes/edit-dish/edit-dish.module").then(m => m.EditDishModule),
+                path: "menu/items/:itemId/edit",
+                loadChildren: () => import("./pages/all-items/edit-item/edit-item.module").then(m => m.EditItemModule),
             }
             
             

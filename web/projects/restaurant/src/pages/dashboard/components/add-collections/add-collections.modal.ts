@@ -31,15 +31,14 @@ export class AddCollectionsModal implements OnInit {
     loading = false;
 
     folders: Folder[];
-    ids: string[] = [];
-
+    
     newSelected: Collection[] = [];
-
+    
     constructor(
         private service: RestaurantService,
-    ) {}
-
-    @Input() selected: Collection[];
+    ) {};
+        
+    @Input() ids: string[] = [];
     @Input() one: boolean = false;
     @Output() leave = new EventEmitter();
 
@@ -85,17 +84,23 @@ export class AddCollectionsModal implements OnInit {
 
         this.folders = [];
 
-        for(let collection of this.selected) {
-            this.ids.push(collection._id);
-            this.newSelected.push(collection);
-        }
-
         for(let folder of result) {
-            this.folders.push({
+            const index = this.folders.push({
                 ...folder,
-                collections: folder.collections.map(c => { return { ...c, open: false, image: getImage(c.image) || "./../../../../../../../../../global-resources/images/no-image.svg" } }),
+                collections: [],
                 image: getImage(folder.image) || "./../../../../../../../../../global-resources/images/no-image.svg",
             });
+            for(const collection of folder.collections) {
+                const c = { ...collection, open: false, image: getImage(collection.image) || "./../../../../../../../../../global-resources/images/no-image.svg" };
+
+                this.folders[index - 1].collections.push(c);
+
+                for(const id of this.ids) {
+                    if(collection._id == id) {
+                        this.newSelected.push(c)
+                    }
+                }
+            }
         }
     }
 

@@ -38,27 +38,27 @@
                 </div>
             </div>
         </div>
-        <div class="dishes" *ngIf="dishes">
-            <div class="title" *ngIf="dishes.length > 0">
+        <div class="items" *ngIf="items">
+            <div class="title" *ngIf="items.length > 0">
                 <span class="global-subtitle">
-                    Dishes
+                    Items
                 </span>
             </div>
-            <div class="list" *ngIf="dishes.length > 0">
-                <a routerLink="../../dishes/{{ dish.id }}" *ngFor="let dish of dishes" class="dish">
+            <div class="list" *ngIf="items.length > 0">
+                <a routerLink="../../items/{{ item.id }}" *ngFor="let item of items" class="item">
                     <div class="image">
-                        <img [src]="dish.image" alt="">
+                        <img [src]="item.image" alt="">
                     </div>
                     <div class="name">
                         <span class="global-text bold black big">
-                            {{ dish.name }}
+                            {{ item.name }}
                         </span>
                     </div>
                 </a>
             </div>
-            <div *ngIf="dishes.length == 0" class="no-dishes">
+            <div *ngIf="items.length == 0" class="no-items">
                 <span class="global-text bold black big">
-                    Add dishes
+                    Add items
                 </span>
             </div>
         </div>

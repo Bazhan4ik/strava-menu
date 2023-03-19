@@ -37,10 +37,10 @@
                 }
             }
 
-            .dishes {
+            .items {
                 margin-top: 24px;
                 
-                .dish {
+                .item {
                     height: 64px;
                     padding: 8px;
                     width: 100%;
@@ -55,7 +55,7 @@
                         background-color: var(--default-on-background);
                     }
 
-                    .dish-info {
+                    .item-info {
                         height: 100%;
                         display: flex;
 

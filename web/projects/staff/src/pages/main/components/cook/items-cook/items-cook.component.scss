@@ -1,0 +1,21 @@
+.app {
+    
+    .content {
+        background-color: var(--default-on-background);
+        min-height: 250px;
+        width: 100%;
+        overflow-x: auto;
+        padding: 24px;
+
+        .list {
+            display: flex;
+            width: 100%;
+            gap: 18px;
+        }
+
+        .no-items {
+            display: flex;
+            align-items: center;
+        }
+    }
+}

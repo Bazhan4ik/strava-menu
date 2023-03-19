@@ -13,6 +13,6 @@ export const ordersDBName: string = await new Promise(res => setTimeout(() => {
 export const sessionsDBName: string = await new Promise(res => setTimeout(() => {
     res(process.env.SESSIONS_DB_NAME as string);
 }, 10));
-export const dishesDBName: string = await new Promise(res => setTimeout(() => {
-    res(process.env.DISHES_DB_NAME as string);
+export const itemsDBName: string = await new Promise(res => setTimeout(() => {
+    res(process.env.ITEMS_DB_NAME as string);
 }, 10));

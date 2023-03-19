@@ -1,0 +1,112 @@
+<div class="app expand content-page">
+    <div class="header">
+        <div class="title">
+            <span class="global-title">
+                Menu
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="sorting">
+            <div class="days">
+                <button (click)="openSorting('day', 0)" [class.active]="currentDay == 0" class="day">
+                    <span class="global-text normal">
+                        Sun
+                    </span>
+                </button>
+                <button (click)="openSorting('day', 1)" [class.active]="currentDay == 1" class="day">
+                    <span class="global-text normal">
+                        Mon
+                    </span>
+                </button>
+                <button (click)="openSorting('day', 2)" [class.active]="currentDay == 2" class="day">
+                    <span class="global-text normal">
+                        Tue
+                    </span>
+                </button>
+                <button (click)="openSorting('day', 3)" [class.active]="currentDay == 3" class="day">
+                    <span class="global-text normal">
+                        Wed
+                    </span>
+                </button>
+                <button (click)="openSorting('day', 4)" [class.active]="currentDay == 4" class="day">
+                    <span class="global-text normal">
+                        Thu
+                    </span>
+                </button>
+                <button (click)="openSorting('day', 5)" [class.active]="currentDay == 5" class="day">
+                    <span class="global-text normal">
+                        Fri
+                    </span>
+                </button>
+                <button (click)="openSorting('day', 6)" [class.active]="currentDay == 6" class="day">
+                    <span class="global-text normal">
+                        Sat
+                    </span>
+                </button>
+            </div>
+            <div class="times">
+                <button class="time" (click)="openSorting('time', 'morning')" [class.active]="currentTime == 'morning'">
+                    <span class="global-text normal">
+                        Morning
+                    </span>
+                    <span class="global-text smaller">
+                        5 AM - 12 PM
+                    </span>
+                </button>
+                <button class="time" (click)="openSorting('time', 'afternoon')" [class.active]="currentTime == 'afternoon'">
+                    <span class="global-text normal">
+                        Afternoon
+                    </span>
+                    <span class="global-text smaller">
+                        12 PM - 5 PM
+                    </span>
+                </button>
+                <button class="time" (click)="openSorting('time', 'evening')" [class.active]="currentTime == 'evening'">
+                    <span class="global-text normal">
+                        Evening
+                    </span>
+                    <span class="global-text smaller">
+                        5 PM - 9 PM
+                    </span>
+                </button>
+                <button class="time" (click)="openSorting('time', 'night')" [class.active]="currentTime == 'night'">
+                    <span class="global-text normal">
+                        Night
+                    </span>
+                    <span class="global-text smaller">
+                        9 PM - 5 AM
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="top">
+            <div class="tabs">
+                <a type="button" [class.active]="currentPage == 'items'" class="button" routerLink="items">
+                    Items
+                </a>
+                <a type="button" [class.active]="currentPage == 'collections'" class="button" routerLink="collections">
+                    Collections
+                </a>
+            </div>
+            <div class="buttons">
+                <a *ngIf="currentPage == 'items'" type="button" routerLink="items/add" class="button orange-button">
+                    <mat-icon>add</mat-icon>
+                    Add item
+                </a>
+                <a *ngIf="currentPage == 'collections'" type="button" class="button orange-button" routerLink="folders/add">
+                    <mat-icon>add</mat-icon>
+                    Add folder
+                </a>
+                <a *ngIf="currentPage == 'collections'" type="button" class="button orange-button" routerLink="collections/add">
+                    <mat-icon>add</mat-icon>
+                    Add collection
+                </a>
+            </div>
+        </div>
+        <router-outlet></router-outlet>
+    </div>
+</div>
+
+
+<ng-container #modalContainer></ng-container>

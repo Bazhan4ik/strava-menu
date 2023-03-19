@@ -32,13 +32,13 @@ declare namespace PaymentsEvent {
 type PaymentSocketEvent = Observable<SocketEvent<PaymentsEvent.succeeded>>;
 
 
-declare namespace DishesEvent {
+declare namespace ItemsEvent {
     interface status { 
-        sessionDishId: string;
+        sessionItemId: string;
         status: string;
     }
 }
-type DishesSocketEvent = Observable<SocketEvent<DishesEvent.status>>;
+type ItemsSocketEvent = Observable<SocketEvent<ItemsEvent.status>>;
 
 
 
@@ -47,6 +47,6 @@ export {
     SocketEvent,
     WaiterRequestEvent,
     PaymentSocketEvent,
-    DishesSocketEvent,
-    DishesEvent,
+    ItemsSocketEvent,
+    ItemsEvent,
 }

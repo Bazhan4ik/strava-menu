@@ -11,27 +11,27 @@
             </a>
         </div>
     </div>
-    <div class="dishes">
-        <div *ngFor="let dish of dishes" class="dish">
+    <div class="items">
+        <div *ngFor="let item of items" class="item">
             <div class="image">
-                <img [ngSrc]="dish.imageUrl" *ngIf="dish.imageUrl" width="160" height="160">
+                <img [ngSrc]="item.imageUrl" *ngIf="item.imageUrl" width="160" height="160">
             </div>
             <div class="name-status">
                 <div class="name">
                     <span class="global-text bold black big">
-                        {{ dish.name }}
+                        {{ item.name }}
                     </span>
                 </div>
                 <div class="status">
-                    <span *ngIf="dish.status != 'ordered'" 
-                          [class.red]="dish.status == 'removed'"
-                          [class.orange]="dish.status == 'cooked'" 
-                          [class.green]="dish.status == 'served'" 
-                          [class.red]="dish.status == 'removed'" 
-                          [class.purple]="dish.status == 'cooking'">
-                        {{ dish.status }}
+                    <span *ngIf="item.status != 'ordered'" 
+                          [class.red]="item.status == 'removed'"
+                          [class.orange]="item.status == 'cooked'" 
+                          [class.green]="item.status == 'served'" 
+                          [class.red]="item.status == 'removed'" 
+                          [class.purple]="item.status == 'cooking'">
+                        {{ item.status }}
                     </span>
-                    <span *ngIf="dish.status == 'ordered'" class="gray">
+                    <span *ngIf="item.status == 'ordered'" class="gray">
                         waiting
                     </span>
                 </div>

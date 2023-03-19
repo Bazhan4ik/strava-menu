@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ingredients } from "../../../resources/data/ingredients.js";
-import { Ingredient } from "../../models/dish.js";
+import { Ingredient } from "../../models/item.js";
 import { Locals } from "../../models/general.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";

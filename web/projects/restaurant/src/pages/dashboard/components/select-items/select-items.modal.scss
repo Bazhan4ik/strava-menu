@@ -1,0 +1,60 @@
+.app {
+    .box {
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+        width: 612px;
+        height: auto;
+
+        .header {
+            width: 100%;
+            height: 42px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .content {
+            padding: 12px;
+            width: 100%;
+
+            .list {
+                width: 100%;
+                .item {
+                    width: 100%;
+                    display: grid;
+                    grid-template-columns: 64px 1fr 30px;
+                    padding: 8px;
+                    border-radius: var(--default-small-radius);
+
+                    .name {
+                        padding: 4px 8px;
+                    }
+                    .image {
+                        display: flex;    
+                        align-items: center;
+                        justify-content: center;
+
+                        img {
+                            border-radius: var(--default-small-radius);
+                        }
+                    }
+                    .buttons {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    &:hover {
+                        background-color: var(--default-on-background);
+                    }
+                }
+            }
+        }
+    }
+}

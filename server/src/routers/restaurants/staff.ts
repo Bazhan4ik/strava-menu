@@ -412,7 +412,7 @@ function checkNewManagerSettings(hiringManagerSettings: WorkerSettings, newManag
         
         !hiringManagerSettings.work ||
         !hiringManagerSettings.customers ||
-        !hiringManagerSettings.dishes ||
+        !hiringManagerSettings.items ||
         !hiringManagerSettings.settings ||
         !hiringManagerSettings.staff ||
         !hiringManagerSettings.settings ||
@@ -425,7 +425,7 @@ function checkNewManagerSettings(hiringManagerSettings: WorkerSettings, newManag
 
         !newManagerSettings.work ||
         !newManagerSettings.customers ||
-        !newManagerSettings.dishes ||
+        !newManagerSettings.items ||
         !newManagerSettings.settings ||
         !newManagerSettings.staff ||
         !newManagerSettings.settings ||
@@ -441,14 +441,14 @@ function checkNewManagerSettings(hiringManagerSettings: WorkerSettings, newManag
 
     // checking if manager that hires a new manager assigned more power to the new manager
 
-    // dishes
-    if (newManagerSettings.dishes.available && !hiringManagerSettings.dishes.available) {
+    // items
+    if (newManagerSettings.items.available && !hiringManagerSettings.items.available) {
         return null;
     }
-    if (newManagerSettings.dishes.removing && !hiringManagerSettings.dishes.removing) {
+    if (newManagerSettings.items.removing && !hiringManagerSettings.items.removing) {
         return null;
     }
-    if (newManagerSettings.dishes.adding && !hiringManagerSettings.dishes.adding) {
+    if (newManagerSettings.items.adding && !hiringManagerSettings.items.adding) {
         return null;
     }
 
@@ -522,7 +522,7 @@ function updateOtherProperties(settings: WorkerSettings) {
         !settings.work || 
         !settings.settings || 
         !settings.locations || 
-        !settings.dishes || 
+        !settings.items || 
         !settings.collections || 
         !settings.staff || 
         !settings.customers ||
@@ -552,12 +552,12 @@ function updateOtherProperties(settings: WorkerSettings) {
         }
     }
 
-    if (settings.dishes) {
-        if (settings.dishes.removing || settings.dishes.adding) {
-            settings.dishes.available = true;
+    if (settings.items) {
+        if (settings.items.removing || settings.items.adding) {
+            settings.items.available = true;
             isManager = true;
-        } else if (!settings.dishes.removing && !settings.dishes.adding) {
-            settings.dishes.available = false;
+        } else if (!settings.items.removing && !settings.items.adding) {
+            settings.items.available = false;
         }
     }
 

@@ -5,7 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { firstValueFrom, Observable } from "rxjs";
 import { Session } from '../pages/main/models/session';
 import { Socket } from "ngx-socket-io";
-import { DishesSocketEvent, PaymentSocketEvent, SocketEvent, WaiterRequestSocketEvent } from '../pages/main/models/socket';
+import { ItemsSocketEvent, PaymentSocketEvent, SocketEvent, WaiterRequestSocketEvent } from '../pages/main/models/socket';
 import { Router } from '@angular/router';
 
 
@@ -26,7 +26,7 @@ export class CustomerService {
 
     private waiterRequest: WaiterRequestSocketEvent;
     private payments: PaymentSocketEvent;
-    private dishes: DishesSocketEvent;
+    private items: ItemsSocketEvent;
 
     constructor(
         private http: HttpClient,
@@ -51,18 +51,18 @@ export class CustomerService {
 
         return this.waiterRequest;
     }
-    public get $dishes(): DishesSocketEvent {
-        if(!this.dishes) {
-            this.dishes = new Observable(subs => {
+    public get $items(): ItemsSocketEvent {
+        if(!this.items) {
+            this.items = new Observable(subs => {
                 this.socket.on("customer", (data: SocketEvent) => {
-                    if(data.types.includes("dishes")) {
+                    if(data.types.includes("items")) {
                         subs.next(data);
                     }
                 });
             });
         }
 
-        return this.dishes;
+        return this.items;
     }
     public get $payments() {
         if(!this.payments) {

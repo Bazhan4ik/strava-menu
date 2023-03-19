@@ -34,7 +34,8 @@ export class AddFolderPage {
 
         const component = this.modalContainer.createComponent(AddCollectionsModal);
 
-        component.instance.selected = this.collections;
+        // component.instance.selected = this.collections;
+        component.instance.ids = this.collections.map(c => c._id);
 
 
         component.instance.leave.subscribe((collections: any) => {

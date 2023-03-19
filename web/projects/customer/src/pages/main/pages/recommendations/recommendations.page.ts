@@ -3,19 +3,19 @@ import { Component, OnInit, ViewChild, ViewContainerRef, } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
-import { DishesService } from 'projects/customer/src/services/dishes.service';
+import { ItemsService } from 'projects/customer/src/services/items.service';
 import { CollectionComponent } from '../../components/collection/collection.component';
-import { DishLayoutElementComponent } from '../../components/dish-layout-element/dish-layout-element.component';
+import { ItemLayoutElementComponent } from '../../components/item-layout-element/item-layout-element.component';
 import { MiniTrackingComponent } from '../../components/mini-tracking/mini-tracking.component';
 import { Collection } from '../../models/collection';
-import { Dish } from '../../models/dish';
+import { Item } from '../../models/item';
 
 interface Response {
     tracking?: any[];
-    dishes: { [dishObjectId: string]: Dish };
+    items: { [itemObjectId: string]: Item };
     elements: {
-        type: "collection" | "folder" | "dish";
-        data: Dish | Collection | {
+        type: "collection" | "folder" | "item";
+        data: Item | Collection | {
             name: string;
             collections: {
                 name: string;
@@ -44,7 +44,7 @@ export class RecommendationsPage implements OnInit {
 
     constructor(
         private service: CustomerService,
-        private dishesService: DishesService,
+        private itemsService: ItemsService,
     ) { };
 
 
@@ -65,10 +65,10 @@ export class RecommendationsPage implements OnInit {
                 const component = this.body.createComponent(FolderComponent);
 
                 component.instance.folder = element.data as any;
-            } else if(element.type == "dish") {
-                const component = this.body.createComponent(DishLayoutElementComponent);
+            } else if(element.type == "item") {
+                const component = this.body.createComponent(ItemLayoutElementComponent);
 
-                component.instance.dish = element.data as Dish;
+                component.instance.item = element.data as Item;
             }
         }
     }
@@ -80,7 +80,7 @@ export class RecommendationsPage implements OnInit {
         console.log(result);
 
         this.elements = result.elements;
-        this.dishesService.dishes = result.dishes;
+        this.itemsService.items = result.items;
         this.tracking = result.tracking;
 
         this.restaurant = this.service.restaurant;

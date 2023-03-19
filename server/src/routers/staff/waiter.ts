@@ -3,16 +3,16 @@ import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { ConvertedWaiterRequest } from "../../models/other/waiterRequest.js";
 import { WaiterRequest } from "../../models/session.js";
-import { convertMultipleSessionsSessionDishes, convertSessionDishes } from "../../utils/convertSessionDishes.js";
-import { getDish } from "../../utils/dishes.js";
+import { convertMultipleSessionsSessionItems, convertSessionItems } from "../../utils/convertSessionItems.js";
+import { getItem, getItems } from "../../utils/items.js";
 import { id } from "../../utils/id.js";
 import { logged } from "../../utils/middleware/auth.js";
 import { restaurantWorker } from "../../utils/middleware/restaurant.js";
 import { addOrder } from "../../utils/orders.js";
 import { aggregateSessions, getSession, getSessions, updateSession } from "../../utils/sessions.js";
-import { sendToCustomerDishStatus } from "../../utils/socket/customer.js";
-import { sendDishIsServed, sendToStaffNewOrder } from "../../utils/socket/dishes.js";
-import { sendToCustomerAcceptWaiterRequest, sendToCustomerQuitWaiterRequest, sendToCustomerResolveWaiterRequest, sendToWaiterAcceptWaiterRequest, sendToWaiterCancelWaiterRequest, sendToWaiterQuitWaiterRequest, sendToWaiterResolveWaiterRequest } from "../../utils/socket/waiterRequest.js";
+import { sendToCustomerItemStatus } from "../../utils/socket/customer.js";
+import { sendItemIsServed, sendToStaffNewOrder } from "../../utils/socket/items.js";
+import { sendToCustomerAcceptWaiterRequest, sendToCustomerQuitWaiterRequest, sendToCustomerResolveWaiterRequest, sendToWaiterAcceptWaiterRequest, sendToWaiterQuitWaiterRequest, sendToWaiterResolveWaiterRequest } from "../../utils/socket/waiterRequest.js";
 import { getDelay } from "../../utils/time.js";
 import { getUser } from "../../utils/users.js";
 
@@ -94,7 +94,7 @@ router.get("/requests", logged(), restaurantWorker({}, { work: { waiter: true } 
                 break;
             case "refund":
                 acceptedTitle = `Refund $${request.amount ? request.amount / 100 : null! }`;
-                reasonTitle = "Refund a dish";
+                reasonTitle = "Refund an item";
                 break;
             case "other":
                 reasonTitle = "Other inquiry";
@@ -128,9 +128,6 @@ router.get("/requests", logged(), restaurantWorker({}, { work: { waiter: true } 
         result.push(r);
     }
 
-
-
-    console.log(result);
 
 
     res.send(result);
@@ -273,7 +270,7 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
         {
             projection: {
                 customer: { socketId: 1, customerId: 1, },
-                dishes: 1,
+                items: 1,
                 info: { comment: 1, id: 1, type: 1, },
                 waiterRequests: {
                     active: true,
@@ -332,11 +329,11 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
     if (request.reason == "cash") {
         updateFilter["$set"]["status"] = "progress";
 
-        const convertedOrderDishes = await convertSessionDishes({
+        const convertedOrderItems = await convertSessionItems({
             restaurantId: restaurant._id,
             sessionId: session._id,
             ordered: getDelay(Date.now()),
-            sessionDishes: session.dishes,
+            sessionItems: session.items,
             skip: [],
             customerId: session.customer.customerId!,
             comment: session.info.comment,
@@ -344,7 +341,7 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
             id: session.info.id,
         });
 
-        sendToStaffNewOrder(restaurant._id, location, convertedOrderDishes);
+        sendToStaffNewOrder(restaurant._id, location, convertedOrderItems);
     }
 
 
@@ -352,7 +349,7 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
         restaurant._id,
         { _id: id(sessionId) },
         updateFilter,
-        { arrayFilters: [{ "request._id": id(requestId) }], projection: { _id: 1, dishes: { status: 1, }, waiterRequests: { active: 1 } } }
+        { arrayFilters: [{ "request._id": id(requestId) }], projection: { _id: 1, items: { status: 1, }, waiterRequests: { active: 1 } } }
     );
 
     if(update.session) {
@@ -363,9 +360,9 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
                 resolvedAmount++;
             }
         }
-        for(let d of update.session.dishes) {
+        for(let d of update.session.items) {
             if(d.status != "served" && d.status != "removed") {
-                resolvedAmount--; // not done dishes are still remaining in order. -- so the order status is not updated to "done"
+                resolvedAmount--; // not done items are still remaining in order. -- so the order status is not updated to "done"
                 break;
             }
         }
@@ -385,41 +382,41 @@ router.put("/requests/resolve", logged({ avatar: 1, info: { name: 1 } }), restau
     sendToWaiterResolveWaiterRequest(restaurant._id, location, { sessionId: session._id, requestId: request._id });
 });
 
-router.get("/dishes", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
+router.get("/items", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
     const { restaurant, user, location } = res.locals as Locals;
 
 
-    const sessions = await getSessions(restaurant._id, { status: "progress", "info.location": location }, { projection: { dishes: 1, customer: 1, info: 1, timing: 1, } }).toArray();
+    const sessions = await getSessions(restaurant._id, { status: "progress", "info.location": location }, { projection: { items: 1, customer: 1, info: 1, timing: 1, } }).toArray();
 
     if (!sessions) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    const convertedOrderDishes = await convertMultipleSessionsSessionDishes({
+    const convertedOrderItems = await convertMultipleSessionsSessionItems({
         restaurantId: restaurant._id,
         sessions,
         skipStatuses: ["ordered", "served", "removed", "cooking"]
     });
 
-    res.send(convertedOrderDishes);
+    res.send(convertedOrderItems);
 });
 
 router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }), async (req, res) => {
-    const { sessionDishId, dishId } = req.query;
+    const { sessionItemId, itemId } = req.query;
     const { restaurant, location } = res.locals as Locals;
 
 
-    if (typeof dishId != "string" || dishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidDishId" });
+    if (typeof itemId != "string" || itemId.length != 24) {
+        return res.status(400).send({ reason: "InvalidItemId" });
     }
-    if (typeof sessionDishId != "string" || sessionDishId.length != 24) {
-        return res.status(400).send({ reason: "InvalidSessionDishId" });
+    if (typeof sessionItemId != "string" || sessionItemId.length != 24) {
+        return res.status(400).send({ reason: "InvalidSessionItemId" });
     }
 
     const session = await getSession(
         restaurant._id,
-        { dishes: { $elemMatch: { _id: id(sessionDishId) } } },
-        { projection: { info: { type: 1, id: 1, }, dishes: { modifiers: 1, _id: 1, } } },
+        { items: { $elemMatch: { _id: id(sessionItemId) } } },
+        { projection: { info: { type: 1, id: 1, }, items: { modifiers: 1, _id: 1, } } },
     );
 
 
@@ -428,9 +425,9 @@ router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }
     }
 
     const getSelectedModifiers = () => {
-        for(const dish of session.dishes) {
-            if(dish._id.equals(sessionDishId)) {
-                return dish.modifiers || [];
+        for(const item of session.items) {
+            if(item._id.equals(sessionItemId)) {
+                return item.modifiers || [];
             }
         }
         return null;
@@ -446,27 +443,27 @@ router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }
         return res.send({ modifiers: [], session: session.info });
     }
 
-    const dish = await getDish(
+    const item = await getItem(
         restaurant._id,
-        { _id: id(dishId) },
+        { _id: id(itemId) },
         { projection: { modifiers: { _id: 1, name: 1, options: { _id: 1, name: 1} } } }
     );
 
-    if(!dish) {
-        return res.status(404).send({ reason: "DishNotFound" });
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
     }
-    if(!dish.modifiers) {
+    if(!item.modifiers) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
     const result = [];
 
-    for(const dishModifier of modifiers) {
-        for(const modifier of dish.modifiers) {
-            if(dishModifier._id.equals(modifier._id)) {
+    for(const itemModifier of modifiers) {
+        for(const modifier of item.modifiers) {
+            if(itemModifier._id.equals(modifier._id)) {
                 const options: string[] = [];
 
-                for(const selected of dishModifier.selected) {
+                for(const selected of itemModifier.selected) {
                     for(const option of modifier.options) {
                         if(option._id.equals(selected)) {
                             options.push(option.name);
@@ -489,14 +486,14 @@ router.get("/session", logged(), restaurantWorker({}, { work: { waiter: true } }
 
 
 router.put("/served", logged(), restaurantWorker({ customers: 1, }, { work: { waiter: true } }), async (req, res) => {
-    const { sessionId, sessionDishId } = req.body;
+    const { sessionId, sessionItemId } = req.body;
     const { restaurant, user, location } = res.locals as Locals;
 
     if (!sessionId) {
         return res.status(400).send({ reason: "SessionIdNotProvided" });
     }
-    if (!sessionDishId) {
-        return res.status(400).send({ reason: "SessionDishIdNotProvided" });
+    if (!sessionItemId) {
+        return res.status(400).send({ reason: "SessionItemIdNotProvided" });
     }
 
     const update = await updateSession(
@@ -504,19 +501,19 @@ router.put("/served", logged(), restaurantWorker({ customers: 1, }, { work: { wa
         { _id: id(sessionId) },
         {
             $set: {
-                "dishes.$[sessionDish].status": "served",
-                "dishes.$[sessionDish].timing.served": Date.now(),
-                "dishes.$[sessionDish].staff.waiter": user._id
+                "items.$[sessionItem].status": "served",
+                "items.$[sessionItem].timing.served": Date.now(),
+                "items.$[sessionItem].staff.waiter": user._id
 
             }
         },
         {
-            arrayFilters: [{ "sessionDish._id": id(sessionDishId) }],
+            arrayFilters: [{ "sessionItem._id": id(sessionItemId) }],
             projection: {
                 customer: { socketId: 1, customerId: 1, },
                 timing: { ordered: 1, },
                 waiterRequests: { active: 1 },
-                dishes: { _id: 1, status: 1 }
+                items: { _id: 1, status: 1 }
             }
         }
     );
@@ -529,25 +526,25 @@ router.put("/served", logged(), restaurantWorker({ customers: 1, }, { work: { wa
         return res.status(500).send({ reason: "InvalidError" });
     }
 
-    let amountOfDishesServed = 0;
-    for (let dish of update.session.dishes) {
-        if (dish.status == "served" || dish.status == "removed") {
-            amountOfDishesServed++;
+    let amountOfItemsServed = 0;
+    for (let item of update.session.items) {
+        if (item.status == "served" || item.status == "removed") {
+            amountOfItemsServed++;
         }
-        if (dish._id.equals(sessionDishId)) {
-            if (dish.status != "served") {
+        if (item._id.equals(sessionItemId)) {
+            if (item.status != "served") {
                 return res.send({ updated: false });
             }
         }
     }
     for(let request of update.session.waiterRequests) {
         if(request.active) {
-            amountOfDishesServed--;
+            amountOfItemsServed--;
             break;
         }
     }
 
-    if (update.session.dishes.length == amountOfDishesServed) {
+    if (update.session.items.length == amountOfItemsServed) {
         const sessionDone = await addOrder(restaurant, update.session._id);
     }
 
@@ -555,8 +552,8 @@ router.put("/served", logged(), restaurantWorker({ customers: 1, }, { work: { wa
 
     res.send({ updated: true });
 
-    sendDishIsServed(restaurant._id, location, { sessionId: update.session._id, sessionDishId: id(sessionDishId) });
-    sendToCustomerDishStatus(restaurant._id, update.session?.customer.socketId!, { sessionDishId: id(sessionDishId), status: "served" });
+    sendItemIsServed(restaurant._id, location, { sessionId: update.session._id, sessionItemId: id(sessionItemId) });
+    sendToCustomerItemStatus(restaurant._id, update.session?.customer.socketId!, { sessionItemId: id(sessionItemId), status: "served" });
 });
 
 

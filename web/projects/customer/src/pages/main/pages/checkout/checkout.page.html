@@ -15,22 +15,22 @@
             </div>
         
             <div class="not-payment">
-                <div *ngIf="dishes && dishes.length > 0" class="dishes">
-                    <div *ngFor="let dish of dishes" class="dish">
+                <div *ngIf="items && items.length > 0" class="items">
+                    <div *ngFor="let item of items" class="item">
                         <div class="name-container">
                             <span class="global-text big name black bold">
-                                {{ dish.name }}
+                                {{ item.name }}
                             </span>
                             <span class="x">
                                 x
                             </span>
                             <span class="global-text amount">
-                                {{ dish.amount }}
+                                {{ item.amount }}
                             </span>
                         </div>
                         <div class="price">
                             <span class="big">
-                                ${{ dish.price / 100 }}
+                                ${{ item.price / 100 }}
                             </span>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                 </div>
             </div>
         
-            <div *ngIf="!money || !dishes" class="global-loading height-124">
+            <div *ngIf="!money || !items" class="global-loading height-124">
                 <div></div>
                 <div></div>
                 <div></div>

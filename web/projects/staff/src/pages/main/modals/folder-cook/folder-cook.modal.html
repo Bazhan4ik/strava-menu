@@ -13,8 +13,8 @@
             </div>
         </div>
         <div class="body">
-            <div class="dishes">
-                <app-dish-cook (click)="openDishModal(dish)" *ngFor="let dish of folder.dishes" [sessionDish]="dish"></app-dish-cook>
+            <div class="items">
+                <app-item-cook (click)="openItemModal(item)" *ngFor="let item of folder.items" [sessionItem]="item"></app-item-cook>
             </div>
         </div>
     </div>

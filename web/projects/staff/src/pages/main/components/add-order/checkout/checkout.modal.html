@@ -40,39 +40,39 @@
                 </div>
             </div>
 
-            <div class="dishes">
-                <div *ngFor="let dish of dishes" class="dish">
-                    <div class="dish-info">
+            <div class="items">
+                <div *ngFor="let item of items" class="item">
+                    <div class="item-info">
                         <div class="image">
-                            <img [src]="dish.image" alt="">
+                            <img [src]="item.image" alt="">
                         </div>
                         <div class="name-price">
                             <div class="name">
                                 <span class="global-text big black bold">
-                                    {{ dish.name }}
+                                    {{ item.name }}
                                 </span>
                             </div>
                             <div class="price">
                                 <span class="global-text">
-                                    ${{ dish.price / 100 }}
+                                    ${{ item.price / 100 }}
                                 </span>
-                                <span *ngIf="dish.comment" class="dot">
+                                <span *ngIf="item.comment" class="dot">
                                     &#9679;
                                 </span>
-                                <span *ngIf="dish.comment" class="global-text">
+                                <span *ngIf="item.comment" class="global-text">
                                     comment
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div class="buttons" (click)="$event.stopPropagation()">
-                        <button (click)="changeModifiers(dish.dishId, dish._id)" class="icon-button">
+                        <button (click)="changeModifiers(item.itemId, item._id)" class="icon-button">
                             <mat-icon>settings</mat-icon>
                         </button>
-                        <button (click)="addComment(dish._id)" class="icon-button">
+                        <button (click)="addComment(item._id)" class="icon-button">
                             <mat-icon>textsms</mat-icon>
                         </button>
-                        <button (click)="removeDish(dish._id)" class="icon-button">
+                        <button (click)="removeItem(item._id)" class="icon-button">
                             <mat-icon>remove</mat-icon>
                         </button>
                     </div>
@@ -153,7 +153,7 @@
                 </button>
             </div>
 
-            <div *ngIf="!dishes || !money" class="global-loading height-124">
+            <div *ngIf="!items || !money" class="global-loading height-124">
                 <div></div>
                 <div></div>
                 <div></div>

@@ -1,0 +1,69 @@
+.app {
+    height: 100%;
+    overflow-y: auto;
+
+    .box {
+        min-height: 100%;
+        padding-bottom: 100px;    
+        max-width: 512px;
+        width: 100vw;
+        border-top-right-radius: var(--default-border-radius);
+        border-top-left-radius: var(--default-border-radius);
+        background-color: var(--default-background);
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            .title {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .content {
+            padding: 0 12px;
+
+            .items, .collections {
+                margin-top: 24px;
+
+                .header {
+                    padding: 12px 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .title {
+
+                    }
+                }
+                .list {
+                    .item, .collection {
+                        display: grid;
+                        grid-template-columns: 52px 1fr 32px;
+                        height: 64px;
+                        padding: 6px 0;
+
+                        .image {
+                            img {
+                                width: 52px;
+                                height: 52px;
+                                border-radius: var(--default-small-radius);
+                                object-fit: cover;
+                            }
+                        }
+
+                        .name {
+                            padding: 0 6px;
+                        }
+                        .buttons {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

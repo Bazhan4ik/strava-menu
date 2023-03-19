@@ -48,12 +48,12 @@
         .content {
             padding: 0 12px;
     
-            .dishes {
+            .items {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr;
                 gap: 12px;
     
-                .dish {
+                .item {
     
                     .image {
                         img {

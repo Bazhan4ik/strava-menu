@@ -41,7 +41,7 @@
                         margin: 0;
                     }
                 }
-                .dishes {
+                .items {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     gap: 8px;
@@ -50,7 +50,7 @@
                     max-height: 212px;
                     width: 100%;
 
-                    .dish {
+                    .item {
                         .image {
                             img {
                                 width: 100%;

@@ -41,6 +41,24 @@ interface Restaurant {
         current: Ingredients.Usage[];
         history: Ingredients.Usage[];
     };
+
+    sorting?: {
+        days: {
+            0: Sorting.Day;  // sunday
+            1: Sorting.Day;  // monday ....
+            2: Sorting.Day;
+            3: Sorting.Day;
+            4: Sorting.Day;
+            5: Sorting.Day;
+            6: Sorting.Day;  // saturday
+        };
+        times: {
+            morning: Sorting.Time;     // 5am-12pm
+            afternoon: Sorting.Time;   // 12pm-5pm
+            evening: Sorting.Time;     // 5pm-9pm
+            night: Sorting.Time;       // 9pm-5am
+        }
+    } 
     
     blacklist?: (ObjectId | string)[];
     collections: Collection[];
@@ -54,16 +72,27 @@ interface Restaurant {
 }
 
 
+declare namespace Sorting {
+    interface Day {
+        collections: ObjectId[];
+        items: ObjectId[];
+    }
+    interface Time {
+        collections: ObjectId[];
+        items: ObjectId[];
+    }
+}
+
 interface LayoutElement {
     _id: ObjectId;
     position: number;
-    type: "collection" | "folder" | "dish";
+    type: "collection" | "folder" | "item";
     data?: { id: ObjectId };
 }
 
 interface LocationSettings {
     customers?: {
-        maxDishes: number; // 0 is unlimited
+        maxItems: number; // 0 is unlimited
         allowOrderingOnline: boolean;
         allowDineIn: boolean;
         allowTakeOut: boolean;
@@ -106,7 +135,7 @@ interface Collection {
         buffer: Buffer;
         userId: ObjectId;
     };
-    dishes: ObjectId[];
+    items: ObjectId[];
     description: string;
 }
 

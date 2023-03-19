@@ -17,7 +17,7 @@ import { bulkRestaurant, updateRestaurant } from "../../../utils/restaurant.js";
 const router = Router({ mergeParams: true });
 
 
-router.get("/", logged(), restaurantWorker({ folders: 1 }, { dishes: { adding: true } }), (req, res) => { 
+router.get("/", logged(), restaurantWorker({ folders: 1 }, { items: { adding: true } }), (req, res) => { 
     const { restaurant } = res.locals as Locals;
 
     if(!restaurant.folders) {
@@ -36,7 +36,7 @@ router.get("/", logged(), restaurantWorker({ folders: 1 }, { dishes: { adding: t
 
     res.send(result);
 });
-router.post("/", logged(), restaurantWorker({ folders: { id: 1, } }, { dishes: { adding: true } }), async (req, res) => {
+router.post("/", logged(), restaurantWorker({ folders: { id: 1, } }, { items: { adding: true } }), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
     const { name, collections: convertCollections } = req.body;
 
@@ -88,7 +88,7 @@ router.post("/", logged(), restaurantWorker({ folders: { id: 1, } }, { dishes: {
 
     res.send({ updated: update.ok == 1 });
 });
-router.get("/:folderId", logged(), restaurantWorker({ collections: 1, folders: 1, }, { dishes: { available: true } }), async (req, res) => {
+router.get("/:folderId", logged(), restaurantWorker({ collections: 1, folders: 1, }, { items: { available: true } }), async (req, res) => {
     const { folderId } = req.params;
     const { restaurant, } = res.locals as Locals;
 
@@ -112,7 +112,7 @@ router.get("/:folderId", logged(), restaurantWorker({ collections: 1, folders: 1
                     result.push({
                         ...collection,
                         image: collection.image?.buffer,
-                        dishes: collection.dishes.length,
+                        items: collection.items.length,
                     });
                     break;
                 }
@@ -131,7 +131,7 @@ router.get("/:folderId", logged(), restaurantWorker({ collections: 1, folders: 1
 
     res.send({ folder: { ...folder }, collections });
 });
-router.put("/:folderId/collections", logged(), restaurantWorker({ folders: { id: 1, _id: 1, collections: 1, }, collections: { _id: 1 } }, { dishes: { adding: true } }), async (req, res) => {
+router.put("/:folderId/collections", logged(), restaurantWorker({ folders: { id: 1, _id: 1, collections: 1, }, collections: { _id: 1 } }, { items: { adding: true } }), async (req, res) => {
     const { folderId } = req.params;
     const { collections } = req.body;
     const { restaurant } = res.locals as Locals;
