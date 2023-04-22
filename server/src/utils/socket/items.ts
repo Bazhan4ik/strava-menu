@@ -67,10 +67,39 @@ function sendItemIsServed(restaurantId: ObjectId, locationId: ObjectId, data: { 
         });
 }
 
+function sendItemIsRemoved(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; sessionItemId: ObjectId; }) {
+    io
+        .to(restaurantId.toString())
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("cook", {
+            types: ["items", "items/remove"],
+            data
+        });
+    io
+        .to(restaurantId.toString())
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("waiter", {
+            types: ["items", "items/remove"],
+            data
+        });
+}
+
+function sendDeliveryPickedUp(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; }) {
+    io
+        .to(restaurantId.toString())
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("waiter", {
+            types: ["delivery", "delivery/picked-up"],
+            data
+        });
+}
+
 export {
     sendToStaffNewOrder,
     sendItemIsServed,
     sendItemIsDone,
     sendItemIsQuitted,
     sendItemIsTaken,
+    sendItemIsRemoved,
+    sendDeliveryPickedUp,
 }

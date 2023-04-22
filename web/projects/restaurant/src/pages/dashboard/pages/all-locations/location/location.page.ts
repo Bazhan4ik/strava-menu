@@ -14,8 +14,9 @@ interface Location {
         customers: {
             maxDishes: number;
             allowOrderingOnline: boolean;
-            allowDineIn: boolean;
+            allowDelivery: boolean;
             allowTakeOut: boolean;
+            allowDineIn: boolean;
         };
         methods: {
             card: boolean;

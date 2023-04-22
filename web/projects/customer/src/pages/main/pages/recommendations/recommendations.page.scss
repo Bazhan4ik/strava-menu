@@ -1,5 +1,4 @@
-.recommendations-app {
-    
+.recommendations-app { 
     background-color: var(--default-background);
     
     width: 100%;
@@ -11,7 +10,7 @@
         display: flex;
         justify-content: center;
         min-height: 100%;
-        width: 100%;
+        max-width: 100%;
     }
 
     .box {
@@ -49,6 +48,9 @@
                 .icon-button {
                     border-radius: var(--default-small-radius);
                 }
+                .btn {
+                    display: none;
+                }
             }
         }
     
@@ -60,12 +62,68 @@
 
     
     }
+    .preview {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 640px) {
     .recommendations-app {
         .box {
             border: none;
+        }
+        .preview {
+            display: none;
+        }
+    }
+}
+@media screen and (min-width: 640px) and (max-width: 1200px) {   
+
+    .recommendations-app {
+        .box {
+            border: none;
+            max-width: 100%;
+        }
+        .preview {
+            display: none;
+        }
+    }
+
+}
+
+
+@media screen and (min-width: 1200px) {
+    .recommendations-app {
+        .box-wrap {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 504px;
+        }
+
+        .box {
+            padding: 0 32px;
+            border: none;
+            min-width: 100%;
+
+            .body {
+                margin-top: 12px;
+                height: auto;
+            }
+            .header {
+                width: 512px;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                border: 1px solid var(--default-border-color);
+        
+                .order {
+                    .icon-button {
+                        border-radius: var(--default-small-radius);
+                    }
+                }
+            }
+        }
+        .preview {
+            display: inline;
         }
     }
 }

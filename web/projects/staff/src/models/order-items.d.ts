@@ -10,7 +10,7 @@ interface ConvertedSessionItem {
     comment: string;
     orderComment: string;
     id: string;
-    status: "cooking" | "ordered" | "cooked";
+    status: "cooking" | "ordered" | "cooked" | "cooking:disposing" | "cooked:disposing";
 
     order: {
         type: string;
@@ -23,10 +23,10 @@ interface ConvertedSessionItem {
         image: any;
     };
 
-    people: {
+    people?: {
         cook?: { name: string; avatar: any; _id: string; };
         waiter?: { name: string; avatar: any; _id: string; };
-        customer: { name: string; avatar: any; _id: string; };
+        customer?: { name: string; avatar: any; _id: string; };
     };
 
     takenInterval?: any;
@@ -34,6 +34,9 @@ interface ConvertedSessionItem {
 
     takenTimeout?: any;
     orderedTimeout?: any;
+
+    danger: boolean;
+    warning: boolean;
 
     time: {
         ordered: Time;
@@ -43,6 +46,10 @@ interface ConvertedSessionItem {
         cooked?: Time;
 
         served?: Time;
+
+        beReady?: number;
+
+        averageCooking?: number;
     };
 }
 

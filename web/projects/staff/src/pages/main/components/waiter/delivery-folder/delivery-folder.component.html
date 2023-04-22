@@ -1,0 +1,29 @@
+<button class="app">
+    <div class="header">
+        <div *ngIf="folder.canBePickedUp" class="dot">
+            <div></div>
+        </div>
+        <div class="title">
+            <span class="global-text black big bold">
+                Delivery {{ folder.id }}
+            </span>
+        </div>
+        <div class="items-amount">
+            <span class="global-text">
+                {{ folder.items.length }} items
+            </span>
+        </div>
+    </div>
+    <div class="items">
+        <div class="item" *ngFor="let item of folder.items">
+            <div class="image">
+                <img [src]="item.item.image" alt="">
+            </div>
+            <div class="name">
+                <span class="global-text small">
+                    {{ item.item.name }}
+                </span>
+            </div>
+        </div>
+    </div>
+</button>

@@ -14,7 +14,7 @@ interface Order {
     date: string;
     status: string;
     location: string;
-    dishes: {
+    items: {
         image: string;
         name: string;
         price: number;
@@ -53,8 +53,8 @@ export class OrderPage implements OnInit {
 
         const result: { order: Order } = await this.service.get("orders", orderId);
 
-        for(const dish of result.order.dishes) {
-            dish.image = getImage(dish.image);
+        for(const item of result.order.items) {
+            item.image = getImage(item.image);
         }
 
         this.order = result.order;

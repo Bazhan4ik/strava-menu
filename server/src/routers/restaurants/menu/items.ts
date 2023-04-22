@@ -3,16 +3,17 @@ import { ObjectId } from "mongodb";
 import sharp from "sharp";
 import { Item, Modifier } from "../../../models/item.js";
 import { Locals } from "../../../models/general.js";
-import { addItem, deleteItem, updateItem, getItems, getItem } from "../../../utils/items.js";
-import { id } from "../../../utils/id.js";
-import { logged } from "../../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../../utils/middleware/restaurant.js";
-import { bufferFromString } from "../../../utils/bufferFromString.js";
-import { getIngredients } from "../../../utils/ingredients.js";
-import { getTags } from "../../../utils/tags.js";
-import { updateRestaurant } from "../../../utils/restaurant.js";
-import { getOrders, updateOrders } from "../../../utils/orders.js";
+import { addItem, deleteItem, updateItem, getItems, getItem } from "../../../utils/data/items.js";
+import { id } from "../../../utils/other/id.js";
+import { logged } from "../../../middleware/auth.js";
+import { restaurantWorker } from "../../../middleware/restaurant.js";
+import { bufferFromString } from "../../../utils/other/bufferFromString.js";
+import { getIngredients } from "../../../utils/data/ingredients.js";
+import { getTags } from "../../../utils/other/tags.js";
+import { updateRestaurant } from "../../../utils/data/restaurant.js";
+import { getOrders, updateOrders } from "../../../utils/data/orders.js";
 import { NewLineKind } from "typescript";
+import { getSessions } from "../../../utils/data/sessions.js";
 
 
 
@@ -126,12 +127,11 @@ router.get("/", logged(), restaurantWorker({}, { items: { available: true } }), 
     const { restaurant, user } = res.locals as Locals;
 
 
-    const items = await getItems(restaurant._id, { }, { projection: { status: 1, info: { name: 1, price: 1 }, id: 1, library: { preview: 1, } } }).toArray();
+    const items = await getItems(restaurant._id, { }, { projection: { status: 1, info: { name: 1, price: 1 }, id: 1 } }).toArray();
 
     const result: {
         name: string;
         price: number;
-        image: any;
         id: string;
         _id: ObjectId;
         status: string;
@@ -142,14 +142,16 @@ router.get("/", logged(), restaurantWorker({}, { items: { available: true } }), 
             name: item.info.name,
             price: item.info.price,
             id: item.id,
-            image: item.library?.preview,
             _id: item._id,
             status: item.status,
         });
     }
 
 
-    res.send(result);
+    res.send({
+        items: result,
+        restaurantId: restaurant._id,
+    });
 });
 router.get("/:itemId", logged(), restaurantWorker({ collections: { name: 1, image: 1, _id: 1, items: 1, id: 1, }, }, { items: { available: true } }), async (req, res) => {
     const { itemId } = req.params;
@@ -330,7 +332,7 @@ router.get("/:itemId/edit", logged(), restaurantWorker({ }, { items: { adding: t
     res.send(result);
 });
 router.put("/:itemId", logged(), restaurantWorker({}, { items: { adding: true } }), async (req, res) => {
-    const { itemId } = req.params;
+    const { itemId } = req.params; // object id here
     const { restaurant, user } = res.locals as Locals;
     const { name, price, ingredients, image, description, tags, } = req.body;
 
@@ -339,10 +341,48 @@ router.put("/:itemId", logged(), restaurantWorker({}, { items: { adding: true } 
         return res.status(422).send({ reason: "InvalidInput" });
     }
 
+    const getAverageTimeCooking = async () => {
+        const orders = await getOrders(
+            restaurant._id,
+            { items: { $elemMatch: { itemId: id(itemId) } } },
+            { projection: { items: { itemId: 1, timing: { taken: 1, cooked: 1 } } } }
+        ).toArray();
+
+        if(!orders || orders.length == 0) {
+            return null;
+        }
+
+        let amountOfItems = 0;
+        let totalTimeCooking = 0;
+        for(const session of orders) {
+            for(const item of session.items) {
+                if(item.itemId.equals(itemId)) {
+                    if(!item.timing?.cooked || !item.timing.taken) {
+                        continue;
+                    }
+
+                    const time = item.timing.cooked - item.timing.taken;
+
+                    amountOfItems++;
+                    totalTimeCooking += time;
+                }
+            }
+        }
+
+        const avgTime = Math.ceil(totalTimeCooking / amountOfItems);;
+
+        if(avgTime < 10000) {
+            return null;
+        }
+
+        return avgTime;
+    }
+
     const update: any = {
         "info.name": name,
         "info.price": price,
         "info.description": description,
+        "info.averageTime": await getAverageTimeCooking(),
         id: name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase(),
     };
 
@@ -377,8 +417,9 @@ router.put("/:itemId", logged(), restaurantWorker({}, { items: { adding: true } 
             resolution: image.resolution,
         }
     }
+
     
-    const result = await updateItem(restaurant._id, { id: itemId }, { $set: update, }, { projection: { _id: 1, } });
+    const result = await updateItem(restaurant._id, { _id: id(itemId) }, { $set: update, }, { projection: { _id: 1, } });
 
 
     res.send({ updated: result.ok == 1, newId: update["id"] });
@@ -452,6 +493,26 @@ router.put("/:itemId/visibility", logged(), restaurantWorker({ }, { items: { add
 
 
     res.send({ updated: update.ok == 1 });
+});
+router.get("/:itemId/image", async (req, res) => {
+    const { itemId, restaurantId } = req.params as any;
+
+    const item = await getItem(restaurantId, { id: itemId }, { projection: { library: { preview: 1, } } });
+
+    if(!item) {
+        return res.status(404).send({ reason: "ItemNotFound" });
+    }
+
+    if(!item.library || !item.library.preview) {
+        return res.send(null);
+    }
+
+    const image = item.library.preview;
+
+    res.set("Content-Type", "image/png");
+    res.set("Content-Length", image.buffer.length.toString());
+    res.set("Cache-Control", "public, max-age=31536000");
+    res.send(image.buffer);
 });
 
 

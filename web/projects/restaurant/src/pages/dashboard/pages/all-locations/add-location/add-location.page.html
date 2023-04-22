@@ -21,6 +21,15 @@
         </div>
         <div class="full-address" *ngIf="place">
 
+            <div class="state">
+                <div class="label">
+                    <span class="global-text">
+                        Phone number
+                    </span>
+                </div>
+                <input type="tel" (input)="onPhoneInput($event)" inputmode="numeric" [(ngModel)]="phone" class="global-input">
+            </div>
+
             <div class="top">
                 <div class="state">
                     <div class="label">

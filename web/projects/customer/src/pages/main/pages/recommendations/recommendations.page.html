@@ -8,7 +8,7 @@
                     </span>
                 </div>
                 <div class="order">
-                    <a type="button" routerLink="../order/preview" class="orange-button icon-button square">
+                    <a type="button" id="goto-preview" routerLink="../order/preview" class="orange-button icon-button square link">
                         <mat-icon>shopping_cart</mat-icon>
                     </a>
                 </div>
@@ -26,5 +26,10 @@
                 <div></div>
             </div>
         </div>
+        <div class="preview">
+            <ng-container #previewContainer></ng-container>
+        </div>
     </div>
 </div>
+
+<ng-container #itemModalContainer></ng-container>

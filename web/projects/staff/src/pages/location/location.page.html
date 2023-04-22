@@ -13,7 +13,7 @@
     </div>
     <div class="box">
         <div class="locations">
-            <a *ngFor="let location of locations" routerLink="{{ location.id }}" class="location">
+            <a *ngFor="let location of locations" routerLink="{{ location.id }}" [id]="location.id" class="location">
                 <div class="name">
                     <mat-icon>
                         place

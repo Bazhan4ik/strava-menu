@@ -1,11 +1,27 @@
-<button class="app" [class.orange]="sessionItem.status == 'cooking'">
+<button class="app {{ sessionItem.status }}" [class.orange]="sessionItem.status == 'cooking'" [class.red]="sessionItem.status == 'cooking:disposing'">
     <div class="image">
         <img [src]="image" alt="">
     </div>
-    <div class="name-id">
-        <div class="name">
-            <span class="global-text big black bold">
-                {{ sessionItem.item.name }}
+    <div class="name">
+        <span class="global-text big black bold">
+            {{ sessionItem.item.name }}
+        </span>
+    </div>
+    <div class="info">
+        <div class="type">
+            <div class="icon" [class.orange]="sessionItem.order.type == 'dinein'" [class.red]="sessionItem.order.type == 'delivery'" [class.purple]="sessionItem.order.type == 'takeout'">
+                <mat-icon *ngIf="sessionItem.order.type == 'delivery'">delivery_dining</mat-icon>
+                <mat-icon *ngIf="sessionItem.order.type == 'takeout'">takeout_dining</mat-icon>
+                <mat-icon *ngIf="sessionItem.order.type == 'dinein'">restaurant</mat-icon>
+            </div>
+            <span *ngIf="sessionItem.order.type == 'delivery'" class="global-text normal">
+                Delivery
+            </span>
+            <span *ngIf="sessionItem.order.type == 'takeout'" class="global-text normal">
+                Take out
+            </span>
+            <span *ngIf="sessionItem.order.type == 'dinein'" class="global-text normal">
+                Dine in
             </span>
         </div>
         <div class="id">
@@ -14,10 +30,10 @@
             </span>
         </div>
     </div>
-    <div class="customer-delay">
+    <div class="customer-delay" *ngIf="sessionItem.people?.customer">
         <div class="customer">
             <span class="global-text">
-                For {{ sessionItem.people.customer.name }}
+                For {{ sessionItem.people?.customer?.name }}
             </span>
         </div>
         <div class="delay">
@@ -31,10 +47,49 @@
             </span>
         </div>
     </div>
-    <div class="cooking-delay" *ngIf="sessionItem.time.taken">
+    <div class="be-ready" *ngIf="sessionItem.time.beReady">
         <div class="customer">
             <span class="global-text">
-                Taken by {{ sessionItem.people.cook?.name }}
+                Be ready by
+            </span>
+        </div>
+        <div class="time">
+            <span class="global-text" [class.red]="sessionItem.danger" [class.orange]="sessionItem.warning">
+                {{ beReadyTime | date:'shortTime' }}
+            </span>
+        </div>
+    </div>
+    <div class="average" *ngIf="sessionItem.time.averageCooking">
+        <div class="title">
+            <span class="global-text">
+                Average cooking time
+            </span>
+        </div>
+        <div class="time">
+            <span class="global-text">
+                {{ cookingTime | date:'mm:ss' }} s. 
+            </span>
+        </div>
+    </div>
+    <div class="ordered" *ngIf="sessionItem.time.ordered">
+        <div class="title">
+            <span class="global-text">
+                Ordered
+            </span>
+        </div>
+        <div class="time">
+            <span *ngIf="sessionItem.time.ordered.hours" class="hours global-text">
+                {{ sessionItem.time.ordered.hours }}h
+            </span>
+            <span class="global-text minutes">
+                {{ sessionItem.time.ordered.minutes }}m ago
+            </span>
+        </div>
+    </div>
+    <div class="cooking-delay" *ngIf="sessionItem.time.taken">
+        <div class="customer" *ngIf="sessionItem.people?.cook">
+            <span class="global-text">
+                Taken by {{ sessionItem.people?.cook?.name }}
             </span>
         </div>
         <div class="delay">

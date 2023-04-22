@@ -3,25 +3,26 @@ import { Item } from "../models/item.js";
 import { ConvertedSessionItem } from "../models/other/convertedSession.js";
 import { Time } from "../models/other/time.js";
 import { Session, SessionItem, SessionItemStatus } from "../models/session.js";
-import { getItem, getItems } from "./items.js";
-import { getDelay } from "./time.js";
-import { getUsers } from "./users.js";
+import { getItem, getItems } from "./data/items.js";
+import { getDelay } from "./other/time.js";
+import { getUsers } from "./data/users.js";
 
 
 
 
 async function convertSessionItems(data: {
-    restaurantId: ObjectId;
-    sessionId: ObjectId;
     sessionItems: SessionItem[];
-    customerId: ObjectId;
-    ordered: Time;
-    comment?: string;
     skip: SessionItemStatus[];
-    id: string;
+    restaurantId: ObjectId;
+    customerId: ObjectId;
+    deliveryTime: number;
+    sessionId: ObjectId;
+    comment?: string;
+    ordered: Time;
     type: string;
+    id: string;
 }) {
-    const { sessionItems, type, id, comment: orderComment, sessionId, customerId, restaurantId, ordered, skip } = data;
+    const { sessionItems, type, deliveryTime, id, comment: orderComment, sessionId, customerId, restaurantId, ordered, skip } = data;
 
     const getIds = () => {
         const itemIds = [];
@@ -36,7 +37,7 @@ async function convertSessionItems(data: {
     const { itemIds, userIds } = getIds();
 
     const [items, users] = await Promise.all([
-        getItems(restaurantId, { _id: { $in: itemIds } }, { projection: { _id: 1, info: { name: 1, }, library: { preview: 1 } } }).toArray(),
+        getItems(restaurantId, { _id: { $in: itemIds } }, { projection: { _id: 1, info: { name: 1, averageTime: 1, }, library: { preview: 1 } } }).toArray(),
         getUsers({ _id: { $in: userIds } }, { projection: { info: { name: 1 }, avatar: 1 } }).toArray()
     ])
     
@@ -81,7 +82,6 @@ async function convertSessionItems(data: {
         }
 
 
-
         result.push({
             _id: sessionItem._id,
             itemId: sessionItem.itemId,
@@ -109,6 +109,8 @@ async function convertSessionItems(data: {
             
             time: {                
                 ordered,
+                averageCooking: item.info.averageTime,
+                beReady: type == "delivery" ? new Date(deliveryTime).getTime() : undefined!,
             }
         });
     }
@@ -119,6 +121,13 @@ async function convertSessionItems(data: {
 
 
 
+/**
+ * 
+ * This function should convert dishes of the provided sessions.
+ * This function should sort the dishes from the most delayed one to the newest ones (newest to the end)
+ * This function should sort the delivery dishes, so they are cooked before the delivery driver picks up them
+ * 
+ */
 async function convertMultipleSessionsSessionItems(data: {
     restaurantId: ObjectId;
     sessions: Session[];
@@ -152,15 +161,17 @@ async function convertMultipleSessionsSessionItems(data: {
     const { userIds, itemIds } = getIds();
 
     const [items, users] = await Promise.all([
-        getItems(restaurantId, { _id: { $in: itemIds } }, { projection: { info: { name: 1 }, library: { preview: 1 } } }).toArray(),
+        getItems(restaurantId, { _id: { $in: itemIds } }, { projection: { info: { name: 1, averageTime: 1, }, library: { preview: 1 } } }).toArray(),
         getUsers({ _id: { $in: userIds } }, { projection: { info: { name: 1 }, avatar: 1 } }).toArray(),
     ]);
 
     const convertToMap = () => {
-        const itemsMap = new Map<string, { name: string; image: any; }>();
+        const itemsMap = new Map<string, { name: string; image: any; averageCooking?: number; }>();
+
+        
 
         for(let item of items) {
-            itemsMap.set(item._id.toString(), { name: item.info.name, image: item.library?.preview });
+            itemsMap.set(item._id.toString(), { name: item.info.name, averageCooking: item.info.averageTime, image: item.library?.preview });
         }
 
         const usersMap = new Map<string, { name: string; avatar: any; _id: ObjectId; }>();
@@ -179,12 +190,12 @@ async function convertMultipleSessionsSessionItems(data: {
 
 
     const result: ConvertedSessionItem[] = [];
-
     for(let session of sessions) {
 
         
         const customer = usersMap.get(session.customer.customerId?.toString() || "noid")!;
-        
+
+
         for(let item of session.items) {
             
             if(skipStatuses.includes(item.status)) {
@@ -218,6 +229,8 @@ async function convertMultipleSessionsSessionItems(data: {
                     ordered: getDelay(session.timing.ordered),
                     taken: getDelay(item.timing?.taken),
                     cooked: getDelay(item.timing?.cooked),
+                    averageCooking: d.averageCooking,
+                    beReady: session.info.type == "delivery" ? new Date(session.info.delivery!.time).getTime() : undefined!,
                 },
                 
                 people: {
@@ -235,16 +248,17 @@ async function convertMultipleSessionsSessionItems(data: {
 
 
 async function convertOneSessionItem(data: {
-    restaurantId: ObjectId;
     sessionItem: SessionItem;
-    ordered: number;
-    sessionId: ObjectId;
+    restaurantId: ObjectId;
     customerId: ObjectId;
+    sessionId: ObjectId;
+    deliveryTime: any;
     comment?: string;
+    ordered: number;
     type: string;
     id: string;
 }) {
-    let { ordered, sessionId, customerId, restaurantId, comment: orderComment, sessionItem, type, id } = data;
+    const { ordered, sessionId, customerId, restaurantId, deliveryTime, comment: orderComment, sessionItem, type, id } = data;
 
 
     const users = await getUsers({ _id: { $in: [customerId, sessionItem.staff?.cook!, sessionItem.staff?.waiter!] } }, { projection: { info: { name: 1 }, avatar: 1 } }).toArray();
@@ -265,11 +279,12 @@ async function convertOneSessionItem(data: {
     const people = convertToMap();
 
 
-    const item = await getItem(restaurantId, { _id: sessionItem.itemId }, { projection: { info: { name: 1 }, library: { preview: 1 } } });
+    const item = await getItem(restaurantId, { _id: sessionItem.itemId }, { projection: { info: { name: 1, averageTime: 1, }, library: { preview: 1 } } });
 
     if(!item) {
         return null;
     }
+
 
     const result: ConvertedSessionItem = {
         _id: sessionItem._id,
@@ -289,6 +304,8 @@ async function convertOneSessionItem(data: {
             ordered: getDelay(ordered),
             cooked: getDelay(sessionItem.timing?.cooked),
             taken: getDelay(sessionItem.timing?.taken),
+            averageCooking: item.info.averageTime,
+            beReady: type == "delivery" ? new Date(deliveryTime).getTime() : undefined,
         },
 
 
@@ -313,3 +330,21 @@ export {
     convertMultipleSessionsSessionItems,
     convertOneSessionItem,
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

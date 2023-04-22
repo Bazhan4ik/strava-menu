@@ -17,7 +17,7 @@
             </button>
         </div>
     </div>
-    <div class="items" #list>
+    <div class="items item-list" #list>
         <app-item *ngFor="let item of collection.items" [small]="small" [collection]="collection.id" [itemObjectId]="item"></app-item>
     </div>
 </div>

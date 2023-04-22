@@ -1,0 +1,132 @@
+.app-bill-info {
+    padding-bottom: 24px;
+    height: 100%;
+
+    .items {
+        width: 324px;
+        margin-top: 24px;
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 42px;
+            border-bottom: 1px solid var(--default-border-color);
+
+            .name-container {
+                display: flex;
+                align-items: center;
+                padding-right: 16px;
+
+                span.name {
+                    margin: 0;
+                    display: -webkit-box;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                    margin-right: 6px;
+                }
+
+                .amount {
+                    margin: 0;
+                    margin-left: 6px;
+                }
+            }
+        }
+    }
+
+    .money {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-top: 32px;
+
+        div {
+            display: flex;
+            align-items: flex-end;
+            width: 272px;
+            height: 24px;
+
+            .border {
+                border-bottom: 2px dotted var(--default-border-color);
+                width: 100%;
+                margin: 3px 3px;
+            }
+
+            .title,
+            .value {
+                width: auto;
+                white-space: nowrap;
+            }
+
+            span.global-text {
+                margin: 0;
+
+                &.big {
+                    font-size: 18px;
+                }
+
+                &.bigger {
+                    font-size: 20px;
+                }
+            }
+        }
+
+        .total {
+            .border {
+                border-bottom: 2px dotted var(--black);
+            }
+        }
+    }
+
+    .tips {
+        margin-top: 24px;
+
+        .tip-box {
+            margin-top: 8px;
+            width: 100%;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+            border: 1px solid var(--light-border-color);
+
+            .options {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                gap: 8px;
+            }
+
+            .tip {
+                width: 64px;
+                height: 64px;
+                display: flex;
+                align-items: center;
+                background: none;
+                flex-direction: column;
+                gap: 8px;
+                justify-content: center;
+                background-color: var(--default-on-background);
+                border-radius: var(--default-border-radius);
+
+                &.selected {
+                    background-color: var(--orange-lighter);
+                    outline: 2px solid var(--orange);
+                    span {
+                        color: var(--orange-dark);
+                    }
+                }
+            }
+
+            .amount {
+                .global-text {
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+}

@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="restaurants" *ngIf="user">
+            <div class="restaurants" id="restaurant-list" *ngIf="user">
                 <a *ngFor="let restaurant of user.restaurants" [href]="restaurant.redirectUrl" type="button" class="restaurant">
                     <div class="left">
                         <span class="global-text name">

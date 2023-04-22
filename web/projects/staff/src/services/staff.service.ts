@@ -25,6 +25,11 @@ export class StaffService {
     ) { };
 
 
+    /**
+     * location =>
+     * waiter/cook =?
+     * path.join()
+     */
     get<T>(...path: string[]) {
         return firstValueFrom(
             this.http.get<T>(this.baseUrl + this.restaurant.id + "/" + this.locationId + "/" + path.join("/"))

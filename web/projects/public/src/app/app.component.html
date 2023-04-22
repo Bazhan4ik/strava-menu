@@ -1,12 +1,12 @@
 <div class="app">
     <!-- Preloader -->
-    <div class="spinner-wrapper">
+    <!-- <div class="spinner-wrapper">
         <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
         </div>
-    </div>
+    </div> -->
     <!-- end of preloader -->
 
 
@@ -212,29 +212,39 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="above-heading">FEATURES</div>
-                    <h2 class="h2-heading">Marketing Automation</h2>
-                    <p class="p-heading">Take your business strategy to the next level and automatize your marketing
-                        tasks to save time for product development. Tivo can provide results in less than 2 weeks</p>
-                </div> <!-- end of col -->
-            </div> <!-- end of row -->
+                    <h2 class="h2-heading">Make it quicker, better, easier</h2>
+                    <p class="p-heading">
+                        Take your restaurant management to the next level with StravaMenu
+                    </p>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-12">
 
                     <!-- Tabs Links -->
                     <ul class="nav nav-tabs" id="argoTabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="nav-tab-1" data-toggle="tab" href="#tab-1" role="tab"
-                                aria-controls="tab-1" aria-selected="true"><i class="fas fa-list"></i>List Builder</a>
+                            <a class="nav-link active" id="nav-tab-1" data-toggle="tab" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="true">
+                                <!-- <i class="fas fa-list"></i> -->
+                                <mat-icon>menu_book</mat-icon>
+                                Menu
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="nav-tab-2" data-toggle="tab" href="#tab-2" role="tab"
-                                aria-controls="tab-2" aria-selected="false"><i
-                                    class="fas fa-envelope-open-text"></i>Campaigns</a>
+                            <a class="nav-link" id="nav-tab-2" data-toggle="tab" href="#tab-2" role="tab" aria-controls="tab-2" aria-selected="false">
+                                <mat-icon>
+                                    soup_kitchen
+                                </mat-icon>
+                                Kitchen
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="nav-tab-3" data-toggle="tab" href="#tab-3" role="tab"
-                                aria-controls="tab-3" aria-selected="false"><i
-                                    class="fas fa-chart-bar"></i>Analytics</a>
+                            <a class="nav-link" id="nav-tab-3" data-toggle="tab" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false">
+                                <mat-icon>
+                                    face
+                                </mat-icon>
+                                Customers
+                            </a>
                         </li>
                     </ul>
                     <!-- end of tabs links -->
@@ -247,35 +257,37 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="image-container">
-                                        <img class="img-fluid" src="images/features-1.png" alt="alternative">
+                                        <img class="img-fluid" src="./../resources/images/MENU.png" alt="simple-menu">
                                     </div> <!-- end of image-container -->
                                 </div> <!-- end of col -->
                                 <div class="col-lg-6">
                                     <div class="text-container">
-                                        <h3>List Building Is Easier Than Ever</h3>
-                                        <p>It's very easy to start using Tivo. You just need to fill out and submit the
-                                            <a class="blue page-scroll" href="sign-up.html">Sign Up Form</a> and you
-                                            will receive access to the app and all of its features in no more than 24h.
+                                        <h3>Simple, flexible menu management</h3>
+                                        <p>
+                                            Menu is the most important part of your restaurant, it's the first thing your customers see. StravaMenu gives you an opportunity to create your menu in minutes and manage it with very easy to use interface.
                                         </p>
                                         <ul class="list-unstyled li-space-lg">
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">Create and embed on websites newsletter sign up
-                                                    forms</div>
-                                            </li>
-                                            <li class="media">
-                                                <i class="fas fa-square"></i>
-                                                <div class="media-body">Manage forms and landing pages for your services
+                                                <div class="media-body">
+                                                    Create your menu in minutes
                                                 </div>
                                             </li>
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">Add and remove subscribers using the control
-                                                    panel</div>
+                                                <div class="media-body">
+                                                    Manage items and collections with very easy to use interface
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <i class="fas fa-square"></i>
+                                                <div class="media-body">
+                                                    StravaMenu updates your menu automatically according to ingredients availability
+                                                </div>
                                             </li>
                                         </ul>
                                         <a class="btn-solid-reg popup-with-move-anim"
-                                            href="#details-lightbox-1">LIGHTBOX</a>
+                                            [href]="registerLink">SIGN UP</a>
                                     </div> <!-- end of text-container -->
                                 </div> <!-- end of col -->
                             </div> <!-- end of row -->
@@ -287,34 +299,37 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="image-container">
-                                        <img class="img-fluid" src="images/features-2.png" alt="alternative">
+                                        <img class="img-fluid" src="./../resources/images/STAFF.png" alt="alternative">
                                     </div> <!-- end of image-container -->
                                 </div> <!-- end of col -->
                                 <div class="col-lg-6">
                                     <div class="text-container">
-                                        <h3>Campaigns Monitoring Tools</h3>
-                                        <p>Campaigns monitoring is a feature we've developed since the beginning because
-                                            it's at the core of Tivo and basically to any marketing activity focused on
-                                            results.</p>
+                                        <h3>Kitchen</h3>
+                                        <p>
+                                            In order to provide the best service to your customers, you need to have a good kitchen management. StravaMenu gives you an opportunity to manage your kitchen with VERY low costs and very big convinience.
+                                        </p>
                                         <ul class="list-unstyled li-space-lg">
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">Easily plan campaigns and schedule their
-                                                    starting date</div>
+                                                <div class="media-body">
+                                                    Sorting dishes in order to serve items at once
+                                                </div>
                                             </li>
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">Start campaigns and follow their evolution
-                                                    closely</div>
+                                                <div class="media-body">
+                                                    Easy to use interface, minimum training required
+                                                </div>
                                             </li>
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">Evaluate campaign results and optimize future
-                                                    actions</div>
+                                                <div class="media-body">
+                                                    Any device can be used in kitchen. From a phone, to a computer.
+                                                </div>
                                             </li>
                                         </ul>
                                         <a class="btn-solid-reg popup-with-move-anim"
-                                            href="#details-lightbox-2">LIGHTBOX</a>
+                                            [href]="registerLink">SIGN UP</a>
                                     </div> <!-- end of text-container -->
                                 </div> <!-- end of col -->
                             </div> <!-- end of row -->
@@ -326,34 +341,38 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="image-container">
-                                        <img class="img-fluid" src="images/features-3.png" alt="alternative">
+                                        <img class="img-fluid" src="./../resources/images/CUSTOMER.png" alt="customer">
                                     </div> <!-- end of image-container -->
                                 </div> <!-- end of col -->
                                 <div class="col-lg-6">
                                     <div class="text-container">
-                                        <h3>Analytics Control Panel</h3>
-                                        <p>Analytics control panel is important for every marketing team so it's beed
-                                            implemented from the begging and designed to produce reports based on very
-                                            little input information.</p>
+                                        <h3>
+                                            Ordering expirience
+                                        </h3>
+                                        <p>
+                                            StravaMenu gives you full control of your customers' experience while ordering online, but we also have some beautiful default themes for your page.
+                                        </p>
                                         <ul class="list-unstyled li-space-lg">
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">If you set it up correctly you will get acces to
-                                                    great intel</div>
+                                                <div class="media-body">
+                                                    Choose themes for your page based on your restaurant's style
+                                                </div>
                                             </li>
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">Easy to integrate in your websites and landing
-                                                    pages</div>
+                                                <div class="media-body">
+                                                    Create your own theme using CSS
+                                                </div>
                                             </li>
                                             <li class="media">
                                                 <i class="fas fa-square"></i>
-                                                <div class="media-body">The generated reports are important for your
-                                                    strategy</div>
+                                                <div class="media-body">
+                                                    Optimized for all devices & all browsers
+                                                </div>
                                             </li>
                                         </ul>
-                                        <a class="btn-solid-reg popup-with-move-anim"
-                                            href="#details-lightbox-3">LIGHTBOX</a>
+                                        <a class="btn-solid-reg popup-with-move-anim" [href]="registerLink">SIGN UP</a>
                                     </div> <!-- end of text-container -->
                                 </div> <!-- end of col -->
                             </div> <!-- end of row -->
@@ -976,152 +995,3 @@
     <!-- end of copyright -->
 
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <div class="app">
-    <div class="box">
-        <div class="header">
-            <span class="global-title">
-                Your online menu
-            </span>
-        </div>
-        <div class="buttons">
-            <a type="button" [href]="loginLink" class="button">
-                Login
-            </a>
-            <a type="button" [href]="registerLink" class="button orange-button">
-                Register
-                <ion-icon name="chevron-forward"></ion-icon>
-            </a>
-        </div>
-    </div>
-
-    <div class="box">
-        <div class="header">
-            <span class="global-title">
-                Why?
-            </span>
-        </div>
-        <div class="block">
-            <div class="icon">
-                <mat-icon>
-                    menu_book
-                </mat-icon>
-            </div>
-            <div class="info">
-                <div class="subtitle">
-                    <span class="global-text big black bold">
-                        Changes
-                    </span>
-                </div>
-                <div class="text">
-                    <span class="global-text">
-                        Change your menu in seconds. If you can adapt to changes quicker you have more advantage on your competitors.
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="block">
-            <div class="icon">
-                <mat-icon>
-                    ramen_dining
-                </mat-icon>
-            </div>
-            <div class="info">
-                <div class="subtitle">
-                    <span class="global-text big black bold">
-                        No confusion
-                    </span>
-                </div>
-                <div class="text">
-                    <span class="global-text">
-                        With online menu your customers are getting more information about the dishes: ingredients, time of cooking, nutritions...
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="block">
-            <div class="icon">
-                <mat-icon>
-                    schedule
-                </mat-icon>
-            </div>
-            <div class="info">
-                <div class="subtitle">
-                    <span class="global-text big black bold">
-                        Time
-                    </span>
-                </div>
-                <div class="text">
-                    <span class="global-text">
-                        Orders are taken as soon as customers are ready.
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="block">
-            <div class="icon">
-                <mat-icon>
-                    insights
-                </mat-icon>
-            </div>
-            <div class="info">
-                <div class="subtitle">
-                    <span class="global-text big black bold">
-                        Analytics
-                    </span>
-                </div>
-                <div class="text">
-                    <span class="global-text">
-                        Get reports, statistics and feedbacks from your customers, and improve.
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="box contact">
-        <div class="header">
-            <span class="global-title">
-                Contact us
-            </span>
-        </div>
-        <div class="block">
-            <div class="icon">
-                <mat-icon>
-                    email
-                </mat-icon>
-            </div>
-            <div class="info">
-                <span class="global-text big black bold">
-                    bazhantt@gmail.com
-                </span>
-            </div>
-        </div>
-        <div class="block">
-            <div class="icon">
-                <mat-icon>
-                    phone
-                </mat-icon>
-            </div>
-            <div class="info">
-                <span class="global-text big black bold">
-                    +1 (289) 968-7940
-                </span>
-            </div>
-        </div>
-    </div>
-</div> -->

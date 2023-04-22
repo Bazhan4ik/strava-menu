@@ -2,10 +2,10 @@ import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { SessionItem } from "../../models/session.js";
-import { getItem, getItems } from "../../utils/items.js";
-import { id } from "../../utils/id.js";
-import { waiterManualOrder, waiterSession } from "../../utils/middleware/waiterManualOrder.js";
-import { confirmSession, createSession, getSession, getSessions, updateSession } from "../../utils/sessions.js";
+import { getItem, getItems } from "../../utils/data/items.js";
+import { id } from "../../utils/other/id.js";
+import { waiterManualOrder, waiterSession } from "../../middleware/waiterManualOrder.js";
+import { confirmSession, createSession, getSession, getSessions, updateSession } from "../../utils/data/sessions.js";
 
 
 
@@ -45,7 +45,7 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
             info: {
                 id: null!,
                 type: "dinein",
-                location: location
+                location: location,
             },
             status: "ordering",
             timing: { },

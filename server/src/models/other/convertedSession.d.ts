@@ -26,18 +26,22 @@ interface ConvertedSessionItem {
     people: {
         cook?: { name: string; avatar: any; _id: ObjectId; };
         waiter?: { name: string; avatar: any; _id: ObjectId; };
-        customer: { name: string; avatar: any; _id: ObjectId; };
+        customer?: { name: string; avatar: any; _id: ObjectId; };
     }
 
 
     time: {
         ordered: Time;
-
+        
         taken?: Time;
-
+        
         cooked?: Time;
-
+        
         served?: Time;
+        
+        averageCooking?: number;
+
+        beReady?: number; // for delivery orders,  this is the time when the order should be ready 
     }
 }
 

@@ -15,7 +15,7 @@
                             Email address
                         </span>
                     </div>
-                    <input type="email" class="global-input" formControlName="email">
+                    <input type="email" id="username" class="global-input" formControlName="email">
                 </div>
                 <div class="password">
                     <div class="label">
@@ -23,7 +23,7 @@
                             Password
                         </span>
                     </div>
-                    <input type="password" class="global-input" [class.red]="!!message" (input)="onPasswordInput()" formControlName="password">
+                    <input type="password" id="password" class="global-input" [class.red]="!!message" (input)="onPasswordInput()" formControlName="password">
                 </div>
                 <div class="message" *ngIf="message">
                     <span class="global-text">
@@ -32,7 +32,7 @@
                 </div>
         
                 <div class="submit">
-                    <button type="submit" class="button orange-button">Login</button>
+                    <button id="submit-button" type="submit" class="button orange-button">Login</button>
                 </div>
 
                 <div class="links">

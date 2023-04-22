@@ -1,5 +1,5 @@
 import { Collection, Folder } from "../../src/models/restaurant.js";
-import { id } from "../../src/utils/id.js";
+import { id } from "../../src/utils/other/id.js";
 
 
 export const DEFAULT_COLLECTIONS_IDS: string[] = [

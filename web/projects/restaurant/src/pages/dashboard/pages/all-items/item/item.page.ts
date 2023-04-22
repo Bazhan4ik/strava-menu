@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
-// import { default as Annotation } from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
@@ -46,21 +45,28 @@ interface Collection {
     styleUrls: ['./item.page.scss']
 })
 export class ItemPage implements OnInit {
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private service: RestaurantService,
+    ) {};
+
+
 
     item: Item;
     collections: Collection[];
-
     image: string;
     loading = false;
-
     weeks = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    lineChartType: ChartType = 'line';
+    averageGrowth: number;
 
     lineChartData: ChartConfiguration['data'] = {
         datasets: [
         ],
         labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     };
-
     lineChartOptions: ChartConfiguration['options'] = {
         elements: {
             line: {
@@ -90,21 +96,61 @@ export class ItemPage implements OnInit {
         }
     };
 
-    lineChartType: ChartType = 'line';
-
-    averageGrowth: number;
-
-    constructor(
-        private router: Router,
-        private route: ActivatedRoute,
-        private service: RestaurantService,
-    ) {};
-
-
+    
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
     @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
 
+
+
+    async ngOnInit() {
+        const itemId = this.route.snapshot.paramMap.get("itemId");
+
+        if(!itemId) {
+            return this.router.navigate([this.service.restaurant.id, "menu", "items"]);
+        }
+        
+        
+        const result: { item: Item; collections: Collection[]; sales: { data: number[]; start: number; growth: number; } } = await this.service.get("menu/items", itemId);
+        
+        this.collections = result.collections;
+
+        this.service.currentDishId = result.item.id;
+
+        
+        if(result.item.library && result.item.library.preview) {
+            this.image = getImage(result.item.library.preview);
+        }
+
+        if(result.collections) {
+            this.collections = [];
+            for(let collection of result.collections) {
+                this.collections.push({ ...collection, image: getImage(collection.image) || "./../../../../../../../../global-resources/images/no-image.svg" })
+            }
+        }
+
+        this.item = result.item;
+        this.averageGrowth = result.sales.growth;
+
+        if(result.sales) {
+            this.lineChartData.datasets.push({
+                data: result.sales.data,
+                label: 'This week',
+                borderColor: '#FFC409',
+                pointBackgroundColor: "#FFC409",
+                pointBorderColor: 'rgba(0, 0, 0, 0)',
+                pointHoverBackgroundColor: '#000',
+                backgroundColor: "#ffc60933",
+                fill: 'origin',
+            });
+
+            this.lineChartData.labels = [...this.weeks.slice(result.sales.start + 1), ...this.weeks.slice(0, result.sales.start + 1) ];
+
+            this.chart?.update();
+        }
+
+        return;
+    }
 
 
     async onVisibilityChange(event: Event) {
@@ -118,8 +164,6 @@ export class ItemPage implements OnInit {
             (event.target as HTMLInputElement).checked = !value;
         }
     }
-
-
     async addModifier() {
         const { AddModifierModal } = await import("./../../../components/add-modifier/add-modifier.modal");
 
@@ -191,8 +235,6 @@ export class ItemPage implements OnInit {
 
         this.loading = false;
     }
-
-
     async editCollections() {
         const { AddCollectionsModal } = await import("../../../components/add-collections/add-collections.modal");
 
@@ -214,61 +256,5 @@ export class ItemPage implements OnInit {
             this.loading = false;
             component.destroy();
         });
-    }
-
-
-
-
-    async ngOnInit() {
-        const itemId = this.route.snapshot.paramMap.get("itemId");
-
-        console.log(itemId);
-        
-        if(!itemId) {
-            return this.router.navigate([this.service.restaurant.id, "menu", "items"]);
-        }
-        
-        
-        const result: { item: Item; collections: Collection[]; sales: { data: number[]; start: number; growth: number; } } = await this.service.get("menu/items", itemId);
-        
-        this.collections = result.collections;
-
-        this.service.currentDishId = result.item.id;
-
-        
-        if(result.item.library && result.item.library.preview) {
-            this.image = getImage(result.item.library.preview);
-        }
-
-        if(result.collections) {
-            this.collections = [];
-            for(let collection of result.collections) {
-                this.collections.push({ ...collection, image: getImage(collection.image) || "./../../../../../../../../global-resources/images/no-image.svg" })
-            }
-        }
-
-        this.item = result.item;
-        this.averageGrowth = result.sales.growth;
-
-        console.log(result);
-
-        if(result.sales) {
-            this.lineChartData.datasets.push({
-                data: result.sales.data,
-                label: 'This week',
-                borderColor: '#FFC409',
-                pointBackgroundColor: "#FFC409",
-                pointBorderColor: 'rgba(0, 0, 0, 0)',
-                pointHoverBackgroundColor: '#000',
-                backgroundColor: "#ffc60933",
-                fill: 'origin',
-            });
-
-            this.lineChartData.labels = [...this.weeks.slice(result.sales.start + 1), ...this.weeks.slice(0, result.sales.start + 1) ];
-
-            this.chart?.update();
-        }
-
-        return;
     }
 }

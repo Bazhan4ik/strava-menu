@@ -13,38 +13,27 @@ import { StaffService } from 'projects/staff/src/services/staff.service';
     imports: [CommonModule, MatIconModule],
 })
 export class WaiterItemModal implements OnInit {
+    constructor(
+        private service: StaffService,
+    ) { };
 
     cookAvatar: string = "./../../../../../../../global-resources/images/plain-avatar.jpg";
     customerAvatar: string = "./../../../../../../../global-resources/images/plain-avatar.jpg";
-
     session: { type: string; id: string; };
     modifiers: { name: string; selected: string[] }[];
 
-    constructor(
-        private service: StaffService,
-    ) {}
 
     @Input() sessionItem: ConvertedSessionItem;
     @Output() leave = new EventEmitter();
 
-    async served() {
-        const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "waiter/served");
 
-        if(update.updated) {
-            this.leave.emit(true);
-        }
-    }
-
-    close() {
-        this.leave.emit();
-    }
 
 
     async ngOnInit() {
-        if(this.sessionItem.people.cook?.avatar) {
-            this.cookAvatar = getImage(this.sessionItem.people.cook?.avatar);
+        if(this.sessionItem.people?.cook?.avatar) {
+            this.cookAvatar = getImage(this.sessionItem.people?.cook?.avatar);
         }
-        if(this.sessionItem.people.customer.avatar) {
+        if(this.sessionItem.people?.customer?.avatar) {
             this.customerAvatar = getImage(this.sessionItem.people.customer?.avatar);
         }
 
@@ -53,7 +42,23 @@ export class WaiterItemModal implements OnInit {
 
         this.session = result.session;
         this.modifiers = result.modifiers;
+    }
 
-        console.log(result);
+    close() {
+        this.leave.emit();
+    }
+    async served() {
+        const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "waiter/served");
+
+        if(update.updated) {
+            this.leave.emit(true);
+        }
+    }
+    async disposed() {
+        const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "waiter/disposed");
+
+        if(update.updated) {
+            this.leave.emit(true);
+        }
     }
 }

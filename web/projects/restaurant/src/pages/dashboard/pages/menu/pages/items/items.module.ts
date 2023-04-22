@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { ItemsRoutingModule } from './items-routing.module';
 import { ItemsPage } from './items.page';
@@ -14,6 +14,7 @@ import { IonicModule } from '@ionic/angular';
         CommonModule,
         ItemsRoutingModule,
         IonicModule,
+        NgOptimizedImage,
     ]
 })
 export class ItemsModule { }

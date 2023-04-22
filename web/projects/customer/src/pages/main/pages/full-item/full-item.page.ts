@@ -1,11 +1,11 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, Injector, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewContainerRef, AfterViewInit, ComponentRef } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewContainerRef, AfterViewInit, ComponentRef, Input, EventEmitter, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
 import { ItemsService } from 'projects/customer/src/services/items.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CollectionComponent } from '../../components/collection/collection.component';
 import { ModifiersComponent } from '../../components/modifiers/modifiers.component';
 import { Item } from '../../models/item';
@@ -18,6 +18,14 @@ import { Item } from '../../models/item';
     imports: [CommonModule, MatIconModule, RouterModule, CollectionComponent, NgOptimizedImage],
 })
 export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
+    constructor(
+        private service: CustomerService,
+        private router: Router,
+        private route: ActivatedRoute,
+        private injector: Injector,
+        private itemsService: ItemsService,
+        private changeDetector: ChangeDetectorRef,
+    ) { };
 
     image: string;
     imageUrl: string;
@@ -36,38 +44,91 @@ export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
         loading: false,
         removed: false,
     }
+    updatePreview = false;
 
-    constructor(
-        private service: CustomerService,
-        private router: Router,
-        private route: ActivatedRoute,
-        private injector: Injector,
-        private itemsService: ItemsService,
-        private changeDetector: ChangeDetectorRef,
-    ) {
-        this.subscription = this.router.events.subscribe(ev => {
-            if(ev instanceof NavigationEnd) {
-                if(this.item) {
-                    const itemId = ev.url.split("?")[0].split("/")[3];
-    
-                    if(this.item.id != itemId) {
-                        this.amount = 0;
-                        this.item = null!;
-                        this.collection = null!;
-                        this.ngOnInit();
-                    }
-                }
-            }
-        });
-    };
+
+    @Input() modal = false;
+    @Input() itemId: string;
+    @Output() modalControl = new EventEmitter();;
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
     @ViewChild("modifiersContainer", { read: ViewContainerRef }) modifiersContainer: ViewContainerRef;
 
 
+    async ngOnInit() {
+        const itemId = this.route.snapshot.paramMap.get("itemId") || this.itemId;
+        const backUrl = this.route.snapshot.queryParamMap.get("back");
+        const collectionId = this.route.snapshot.queryParamMap.get("c"); // collection id where the item was redirected from. used to show more items from that collection
+
+        this.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/items/" + itemId + "/image";
+
+        if(backUrl) {
+            this.backUrl = backUrl!;
+        } else {
+            this.backUrl = `/${this.service.restaurant.id}/${this.service.locationId}/home`;
+        }
+
+        if(!itemId) {
+            if(this.modal) {
+                this.modalControl.next(true);
+                return;
+            }
+            this.router.navigate([this.service.restaurant.id, "recommendations"]);
+            return;
+        }
+
+        if(this.itemsService.items) {
+            for(let id of Object.keys(this.itemsService.items)) {
+                if(this.itemsService.items[id].id == itemId) {
+                    this.item = this.itemsService.items[id];
+                    break;
+                }
+            }
+        }
+
+        
+        try {
+            const result: {
+                item: Item;
+            } = await this.service.get({ collection: collectionId || undefined!, }, "items", itemId);
+            
+            this.item = result.item;
+
+            this.reloadModifications();
+            
+            for(let i of this.service.session.items) {
+                if(i.itemId == this.item._id) {
+                    this.amount++;
+                }
+            }
+        } catch (e: any) {
+            if(e.status == 404) {
+                this.router.navigate([this.service.restaurant.id, this.service.locationId, "home"], { replaceUrl: true });
+            }
+        }
+    }
+    ngOnDestroy(): void {
+        this.subscription?.unsubscribe();
+        if(this.updatePreview) {
+            this.itemsService.$previewUpdate.next(true);
+            this.itemsService.$checkoutUpdate.next(true);
+        }
+    }
+    async ngAfterViewInit() {
+        
+    }
+
+
+
+
+
+    closeModal() {
+        this.modalControl?.emit();
+    }
     async remove() {
         this.removing.loading = true;
         this.removing.removed = false;
+        this.updatePreview = true;
         let item: any = null!;
         let index: string = null!;
         for(const d in this.service.session.items) {
@@ -102,9 +163,9 @@ export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
         this.adding.loading = true;
         this.adding.added = false;
 
-        const modifiers = this.modifiers.instance.getModifiers();
+        const modifiers = this.modifiers?.instance.getModifiers();
 
-        if(!modifiers) {
+        if(!modifiers && this.item.modifiers?.length > 0) {
             this.adding.added = false;
             this.adding.loading = false;
             return;
@@ -112,9 +173,10 @@ export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
 
         this.amount++;
 
-        const result: { insertedId: string; } = await this.service.post({ comment, modifiers, itemId: this.item._id }, "session", "item");
+        const result: { insertedId: string; } = await this.service.post({ comment, modifiers: modifiers || [], itemId: this.item._id }, "session", "item");
 
-        if(result.insertedId) {    
+        if(result.insertedId) { 
+            this.updatePreview = true;   
             this.service.session.items.push({
                 _id: result.insertedId,
                 itemId: this.item._id,
@@ -126,13 +188,12 @@ export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
 
             setTimeout(() => {
                 this.adding.added = false;
-            }, 1000);
+            }, 700);
         } else {
             this.amount--;
         }
 
     }
-    
     async comment() {
         const { CommentModal } = await import("../../components/comment/comment.modal");
         
@@ -142,74 +203,16 @@ export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
         component.instance.leave.subscribe((comment: string) => {
             if(comment) {
                 this.add(comment);
+                this.updatePreview = true;
             }
             component.destroy();
         });
     }
-
-
     reloadModifications() {
         this.changeDetector.detectChanges();
 
         this.modifiers = this.modifiersContainer.createComponent(ModifiersComponent);
 
         this.modifiers.instance.modifiers = this.item.modifiers;
-    }
-
-
-    async ngAfterViewInit() {
-        
-    }
-    async ngOnInit() {
-
-        const itemId = this.route.snapshot.paramMap.get("itemId");
-        const backUrl = this.route.snapshot.queryParamMap.get("back");
-        const collectionId = this.route.snapshot.queryParamMap.get("c"); // collection id where the item was redirected from. used to show more items from that collection
-
-        this.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/items/" + itemId + "/image";
-
-        if(backUrl) {
-            this.backUrl = backUrl!;
-        } else {
-            this.backUrl = `/${this.service.restaurant.id}/${this.service.locationId}/home`;
-        }
-
-        if(!itemId) {
-            return this.router.navigate([this.service.restaurant.id, "recommendations"]);
-        }
-
-        if(this.itemsService.items) {
-            for(let id of Object.keys(this.itemsService.items)) {
-                if(this.itemsService.items[id].id == itemId) {
-                    this.item = this.itemsService.items[id];
-                    break;
-                }
-            }
-        }
-
-        
-        try {
-            const result: {
-                item: Item;
-            } = await this.service.get({ collection: collectionId || undefined!, }, "items", itemId);
-            
-            this.item = result.item;
-
-            this.reloadModifications();
-            
-            for(let i of this.service.session.items) {
-                if(i.itemId == this.item._id) {
-                    this.amount++;
-                }
-            }
-        } catch (e: any) {
-            if(e.status == 404) {
-                this.router.navigate([this.service.restaurant.id, this.service.locationId, "home"], { replaceUrl: true });
-            }
-        }
-        return;
-    }
-    ngOnDestroy(): void {
-        this.subscription?.unsubscribe();
     }
 }

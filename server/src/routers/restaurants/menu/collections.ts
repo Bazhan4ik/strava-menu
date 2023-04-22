@@ -3,12 +3,12 @@ import { ObjectId } from "mongodb";
 import sharp from "sharp";
 import { Locals } from "../../../models/general.js";
 import { Collection } from "../../../models/restaurant.js";
-import { bufferFromString } from "../../../utils/bufferFromString.js";
-import { getItems } from "../../../utils/items.js";
-import { id } from "../../../utils/id.js";
-import { logged } from "../../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../../utils/middleware/restaurant.js";
-import { updateRestaurant } from "../../../utils/restaurant.js";
+import { bufferFromString } from "../../../utils/other/bufferFromString.js";
+import { getItems } from "../../../utils/data/items.js";
+import { id } from "../../../utils/other/id.js";
+import { logged } from "../../../middleware/auth.js";
+import { restaurantWorker } from "../../../middleware/restaurant.js";
+import { updateRestaurant } from "../../../utils/data/restaurant.js";
 
 
 

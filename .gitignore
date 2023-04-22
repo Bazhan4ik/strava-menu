@@ -38,3 +38,5 @@ web/www
 
 server/dist
 server/.env
+
+tests/builds

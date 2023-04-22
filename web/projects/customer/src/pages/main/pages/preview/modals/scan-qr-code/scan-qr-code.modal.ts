@@ -11,17 +11,16 @@ import jsqr from 'jsqr';
     imports: [CommonModule, MatIconModule]
 })
 export class ScanQrCodeModal implements OnInit, AfterViewInit {
-
-    cameraAllowed = false;
-
-    stream: MediaStream;
-
-    message: string;
-
-
     constructor(
         private changeDetector: ChangeDetectorRef,
     ) {}
+
+
+    cameraAllowed = false;
+    stream: MediaStream;
+    message: string;
+
+
 
     @ViewChild('videoElement') videoElement: ElementRef<HTMLVideoElement>;
 

@@ -1,0 +1,49 @@
+<div class="app-payment-card">
+    <div class="card-number input-label">
+        <div class="label">
+            <span class="global-text">
+                Card number
+            </span>
+        </div>
+        <div class="card-input">
+            <input [class.invalid]="errors.number || error" inputmode="numeric" placeholder="1234 1234 1234 1234" (input)="onCardInput($event)" name="cardNumber" type="text"
+                [(ngModel)]="cardInfo.number" id="card_number">
+            <div *ngIf="brand" class="image">
+                <img src="./../../../../../../../../../global-resources/icons/brands/{{ brand }}.png" alt="">
+            </div>
+            <div class="image double" *ngIf="!brand">
+                <img class="first" src="./../../../../../../../../../global-resources/icons/brands/diners.png" alt="">
+                <img class="second" src="./../../../../../../../../../global-resources/icons/brands/mastercard.png" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="double">
+        <div class="card-expiry input-label">
+            <div class="label">
+                <span class="global-text">
+                    Expiry date
+                </span>
+            </div>
+            <input [class.invalid]="errors.exp" inputmode="numeric" (input)="onExpireInput($event)" placeholder="MM / YY" name="cardExpiry" type="text"
+                [(ngModel)]="cardInfo.exp" id="card_expiry">
+        </div>
+        <div class="card-cvc input-label">
+            <div class="label">
+                <span class="global-text">
+                    CVC
+                </span>
+            </div>
+            <input [class.invalid]="errors.cvc" (input)="onCvcInput($event)" inputmode="numeric" placeholder="123" name="cardCvc" type="text" [(ngModel)]="cardInfo.cvc"
+                id="card_cvc">
+        </div>
+    </div>
+    <div class="postal-code input-label">
+        <div class="label">
+            <span class="global-text">
+                Postal code
+            </span>
+        </div>
+        <input [class.invalid]="errors.postalCode" (input)="onPostalCodeInput($event)" inputmode="numeric" placeholder="M5T 1T4" name="postalCode" type="text"
+            [(ngModel)]="cardInfo.postalCode" id="input_postalCode">
+    </div>
+</div>

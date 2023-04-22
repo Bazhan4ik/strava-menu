@@ -40,6 +40,12 @@ declare namespace ItemsEvent {
 }
 type ItemsSocketEvent = Observable<SocketEvent<ItemsEvent.status>>;
 
+declare namespace DeliveryEvent {
+    interface validation { 
+        sessionId: string;
+    }
+}
+type DeliverySocketEvent = Observable<SocketEvent<DeliveryEvent.validation>>;
 
 
 export {
@@ -48,5 +54,6 @@ export {
     WaiterRequestEvent,
     PaymentSocketEvent,
     ItemsSocketEvent,
+    DeliverySocketEvent,
     ItemsEvent,
 }

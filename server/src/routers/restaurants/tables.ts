@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { Locals } from "../../models/general.js";
 import { Table } from "../../models/restaurant.js";
-import { id } from "../../utils/id.js";
-import { logged } from "../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../utils/middleware/restaurant.js";
-import { updateRestaurant } from "../../utils/restaurant.js";
+import { id } from "../../utils/other/id.js";
+import { logged } from "../../middleware/auth.js";
+import { restaurantWorker } from "../../middleware/restaurant.js";
+import { updateRestaurant } from "../../utils/data/restaurant.js";
 import { LiveTablesRouter } from "./tablesLive.js";
 
 

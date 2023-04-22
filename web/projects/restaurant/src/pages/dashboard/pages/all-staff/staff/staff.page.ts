@@ -21,21 +21,21 @@ interface Worker {
     styleUrls: ['./staff.page.scss']
 })
 export class StaffPage implements OnInit {
-    staff: Worker[];
-
     constructor(
         private service: RestaurantService,
-    ) {}
+    ) { };
 
+
+    staff: Worker[];
 
     async ngOnInit() {
         const result: Worker[] = await this.service.get("staff");
 
 
-        if(result) {
+        if (result) {
             this.staff = [];
 
-            for(let worker of result) {
+            for (let worker of result) {
                 this.staff.push({
                     ...worker,
                     avatar: getImage(worker.avatar) || "./../../../../../../../../global-resources/images/plain-avatar.jpg",

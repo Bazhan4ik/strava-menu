@@ -19,6 +19,16 @@
                 align-items: center;
                 justify-content: space-between;
 
+                .title {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    
+                    span.global-text {
+                        margin: 1px 0;
+                    }
+                }
+
                 .values {
                     display: flex;
                     align-items: center;

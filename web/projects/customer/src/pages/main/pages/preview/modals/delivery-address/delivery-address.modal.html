@@ -1,0 +1,101 @@
+<div class="delivery-address-app padding-20 modal-app">
+    <div class="box">
+        <div class="header">
+            <div class="back-button">
+                <button (click)="close()" class="icon-button">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="title">
+                <span *ngIf="!error" class="global-subtitle">
+                    Adress for delivery
+                </span>
+                <span *ngIf="error" class="global-subtitle red">
+                    Invalid delivery address, change now
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="save()" id="save-delivery-address" class="button orange-button">
+                    Save
+                </button>
+            </div>
+        </div>
+        <div class="body">
+            <div class="search">
+                <input #placesInput class="global-input" id="full-address-input" type="text">
+            </div>
+            <div class="full-address" *ngIf="place || showFullAddress">
+
+                <div class="phone">
+                    <div class="label">
+                        <span class="global-text">
+                            Phone number
+                        </span>
+                    </div>
+                    <input type="tel" id="input_phone" inputmode="numeric" [(ngModel)]="phone" (input)="onPhoneInput($event)" [class.red]="errors.phone" class="global-input">
+                </div>
+                <div class="time">
+                    <div class="label">
+                        <span class="global-text">
+                            Time to be delivered
+                        </span>
+                    </div>
+                    <select id="input_time" class="global-input" [(ngModel)]="time">
+                        <option *ngFor="let time of orderingTimes" [value]="time.value">{{ time.title }}</option>
+                    </select>
+                </div>
+                <div class="state">
+                    <div class="label">
+                        <span class="global-text">
+                            Province
+                        </span>
+                    </div>
+                    <input type="text" id="input_state" [(ngModel)]="state" [class.red]="errors.state" class="global-input">
+                </div>
+                <div class="city">
+                    <div class="label">
+                        <span class="global-text">
+                            City
+                        </span>
+                    </div>
+                    <input type="text" id="input_city" [(ngModel)]="city" [class.red]="errors.city" class="global-input">
+                </div>
+
+                <div class="address">
+                    <div class="label">
+                        <span class="global-text">
+                            Address line 1
+                        </span>
+                    </div>
+                    <input type="text" id="input_line1" [(ngModel)]="line1" [class.red]="errors.line1" class="global-input">
+                    <div class="double">
+                        <div class="line2">
+                            <div class="label">
+                                <span class="global-text">
+                                    Address line 2
+                                </span>
+                            </div>
+                            <input type="text" id="input_line2" [(ngModel)]="line2" class="global-input">
+                        </div>
+                        <div class="postal-code">
+                            <div class="label">
+                                <span class="global-text">
+                                    Postal code
+                                </span>
+                            </div>
+                            <input type="text" id="input_postal-code" [class.red]="errors.postalCode" [(ngModel)]="postalCode" class="global-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="loading" class="global-loading full-page">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>

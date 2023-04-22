@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ingredients } from "../../resources/data/ingredients.js";
 import { tags } from "../../resources/data/tags.js";
-import { logged } from "../utils/middleware/auth.js";
+import { logged } from "../middleware/auth.js";
 
 const router = Router({ mergeParams: true });
 

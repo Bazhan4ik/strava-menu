@@ -14,6 +14,7 @@ interface Item {
         name: string;
         description: string;
         price: number;
+        averageTime?: number;
     };
 
     library?: {

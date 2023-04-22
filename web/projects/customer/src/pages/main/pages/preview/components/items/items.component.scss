@@ -1,0 +1,120 @@
+.app {
+    .loading {
+        height: 42px;
+        width: 100;
+        background-color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+
+        .title {
+            .global-text {
+                color: var(--white);
+            }
+        }
+
+        .spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    .items {
+        padding: 24px 12px;
+
+        .item {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-radius: var(--default-border-radius);
+            
+            .left {
+                display: flex;
+                text-decoration: none;
+
+                .image {
+                    img {
+                        width: 52px;
+                        height: 52px;
+                        border-radius: var(--default-small-radius);
+                    }
+                }
+
+                .name-price {
+                    padding-left: 4px;
+                    display: flex;
+                    flex-direction: column;
+
+
+                    span {
+                        margin: 0;
+                    }
+
+                    .name {
+                        padding-right: 12px;
+                        
+                        span.global-text {
+                            display: -webkit-box;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            -webkit-line-clamp: 1;
+                            -webkit-box-orient: vertical;
+                        }
+                    }
+
+                    .price {
+                        display: flex;
+                        align-items: center;
+
+                        .item-comment {
+                            margin: 0;
+
+                            .dot {
+                                margin: 0 6px;
+                                font-size: 12px;
+                            }
+
+                            .global-text {
+                                margin: 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .right {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                button {
+                    // display: none;
+                    background-color: transparent;
+                }
+            }
+
+            &:hover {
+                background-color: var(--default-on-background);
+
+                .right {
+                    button {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+
+    .no-items {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 124px;
+
+        &.red {
+            background-color: rgba(255, 0, 0, 0.158)
+        }
+    }
+}

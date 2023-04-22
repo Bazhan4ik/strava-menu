@@ -9,7 +9,13 @@ import { Router } from '@angular/router';
     styleUrls: ['./add-location.page.scss']
 })
 export class AddLocationPage implements AfterViewInit {
+    constructor(
+        private service: RestaurantService,
+        private changeDetector: ChangeDetectorRef,
+        private router: Router,
+    ) { };
 
+    
     options: any = {
         types: [],
         componentRestrictions: { country: 'CA' },
@@ -48,21 +54,18 @@ export class AddLocationPage implements AfterViewInit {
     addressLine1: string;
     addressLine2: string;
     postalCode: string;
-
+    phone: string = "+1 (";
     placeLocation: google.maps.LatLng;
 
-
-
-    constructor(
-        private service: RestaurantService,
-        private changeDetector: ChangeDetectorRef,
-        private router: Router,
-    ) {
-    }
 
     @ViewChild('placesInput') placesInput: ElementRef;
     @ViewChild('modalContainer', { read: ViewContainerRef }) modalContainer: ViewContainerRef;
     @ViewChild(GoogleMap) googleMap: GoogleMap;
+
+
+    ngAfterViewInit() {
+        this.getPlaceAutocomplete();
+    }
 
 
     private getPlaceAutocomplete() {
@@ -92,11 +95,8 @@ export class AddLocationPage implements AfterViewInit {
 
         });
     }
-
-
     async save() {
-
-        if(!this.city || !this.addressLine1 || !this.state || !this.postalCode) {
+        if(!this.city || !this.addressLine1 || !this.state || !this.postalCode || !this.phone || this.phone.length != 17 || this.phone.slice(0, 4) != "+1 (") {
             return;
         }
 
@@ -104,6 +104,7 @@ export class AddLocationPage implements AfterViewInit {
 
         const component = this.modalContainer.createComponent(ConfirmationModal);
 
+        component.instance.phone = this.phone;
         component.instance.addressLine1 = this.addressLine1;
         component.instance.addressLine2 = this.addressLine2;
         component.instance.city = this.city;
@@ -119,20 +120,55 @@ export class AddLocationPage implements AfterViewInit {
             component.destroy();
         });
     }
+    onPhoneInput(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const value = input.value;
 
+        const key = (event as any).data;
 
+        if(key == " ") {
+            input.value = value.slice(0, value.length - 1);
+            return;
+        }
 
+        if(!key && value.length > 4) { // backspace
+            if(input.value.length == 8) {
+                input.value = value.slice(0, value.length - 2);
+            } else if(input.value.length == 13) {
+                input.value = value.slice(0, value.length - 1);
+            }
+            return;
+        }
 
-    ngAfterViewInit() {
-        this.getPlaceAutocomplete();
+        if(isNaN(+key)) { // not a number
+            input.value = value.slice(0, value.length - 1);
+            return;
+        }
+
+        if(value.length < 4) {
+            input.value = "+1 (";
+            return;
+        }
+
+        if(value.length == 7) {
+            input.value = value + ") ";
+        }
+
+        if(value.length == 8) {
+            input.value = value.slice(0, value.length - 1) + ") " + key;
+        }
+
+        if(value.length == 12) {
+            input.value = value + " ";
+        }
+        
+        if(value.length > 17) {
+            input.value = value.slice(0, 17);
+        }
+        
+        
+
     }
-
-
-
-
-
-
-
     getAddrComponent(componentTemplate: { [key: string]: string }) {
         let result;
 

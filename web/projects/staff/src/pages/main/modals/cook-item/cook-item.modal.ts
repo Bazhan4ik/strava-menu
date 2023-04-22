@@ -16,20 +16,20 @@ import { Subscription } from 'rxjs';
     imports: [CommonModule, MatIconModule],
 })
 export class CookItemModal implements OnInit, OnDestroy {
+    constructor(
+        private service: StaffService,
+        private socket: SocketService,
+    ) { };
+    
 
     customerAvatar = "./../../../../../../../global-resources/images/plain-avatar.jpg";
     cookAvatar = "./../../../../../../../global-resources/images/plain-avatar.jpg";
     userId: string;
-
     subscription: Subscription;
-
     disableButtons = false;
     modifiers: { name: string; selected: string[] }[];
-
-    constructor(
-        private service: StaffService,
-        private socket: SocketService,
-    ) {}
+    beReadyTime: Date;
+    cookingTime: Date;
 
 
     @Input() sessionItem: ConvertedSessionItem;
@@ -37,31 +37,60 @@ export class CookItemModal implements OnInit, OnDestroy {
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
 
 
+
+    async ngOnInit() {
+        this.beReadyTime = new Date(this.sessionItem.time.beReady!);
+        this.cookingTime = new Date(this.sessionItem.time.averageCooking!);
+        this.subscription = this.socket.$cookItems.subscribe(res => {
+            if(res.types.includes("items/done")) {
+                const { sessionItemId } = res.data as CookItemsData.done;
+                if(this.sessionItem._id == sessionItemId) {
+                    this.close();
+                }
+            }
+        });
+
+        this.userId = this.service.userId;
+        
+        if(this.sessionItem.people?.customer?.avatar) {
+            this.customerAvatar = getImage(this.sessionItem.people.customer.avatar);
+        }
+        if(this.sessionItem.people?.cook?.avatar) {
+            this.cookAvatar = getImage(this.sessionItem.people.cook.avatar);
+        }
+
+        const result: any = await this.service.get(`cook/modifiers?itemId=${this.sessionItem.itemId}&sessionItemId=${this.sessionItem._id}`);
+
+        this.modifiers = result.modifiers;
+    }
+    ngOnDestroy() {
+        this.subscription?.unsubscribe();
+    }
+
+
     close() {
         this.leave.emit();
     }
-
     async take() {
         this.disableButtons = true;
         const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "cook/take");
 
         if(update.updated) {
             this.sessionItem.status = "cooking";
-            this.sessionItem.people.cook = update.cook;
+            this.sessionItem.people!.cook = update.cook;
             this.sessionItem.time.taken = update.time;
             this.leave.emit("taken");
         }
 
         this.disableButtons = false;
     }
-
     async quit() {
         this.disableButtons = true;
         const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "cook/quit");
 
         if(update.updated) {
             this.sessionItem.status = "ordered";
-            this.sessionItem.people.cook = null!;
+            this.sessionItem.people!.cook = null!;
             this.sessionItem.time.taken = null!;
 
             clearInterval(this.sessionItem.takenInterval);
@@ -70,7 +99,6 @@ export class CookItemModal implements OnInit, OnDestroy {
         }
         this.disableButtons = false;
     }
-
     async done() {
         this.disableButtons = true;
         const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "cook/done");
@@ -81,7 +109,16 @@ export class CookItemModal implements OnInit, OnDestroy {
         }
         this.disableButtons = false;
     }
+    async dispose() {
+        this.disableButtons = true;
+        const update: any = await this.service.put({ sessionId: this.sessionItem.sessionId, sessionItemId: this.sessionItem._id }, "cook/dispose");
 
+        if(update.updated) {
+            this.leave.emit("done");
+            return;
+        }
+        this.disableButtons = false;
+    }
     async remove() {
         this.disableButtons = true;
         const { RemoveItemModal } = await import("../remove-item/remove-item.modal");
@@ -107,34 +144,5 @@ export class CookItemModal implements OnInit, OnDestroy {
 
             this.disableButtons = false;
         });
-    }
-
-
-
-    async ngOnInit() {
-        this.subscription = this.socket.$cookItems.subscribe(res => {
-            if(res.types.includes("items/done")) {
-                const { sessionItemId } = res.data as CookItemsData.done;
-                if(this.sessionItem._id == sessionItemId) {
-                    this.close();
-                }
-            }
-        });
-
-        this.userId = this.service.userId;
-        
-        if(this.sessionItem.people.customer.avatar) {
-            this.customerAvatar = getImage(this.sessionItem.people.customer.avatar);
-        }
-        if(this.sessionItem.people.cook?.avatar) {
-            this.cookAvatar = getImage(this.sessionItem.people.cook.avatar);
-        }
-
-        const result: any = await this.service.get(`cook/modifiers?itemId=${this.sessionItem.itemId}&sessionItemId=${this.sessionItem._id}`);
-
-        this.modifiers = result.modifiers;
-    }
-    ngOnDestroy() {
-        this.subscription?.unsubscribe();
     }
 }

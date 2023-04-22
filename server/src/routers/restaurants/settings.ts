@@ -3,10 +3,10 @@ import Stripe from "stripe";
 import { Locals } from "../../models/general.js";
 import { Location } from "../../models/restaurant.js";
 import { stripe } from "../../setup/stripe.js";
-import { logged } from "../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../utils/middleware/restaurant.js";
-import { updateRestaurant } from "../../utils/restaurant.js";
-import { updateUser } from "../../utils/users.js";
+import { logged } from "../../middleware/auth.js";
+import { restaurantWorker } from "../../middleware/restaurant.js";
+import { updateRestaurant } from "../../utils/data/restaurant.js";
+import { updateUser } from "../../utils/data/users.js";
 
 
 

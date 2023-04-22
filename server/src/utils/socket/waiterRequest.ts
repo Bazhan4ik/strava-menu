@@ -78,6 +78,43 @@ function sendToCustomerResolveWaiterRequest(socketId: string, data: { requestId:
 }
 
 
+function sendToWaiterDeliveryStatus(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; deliveryStatus: string; canBePickedUp: boolean; }) {  // customer/session.ts
+    io
+        .to(restaurantId.toString()) // to restaurant
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("waiter", { // send to restaurant's waiters
+            types: ["delivery/status", "delivery"],
+            data: data
+        });
+}
+
+function sendToKitchenDisposeOrder(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; }) {
+    io
+        .to(restaurantId.toString()) // to restaurant
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("waiter", { // send to restaurant's waiters
+            types: ["items/dispose", "items"],
+            data: data
+        });
+    io
+        .to(restaurantId.toString()) // to restaurant
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("cook", { // send to restaurant's waiters
+            types: ["items/dispose", "items"],
+            data: data
+        });
+}
+function sendToCooksRemoveOrder(restaurantId: ObjectId, locationId: ObjectId, data: { sessionId: ObjectId; }) {
+    io
+        .to(restaurantId.toString()) // to restaurant
+        .to(`${restaurantId.toString()}/${locationId.toString()}`)
+        .emit("cook", { // send to restaurant's waiters
+            types: ["items/remove", "items"],
+            data: data
+        });
+}
+
+
 export {
     sendToWaiterWaiterRequest,
     sendToWaiterCancelWaiterRequest,
@@ -87,4 +124,7 @@ export {
     sendToWaiterAcceptWaiterRequest,
     sendToWaiterQuitWaiterRequest,
     sendToWaiterResolveWaiterRequest,
+    sendToWaiterDeliveryStatus,
+    sendToKitchenDisposeOrder,
+    sendToCooksRemoveOrder,
 }

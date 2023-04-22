@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "outDir": "./builds/scripts"
+    },
+    "include": [ "./scripts/src" ],
+    "extends": "./tsconfig.json"
+}

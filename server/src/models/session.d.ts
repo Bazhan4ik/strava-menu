@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 
 
 
-type SessionType = "dinein" | "takeout";
+type SessionType = "dinein" | "takeout" | "delivery";
 
 /**
  * 
@@ -24,7 +24,7 @@ type SessionStatus = "ordering" | "progress" | "done" | "removed";
  * @removed - when someone deleted the item. should have item.removed property
  * 
  */
-type SessionItemStatus = "ordered" | "cooking" | "cooked" | "served" | "removed";
+type SessionItemStatus = "ordered" | "cooking" | "cooked" | "served" | "removed" | "cooked:disposing" | "cooking:disposing" | "disposed" | "cooked";
 
 /**
  * 
@@ -74,10 +74,16 @@ interface SessionPayment {
     paymentIntentId?: string; // stripe payment intent id to not generate it everytime user is at checkout
     setupIntentId?: string; // stripe setup intent id to not generate it everytime
     paymentMethodId?: string;
+    refundId?: string;
     payed: boolean;
     selectedTipPercentage: number;
+    selectedDeliveryTipPercentage: number;
+    encryptionKey?: string;
     money?: {
-        hst: number; // tax amount
+        taxTitle: string; // title of the tax
+        tax: number; // tax amount
+        delivery: number; // tax amount
+        deliveryTip: number; // tax amount
         subtotal: number; // subtotal, items price
         total: number; // total is price of all the items and tax
         service?: number; // service fee, set on restaurant's dashboard
@@ -107,6 +113,7 @@ interface SessionTiming {
 interface SessionCustomer {
     customerId?: ObjectId | null; // customer's ObjectId
     onBehalf?: ObjectId; // waiter's ObjectId
+    generatedId?: ObjectId; // if user if not logged in, an id will be generated to track the user
     socketId: string; // socket id to send data
 
     by: "customer" | "staff"; // ordered by customer or by the staff
@@ -116,11 +123,21 @@ interface SessionInfo {
     type: SessionType; // is the order take out or dine in
     id: string; // can be table where the customer sits or random generated 4 digit takeout order number
     comment?: string; // comment for the order
-    location: ObjectId;
+    location: ObjectId; // location of id where the customer orders
+    delivery?: {
+        address?: { line1: string; line2: string; city: string; state: string; postalCode: string; }; // address for delivery
+        phone?: string;  // phone number for delivery
+        time: number;      // time of the delivery, doordash delivery should be created with this time - 5 minutes, so the food has to be ready by, for example, 10:30, and the delivery will be called at 10:25, so the driver will come at 10:30
+        status: "DASHER_CONFIRMED" | "DASHER_CONFIRMED_PICKUP_ARRIVAL" | "DASHER_PICKED_UP" | "DASHER_CONFIRMED_DROPOFF_ARRIVAL" | "DASHER_DROPPED_OFF" | "DELIVERY_CANCELLED";
+        externalId?: string;
+        failed?: boolean;
+        failedReason?: string;
+        cancelledReason?: string;
+    }
 }
 
 interface TimelineComponent {
-    action: "created" | "comment" | "waiterRequest/create" | "payed" | "waiterRequest/cancel" | "tip/add" | "tip/remove" | "type" | "id" | "item/add" | "item/remove" | "item/comment" | "item/modifiers" | "page"; // what action happened
+    action: "created" | "comment" | "deliveryTip/remove" | "tipDelivery/add" | "waiterRequest/create" | "payed" | "waiterRequest/cancel" | "tip/add" | "tip/remove" | "type" | "id" | "item/add" | "item/remove" | "item/comment" | "item/modifiers" | "page"; // what action happened
     sessionItemId?: ObjectId; // id of a item ordered, add if action "item/add"
     page?: string; // if a user visited a page
     waiterRequestId?: ObjectId; // waiter request id

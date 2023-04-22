@@ -1,0 +1,41 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <div class="close-button">
+                <button (click)="close()" class="icon-button">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="title">
+                <div class="icon">
+                    <mat-icon>
+                        delivery_dining
+                    </mat-icon>
+                </div>
+                <span class="global-subtitle">
+                    Delivery
+                </span>
+                <span class="global-text">
+                    #{{ folder.id }}
+                </span>
+            </div>
+            <div class="buttons">
+                <button *ngIf="folder.canBePickedUp" (click)="served()" class="button orange-button">
+                    Picked up
+                </button>
+            </div>
+        </div>
+        <div class="body">
+            <div class="status">
+                <span class="global-text">
+                    {{ folder.deliveryStatus }}
+                </span>
+            </div>
+            <div class="items">
+                <app-item-waiter *ngFor="let item of folder.items" (click)="openModal(item)" [showOrderInfo]="false" [sessionItem]="item"></app-item-waiter>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-container #modalContainer></ng-container>

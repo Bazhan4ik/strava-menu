@@ -20,6 +20,7 @@ export class ConfirmationModal {
         private service: RestaurantService,
     ){}
 
+    @Input() phone: string;
     @Input() city: string;
     @Input() addressLine1: string;
     @Input() addressLine2: string;
@@ -45,6 +46,7 @@ export class ConfirmationModal {
             state: this.state.trim(),
             postalCode: this.postalCode.replaceAll(" ", ""),
             name: this.name.trim(),
+            phone: this.phone,
             latlng: {
                 lat: this.latlng.lat(),
                 lng: this.latlng.lng(),

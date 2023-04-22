@@ -1,0 +1,162 @@
+.app-payment {
+    .payment-cash {
+        margin-top: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .button {
+            width: 324px;
+            height: 42px;
+            border-radius: var(--default-small-radius);
+        }
+    }
+
+    .payment-card {
+        margin-top: 24px;
+        border-radius: var(--default-border-radius);
+        position: relative;
+
+        .payment-header {}
+
+        .payment-box {
+            border: 1px solid var(--light-border-color);
+            padding: 12px;
+            margin-top: 8px;
+            position: relative;
+            min-height: 124px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+
+
+            .email-input {
+                .label {
+                    .text {
+                        color: #30313d;
+                        font-size: 15px;
+                    }
+                }
+
+                #input_email {
+                    margin-top: 4px;
+                    height: 42px;
+                    padding: 12px;
+                    border: 1px solid #e6e6e6;
+                    border-radius: 4px;
+                    width: 100%;
+                    outline: none;
+
+                    &:focus {
+                        // border: 1px solid var(--orange);
+                        outline: 2px solid var(--orange);
+                    }
+                }
+            }
+
+
+            .payment-methods {
+                .list {
+                    width: 100%;
+
+                    .method {
+                        width: 100%;
+                        padding: 12px 24px;
+                        background-color: var(--default-background);
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        &:first-of-type {
+                            border-top-right-radius: var(--default-border-radius);
+                            border-top-left-radius: var(--default-border-radius);
+                        }
+
+                        &.selected {
+                            background-color: var(--orange-light);
+                        }
+
+                        .last4 {}
+
+                        .brand {
+                            img {
+                                width: 32px;
+                                height: 32px;
+                            }
+                        }
+                    }
+                }
+
+                .confirm-button {
+                    .button {
+                        width: 100%;
+                        border-top-left-radius: 0;
+                        border-top-right-radius: 0;
+                        border-bottom-left-radius: var(--default-border-radius);
+                        border-bottom-right-radius: var(--default-border-radius);
+                        height: 42px;
+                    }
+                }
+            }
+
+            .manual {
+
+                #email {
+                    margin-bottom: 24px;
+                }
+
+                .buttons {
+                    margin-top: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .button {
+                        width: 324px;
+                        height: 42px;
+                        border-radius: var(--default-small-radius);
+                    }
+                }
+            }
+        }
+
+
+        .global-loading {
+            border-radius: var(--default-border-radius);
+        }
+    }
+
+    .payment-card-elavon {
+        margin-top: 24px;
+        border-radius: var(--default-border-radius);
+        position: relative;
+
+        .payment-box {
+            border: 1px solid var(--light-border-color);
+            padding: 12px;
+            margin-top: 8px;
+            position: relative;
+            min-height: 124px;
+            display: flex;
+            flex-direction: column;
+
+            .global-loading {
+                border-radius: var(--default-border-radius);
+            }
+
+            .buttons {
+                margin-top: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                .button {
+                    width: 324px;
+                    height: 42px;
+                    border-radius: var(--default-small-radius);
+                }
+            }
+        }
+    }
+}

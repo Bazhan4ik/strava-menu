@@ -11,8 +11,13 @@ function sendToCustomerItemStatus(restaurantId: ObjectId, socketId: string, data
     io.to(restaurantId.toString()).to(socketId).emit("customer", { types: ["items", "items/status"], data });
 }
 
+function sendToCustomerDeliveryValidationFalied(restaurantId: ObjectId, socketId: string, data: { sessionId: ObjectId; }) {
+    io.to(restaurantId.toString()).to(socketId).emit("customer", { types: ["delivery", "delivery/validation", "delivery/error"], data });
+}
+
 
 export {
     sendToCustomerPaymentSucceeded,
     sendToCustomerItemStatus,
+    sendToCustomerDeliveryValidationFalied,
 }

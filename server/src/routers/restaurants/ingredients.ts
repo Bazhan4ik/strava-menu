@@ -2,9 +2,9 @@ import { Router } from "express";
 import { ingredients } from "../../../resources/data/ingredients.js";
 import { Ingredient } from "../../models/item.js";
 import { Locals } from "../../models/general.js";
-import { logged } from "../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../utils/middleware/restaurant.js";
-import { bulkRestaurant, updateRestaurant } from "../../utils/restaurant.js";
+import { logged } from "../../middleware/auth.js";
+import { restaurantWorker } from "../../middleware/restaurant.js";
+import { bulkRestaurant, updateRestaurant } from "../../utils/data/restaurant.js";
 
 
 

@@ -126,32 +126,32 @@
             </div>
 
         </div>
-        <div class="dishes" *ngIf="order">
+        <div class="items" *ngIf="order">
             <div class="title">
                 <span class="global-subtitle">
                     Dishes
                 </span>
             </div>
             <div class="list">
-                <div *ngFor="let dish of order.dishes" class="dish">
+                <div *ngFor="let item of order.items" class="item">
                     <div class="image">
-                        <img [src]="dish.image" alt="">
+                        <img [src]="item.image" alt="">
                     </div>
                     <div class="name-price">
                         <div class="name">
                             <span class="global-text normal black bold">
-                                {{ dish.name }}
+                                {{ item.name }}
                             </span>
                         </div>
                         <div class="price">
                             <span class="global-text">
-                                ${{ dish.price / 100 }}
+                                ${{ item.price / 100 }}
                             </span>
                         </div>
                     </div>
                     <div class="modifiers">
                         <span class="global-text">
-                            +{{ dish.modifiers }} modifiers
+                            +{{ item.modifiers }} modifiers
                         </span>
                     </div>
                 </div>

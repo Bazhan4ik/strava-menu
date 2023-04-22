@@ -47,12 +47,47 @@
                 }
             }
 
-            .session-info {
+            .order {
                 border-top: 1px solid var(--default-border-color);
                 height: 52px;
                 width: 100%;
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
+        
+                .type {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+        
+                    .icon {
+                        border-radius: 100%;
+                        padding: 3px;
+                        
+                        
+                        &.red {
+                            background-color: var(--red-lighter);
+        
+                            mat-icon {
+                                color: var(--red-dark);   
+                            }
+                        }
+                        &.orange {
+                            background-color: var(--orange-lighter);
+        
+                            mat-icon {
+                                color: var(--orange-dark);
+                            }
+                        }
+                        &.purple {
+                            background-color: var(--purple-lighter);
+        
+                            mat-icon {
+                                color: var(--purple-dark);
+                            }
+                        }
+                    }
+                }
             }
 
             .info {

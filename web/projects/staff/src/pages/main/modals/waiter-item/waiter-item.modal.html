@@ -9,8 +9,11 @@
                 </button>
             </div>
             <div class="buttons">
-                <button (click)="served()" class="orange-button button">
+                <button *ngIf="sessionItem.status == 'cooked'" (click)="served()" class="orange-button button">
                     Served
+                </button>
+                <button *ngIf="sessionItem.status == 'cooked:disposing'" (click)="disposed()" class="red-button button">
+                    Disposed
                 </button>
             </div>
         </div>
@@ -53,33 +56,35 @@
                     <div></div>
                 </div>
             </div>
-            <div class="session-info">
-                <div *ngIf="session" class="type">
-                    <span class="global-text big black bold">
-                        <span *ngIf="session.type == 'takeout'">
-                            Takeout
-                        </span>
-                        <span *ngIf="session.type == 'dinein'">
-                            Table 
-                        </span>
+            <div class="order">
+                <div class="type">
+                    <div class="icon" [class.orange]="sessionItem.order.type == 'dinein'" [class.red]="sessionItem.order.type == 'delivery'" [class.purple]="sessionItem.order.type == 'takeout'">
+                        <mat-icon *ngIf="sessionItem.order.type == 'delivery'">delivery_dining</mat-icon>
+                        <mat-icon *ngIf="sessionItem.order.type == 'takeout'">takeout_dining</mat-icon>
+                        <mat-icon *ngIf="sessionItem.order.type == 'dinein'">restaurant</mat-icon>
+                    </div>
+                    <span *ngIf="sessionItem.order.type == 'delivery'" class="global-text normal bold">
+                        Delivery
                     </span>
-                    <span class="global-text bold">
-                        #{{ session.id }}
+                    <span *ngIf="sessionItem.order.type == 'takeout'" class="global-text normal bold">
+                        Take out
+                    </span>
+                    <span *ngIf="sessionItem.order.type == 'dinein'" class="global-text normal bold">
+                        Dine in
                     </span>
                 </div>
-                <div *ngIf="!session" class="global-loading">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+                <div class="id">
+                    <span class="global-text">
+                        #{{ sessionItem.order.id }}
+                    </span>
                 </div>
             </div>
             <div class="info">
                 <div *ngIf="sessionItem.time.ordered as ordered" class="ordered">
-                    <div *ngIf="sessionItem.people.customer" class="customer user">
+                    <div *ngIf="sessionItem.people?.customer" class="customer user">
                         <img [src]="customerAvatar" class="global-avatar small outline" alt="">
                         <span class="global-text big black bold">
-                            {{ sessionItem.people.customer.name }}
+                            {{ sessionItem.people?.customer?.name }}
                         </span>
                     </div>
                     <div class="time">
@@ -96,10 +101,10 @@
                     </div>
                 </div>
                 <div *ngIf="sessionItem.time.taken as taken" class="taken">
-                    <div *ngIf="sessionItem.people.cook" class="customer user">
+                    <div *ngIf="sessionItem.people?.cook" class="customer user">
                         <img [src]="cookAvatar" class="global-avatar small outline" alt="">
                         <span class="global-text big black bold">
-                            {{ sessionItem.people.cook.name }}
+                            {{ sessionItem.people?.cook?.name }}
                         </span>
                     </div>
                     <div class="time">

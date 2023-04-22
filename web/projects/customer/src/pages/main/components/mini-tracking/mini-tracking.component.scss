@@ -1,8 +1,9 @@
 .app {
     width: 100%;
+    padding-bottom: 24px;
 
     .header {
-        padding: 12px 24px;
+        padding: 12px;
         width: 100%;
         display: flex;
         align-items: center;
@@ -10,16 +11,23 @@
     }
 
     .items {
-        padding-left: 24px;
+        padding-left: 12px;
         display: flex;
         gap: 12px;
 
         .item {
-            width: 152px;
+            width: 196px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            transition: 0.25s all;
+            border-radius: var(--customer-normal-radius);
+            outline: none;
+            background: var(--default-background);
 
             .image {
                 img {
-                    border-radius: var(--default-border-radius);
+                    border-radius: var(--customer-normal-radius);
                     width: 100%;
                     height: auto;
                 }

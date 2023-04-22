@@ -1,0 +1,255 @@
+<div class="app-bill-info">
+    <div *ngIf="items && items.length > 0" class="items">
+        <div *ngFor="let item of items" class="item">
+            <div class="name-container">
+                <span class="global-text big name black bold">
+                    {{ item.name }}
+                </span>
+                <span class="x">
+                    x
+                </span>
+                <span class="global-text amount">
+                    {{ item.amount }}
+                </span>
+            </div>
+            <div class="price">
+                <span class="big">
+                    ${{ item.price / 100 }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="money" *ngIf="money">
+        <div class="subtotal">
+            <div class="title">
+                <span class="global-text big">
+                    Subtotal
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big">
+                    ${{ money.subtotal }}
+                </span>
+            </div>
+        </div>
+        <div class="hst">
+            <div class="title">
+                <span class="global-text big">
+                    {{ money.taxTitle }}
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big">
+                    ${{ money.tax }}
+                </span>
+            </div>
+        </div>
+        <div class="service-fee" *ngIf="money.service">
+            <div class="title">
+                <span class="global-text big">
+                    Service fee
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big">
+                    ${{ money.service }}
+                </span>
+            </div>
+        </div>
+        <div class="tip" *ngIf="money.tip">
+            <div class="title">
+                <span class="global-text big">
+                    Tip
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big">
+                    ${{ money.tip }}
+                </span>
+            </div>
+        </div>
+        <div class="tip" *ngIf="money.deliveryTip">
+            <div class="title">
+                <span class="global-text big">
+                    Driver tip
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big">
+                    ${{ money.deliveryTip }}
+                </span>
+            </div>
+        </div>
+        <div class="delivery" *ngIf="money.delivery">
+            <div class="title">
+                <span class="global-text big">
+                    Delivery
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big">
+                    ${{ money.delivery }}
+                </span>
+            </div>
+        </div>
+        <div class="total">
+            <div class="title">
+                <span class="global-text bigger black bold">
+                    Total
+                </span>
+            </div>
+            <div class="border"></div>
+            <div class="value">
+                <span class="global-text big black bold">
+                    ${{ money.total }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="tips.tip" class="tips">
+        <div class="title">
+            <span class="global-subtitle">
+                Tip for the staff
+            </span>
+        </div>
+        <div class="tip-box">
+            <div class="options">
+                <button (click)="tip.remove()" class="tip tip-10">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            0
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.add(10)" [class.selected]="billTips.selected == '10'" class="tip tip-10">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            10%
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            {{ billTips.value10 }}
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.add(15)" [class.selected]="billTips.selected == '15'" class="tip tip-15">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            15%
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            {{ billTips.value15 }}
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.add(20)" [class.selected]="billTips.selected == '20'" class="tip tip-20">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            20%
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            {{ billTips.value20 }}
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.custom()" [class.selected]="billTips.selected == 'custom'" class="tip tip-10">
+                    <div class="title">
+                        <span class="global-text black bold">
+                            Custom
+                        </span>
+                    </div>
+                    <div class="value" *ngIf="money.tip && billTips.selected == 'custom'">
+                        <span class="global-text">
+                            {{ money.tip }}
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="tips.deliveryTip" class="tips">
+        <div class="title">
+            <span class="global-subtitle">
+                Tip for the driver
+            </span>
+        </div>
+        <div class="tip-box">
+            <div class="options">
+                <button (click)="tip.removeDelivery()" class="tip tip-10">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            0
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.addDelivery(10)" [class.selected]="billTips.deliverySelected == '10'"
+                    class="tip tip-10">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            10%
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            {{ billTips.value10 }}
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.addDelivery(15)" [class.selected]="billTips.deliverySelected == '15'"
+                    class="tip tip-15">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            15%
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            {{ billTips.value15 }}
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.addDelivery(20)" [class.selected]="billTips.deliverySelected == '20'"
+                    class="tip tip-20">
+                    <div class="title">
+                        <span class="global-text normal black bold">
+                            20%
+                        </span>
+                    </div>
+                    <div class="value">
+                        <span class="global-text">
+                            {{ billTips.value20 }}
+                        </span>
+                    </div>
+                </button>
+                <button (click)="tip.customDelivery()" [class.selected]="billTips.deliverySelected == 'custom'"
+                    class="tip tip-10">
+                    <div class="title">
+                        <span class="global-text black bold">
+                            Custom
+                        </span>
+                    </div>
+                    <div class="value" *ngIf="money.tip && billTips.deliverySelected == 'custom'">
+                        <span class="global-text">
+                            {{ money.tip }}
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-container #modalContainer></ng-container>

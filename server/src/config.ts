@@ -16,3 +16,6 @@ export const sessionsDBName: string = await new Promise(res => setTimeout(() => 
 export const itemsDBName: string = await new Promise(res => setTimeout(() => {
     res(process.env.ITEMS_DB_NAME as string);
 }, 10));
+export const deliveriesDBName: string = await new Promise(res => setTimeout(() => {
+    res(process.env.DELIVERIES_DB_NAME as string);
+}, 10));

@@ -1,4 +1,4 @@
-<a type="button" [routerLink]="url" [queryParams]="{ c: collection, back: backUrl }" class="app" [class.small]="small">
+<a type="button" [routerLink]="url" *ngIf="!modal" [queryParams]="{ c: collection, back: backUrl }" class="app-item" [id]="item.id" [class.small]="small">
     <div class="image">
         <img [ngSrc]="imageUrl" width="196" (load)="imageLoaded()" height="196">
     </div>
@@ -15,3 +15,22 @@
         </div>
     </div>
 </a>
+<button (click)="openDishModal()" *ngIf="modal" class="app-item" [id]="item.id" [class.small]="small">
+    <div class="image">
+        <img [ngSrc]="imageUrl" width="196" (load)="imageLoaded()" height="196">
+    </div>
+    <div class="name-price">
+        <div class="name">
+            <span class="global-text bold black" [class.big]="!small">
+                {{ item.info.name }}
+            </span>
+        </div>
+        <div class="price">
+            <span class="global-text bold small">
+                ${{ item.info.price / 100 }}
+            </span>
+        </div>
+    </div>
+</button>
+
+<ng-container #itemModalContainer></ng-container>

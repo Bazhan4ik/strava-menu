@@ -13,7 +13,8 @@
     <div class="items" *ngIf="items && items.length > 0">
         <a *ngFor="let item of items" routerLink="{{ item.id }}" class="item">
             <div class="image">
-                <img [src]="item.imageConverted" alt="">
+                <img [ngSrc]="item.imageUrl" width="10" height="10">
+                <!-- <img [src]="item.imageConverted" alt=""> -->
             </div>
             <div class="info">
                 <div class="name">

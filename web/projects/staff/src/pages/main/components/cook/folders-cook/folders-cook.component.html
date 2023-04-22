@@ -3,8 +3,19 @@
         <div class="list" *ngIf="folders && folders.length > 0">
             <button (click)="openFolder(folder)" *ngFor="let folder of folders" class="folder">
                 <div class="header">
-                    <span class="global-text black big bold">
-                        {{ folder.type }} {{ folder.id }}
+                    <div class="type">
+                        <span *ngIf="folder.type == 'delivery'" class="global-badge red">
+                            Delivery
+                        </span>
+                        <span *ngIf="folder.type == 'takeout'" class="global-badge orange">
+                            Take out
+                        </span>
+                        <span *ngIf="folder.type == 'dinein'" class="global-badge purple">
+                            Dine in
+                        </span>
+                    </div>
+                    <span class="global-text big bold">
+                        #{{ folder.id }}
                     </span>
                 </div>
                 <div class="items">

@@ -2,22 +2,21 @@
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    min-height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: var(--default-background);
     
-    .box-wrap {
-        min-height: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
     .box {
         max-width: 504px;
         width: 100vw;
         min-height: 100vh;
         border-left: 2px solid var(--default-border-color);
         border-right: 2px solid var(--default-border-color);
-        padding: 12px;
+        padding: 12px 0;
         padding-bottom: 100px;
+        background-color: var(--default-background);
 
         .header {
             display: flex;
@@ -31,164 +30,8 @@
             }
         }
     
-        .info {
-            padding: 24px 0;
-            border-bottom: 1px solid var(--default-border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-    
-            .top {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-    
-                .title {
-                    display: flex;
-                    align-items: center;
-                }
-    
-                .buttons {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 4px;
-                    border: 1px solid var(--default-border-color);
-                    border-radius: var(--default-border-radius);
-                }
-            }
-    
-            .bottom {
-                display: flex;
-                align-items: center;
-    
-                .table {
-                    width: 100%;
-                    .selected {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                    }
-                    .not-selected {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                    }
-                }
-    
-            }
-    
-            &.red {
-                background-color: rgba(255, 0, 0, 0.158)
-            }
-        }
-    
-        .comment {
-            padding: 24px 0;
-            border-bottom: 1px solid var(--default-border-color);
-
-            .input {
-                margin-top: 8px;
-            }
-        }
-    
-        .items {
-            padding: 24px 0;
-    
-            .item {
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                padding: 4px;
-                
-                .left {
-                    display: flex;
-                    text-decoration: none;
-    
-                    .image {
-                        img {
-                            width: 52px;
-                            height: 52px;
-                            border-radius: var(--default-small-radius);
-                        }
-                    }
-    
-                    .name-price {
-                        padding-left: 4px;
-                        display: flex;
-                        flex-direction: column;
-    
-    
-                        span {
-                            margin: 0;
-                        }
-    
-                        .name {
-                            padding-right: 12px;
-                            
-                            span.global-text {
-                                display: -webkit-box;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                -webkit-line-clamp: 1;
-                                -webkit-box-orient: vertical;
-                            }
-                        }
-    
-                        .price {
-                            display: flex;
-                            align-items: center;
-    
-                            .item-comment {
-                                margin: 0;
-    
-                                .dot {
-                                    margin: 0 6px;
-                                    font-size: 12px;
-                                }
-    
-                                .global-text {
-                                    margin: 0;
-                                }
-                            }
-                        }
-                    }
-                }
-    
-                .right {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-    
-                    button {
-                        display: none;
-                        background-color: transparent;
-                    }
-                }
-    
-                &:hover {
-                    .right {
-                        button {
-                            display: inline-block;
-                        }
-                    }
-                }
-            }
-        }
-    
-        .no-items {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 124px;
-    
-            &.red {
-                background-color: rgba(255, 0, 0, 0.158)
-            }
-        }
-    
         .subtotal {
-            padding: 24px 0;
+            padding: 24px 12px;
             border-top: 1px solid var(--default-border-color);
             display: flex;
             align-items: center;
@@ -210,6 +53,7 @@
         .address {
             display: flex;
             align-items: center;
+            padding: 0 12px;
             gap: 6px;
 
             .global-text {
@@ -221,6 +65,19 @@
                 width: 16px;
                 font-size: 16px;
             }
+        }
+    }
+}
+.mini {
+    height: 100%;
+    min-height: 100%;
+    overflow-y: auto;
+    width: auto;
+
+    .box {
+        min-height: 100%;
+        .header {
+            display: none;
         }
     }
 }

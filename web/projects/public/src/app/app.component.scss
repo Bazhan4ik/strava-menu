@@ -37,16 +37,42 @@
         }
     }
 
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &.active, &:hover {
+            mat-icon {
+                color: var(--orange);
+            }
+        }
+
+        mat-icon {
+            color: #86929b;
+            transition: all 0.2s ease;
+        }
+    }
+
     .card-image {
         display: flex;
         align-items: center;
         justify-content: center;
-        
+
         .card-icon {
             color: #C2933C;
             width: 52px;
             height: 52px;
             font-size: 52px;
+        }
+    }
+
+    
+    #features .image-container {
+        .img-fluid {
+            border: 2px solid var(--orange);
+            border-radius: 18px;
+            rotate: 0deg;
         }
     }
 

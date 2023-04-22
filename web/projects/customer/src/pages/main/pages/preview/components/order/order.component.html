@@ -1,0 +1,51 @@
+<div class="app-order-info" *ngIf="order" [class.modal-open]="hasModalOpen" [class.red]="hasError">
+    <div class="top">
+        <div class="title">
+            <span class="global-text big black bold" *ngIf="order.type == 'dinein'">
+                Dine in
+            </span>
+            <span class="global-text big black bold" *ngIf="order.type == 'takeout'">
+                Take out
+            </span>
+            <span class="global-text big black bold" *ngIf="order.type == 'delivery'">
+                Delivery
+            </span>
+            <span class="global-text small bold" *ngIf="order.id">#{{ order.id }}</span>
+        </div>
+        <div class="buttons">
+            <button *ngIf="order.type == 'dinein'" (click)="changeTable()" class="icon-button orange square orange-button">
+                <mat-icon>qr_code</mat-icon>
+            </button>
+            <button *ngIf="order.type == 'delivery'" (click)="getAddress()" class="icon-button orange square orange-button">
+                <mat-icon>location_on</mat-icon>
+            </button>
+            <div class="border">
+                <button *ngIf="settings.allowDineIn" id="type-dinein" (click)="selectType('dinein')" class="icon-button orange square" [class.orange-button]="order.type == 'dinein'">
+                    <mat-icon>restaurant</mat-icon>
+                </button>
+                <button *ngIf="settings.allowTakeOut" id="type-takeout" (click)="selectType('takeout')" class="icon-button orange square" [class.orange-button]="order.type == 'takeout'">
+                    <mat-icon>local_mall</mat-icon>
+                </button>
+                <button *ngIf="settings.allowDelivery" id="type-delivery" (click)="selectType('delivery')" class="icon-button orange square" [class.orange-button]="order.type == 'delivery'">
+                    <mat-icon>delivery_dining</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="comment">
+        <span class="global-text big black bold">
+            Add comment
+        </span>
+        <div class="input">
+            <input [value]="order.comment || ''" placeholder="Leave a comment..." (focus)="setComment()" class="global-input">
+        </div>
+    </div>
+    <div class="delivery-address" *ngIf="order?.delivery?.address && order.type == 'delivery'">
+        <span class="global-text big black bold">
+            Deliver to {{ order.delivery.address.line1 }}, {{ order.delivery.address.city }}
+        </span>
+    </div>
+</div>
+
+
+<ng-container #modalContainer></ng-container>

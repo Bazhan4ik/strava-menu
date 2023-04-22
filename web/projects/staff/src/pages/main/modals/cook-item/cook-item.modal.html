@@ -9,17 +9,20 @@
                 </button>
             </div>
             <div class="buttons">
-                <button [disabled]="disableButtons" *ngIf="sessionItem.status == 'cooking' && userId == sessionItem.people.cook?._id" (click)="quit()" class="button">
+                <button [disabled]="disableButtons" *ngIf="sessionItem.status == 'cooking' && userId == sessionItem.people?.cook?._id" (click)="quit()" class="button">
                     Quit
                 </button>
-                <button [disabled]="disableButtons" *ngIf="sessionItem.status == 'cooking' && userId == sessionItem.people.cook?._id" (click)="done()" class="orange-button button">
+                <button [disabled]="disableButtons" *ngIf="sessionItem.status == 'cooking' && userId == sessionItem.people?.cook?._id" (click)="done()" class="orange-button button">
                     Done
                 </button>
                 <button [disabled]="disableButtons" *ngIf="sessionItem.status == 'ordered'" (click)="take()" class="orange-button button">
                     Take
                 </button>
-                <button *ngIf="sessionItem.status == 'cooking' && userId != sessionItem.people.cook?._id" disabled class="button orange-button">
+                <button *ngIf="sessionItem.status == 'cooking' && userId != sessionItem.people?.cook?._id" disabled class="button orange-button">
                     Taken
+                </button>
+                <button [disabled]="disableButtons" *ngIf="sessionItem.status == 'cooking:disposing' && userId == sessionItem.people?.cook?._id" (click)="dispose()" class="button red-button">
+                    Disposed
                 </button>
             </div>
         </div>
@@ -62,7 +65,7 @@
                     <div></div>
                 </div>
             </div>
-            <div class="comments">
+            <div class="comments" *ngIf="sessionItem.comment || sessionItem.orderComment">
                 <div class="item-comment" *ngIf="sessionItem.comment">
                     <div class="icon">
                         <mat-icon>
@@ -88,12 +91,59 @@
                     </div>
                 </div>
             </div>
+            <div class="order">
+                <div class="type">
+                    <div class="icon" [class.orange]="sessionItem.order.type == 'dinein'" [class.red]="sessionItem.order.type == 'delivery'" [class.purple]="sessionItem.order.type == 'takeout'">
+                        <mat-icon *ngIf="sessionItem.order.type == 'delivery'">delivery_dining</mat-icon>
+                        <mat-icon *ngIf="sessionItem.order.type == 'takeout'">takeout_dining</mat-icon>
+                        <mat-icon *ngIf="sessionItem.order.type == 'dinein'">restaurant</mat-icon>
+                    </div>
+                    <span *ngIf="sessionItem.order.type == 'delivery'" class="global-text normal bold">
+                        Delivery
+                    </span>
+                    <span *ngIf="sessionItem.order.type == 'takeout'" class="global-text normal bold">
+                        Take out
+                    </span>
+                    <span *ngIf="sessionItem.order.type == 'dinein'" class="global-text normal bold">
+                        Dine in
+                    </span>
+                </div>
+                <div class="id">
+                    <span class="global-text">
+                        #{{ sessionItem.order.id }}
+                    </span>
+                </div>
+            </div>
+            <div class="be-ready" *ngIf="sessionItem.time.beReady">
+                <div class="customer">
+                    <span class="global-text normal bold">
+                        Be ready by
+                    </span>
+                </div>
+                <div class="time">
+                    <span class="global-text normal" [class.red]="sessionItem.danger" [class.orange]="sessionItem.warning">
+                        {{ beReadyTime | date:'shortTime' }}
+                    </span>
+                </div>
+            </div>
+            <div class="average" *ngIf="sessionItem.time.averageCooking">
+                <div class="title">
+                    <span class="global-text normal bold">
+                        Average cooking time
+                    </span>
+                </div>
+                <div class="time">
+                    <span class="global-text normal">
+                        {{ cookingTime | date:'mm:ss' }} s. 
+                    </span>
+                </div>
+            </div>
             <div class="info">
-                <div *ngIf="sessionItem.time.ordered as ordered" class="ordered">
-                    <div *ngIf="sessionItem.people.customer" class="customer user">
+                <!-- <div *ngIf="sessionItem.time.ordered as ordered" class="ordered">
+                    <div *ngIf="sessionItem.people?.customer" class="customer user">
                         <img [src]="customerAvatar" class="global-avatar small outline" alt="">
                         <span class="global-text big black bold">
-                            {{ sessionItem.people.customer.name }}
+                            {{ sessionItem.people?.customer?.name }}
                         </span>
                     </div>
                     <div class="time">
@@ -108,12 +158,12 @@
                             ago
                         </span>
                     </div>
-                </div>
+                </div> -->
                 <div *ngIf="sessionItem.time.taken as taken" class="taken">
-                    <div *ngIf="sessionItem.people.cook" class="customer user">
+                    <div *ngIf="sessionItem.people?.cook" class="customer user">
                         <img [src]="cookAvatar" class="global-avatar small outline" alt="">
-                        <span class="global-text big black bold">
-                            {{ sessionItem.people.cook.name }}
+                        <span class="global-text normal bold">
+                            {{ sessionItem.people?.cook?.name }}
                         </span>
                     </div>
                     <div class="time">

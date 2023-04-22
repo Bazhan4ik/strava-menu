@@ -96,6 +96,7 @@ interface LocationSettings {
         allowOrderingOnline: boolean;
         allowDineIn: boolean;
         allowTakeOut: boolean;
+        allowDelivery: boolean;
     },
     methods?: {
         card: boolean;
@@ -115,6 +116,7 @@ interface Location {
     line1?: string;
     line2?: string;
     postalCode?: string;
+    phone: string;
 
     isUsedForStripe?: boolean;
 

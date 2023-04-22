@@ -8,7 +8,7 @@ main();
 
 async function main() {
     try {
-        import("./utils/console.js");
+        import("./utils/other/console.js");
 
         await client.connect();
 

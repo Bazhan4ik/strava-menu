@@ -8,6 +8,7 @@ interface Locals {
     restaurant: Restaurant;
     session: Session;
     location: ObjectId;
+    // generatedId: ObjectId; // to track not logged users' sessions
 }
 
 

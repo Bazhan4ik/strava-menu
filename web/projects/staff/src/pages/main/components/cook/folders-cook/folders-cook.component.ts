@@ -70,7 +70,7 @@ export class FoldersCookComponent {
                         for(let item of folder.items) {
                             if(item._id == sessionItemId) {
                                 item.status = "cooking";
-                                item.people.cook = cook;
+                                item.people!.cook = cook;
                                 item.time.taken = { hours: 0, minutes: 0, nextMinute: null! };
         
                                 if(item.takenInterval) {

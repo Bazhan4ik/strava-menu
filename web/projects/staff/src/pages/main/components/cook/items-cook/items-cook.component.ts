@@ -88,7 +88,7 @@ export class ItemsCookComponent implements OnInit, OnDestroy {
                 for(let item of this.items) {
                     if(item._id == sessionItemId) {
                         item.status = "cooking";
-                        item.people.cook = cook;
+                        item.people!.cook = cook;
                         item.time.taken = { hours: 0, minutes: 0, nextMinute: null! };
 
                         if(item.takenInterval) {
@@ -127,6 +127,39 @@ export class ItemsCookComponent implements OnInit, OnDestroy {
                     }
                 }
 
+            } else if(res.types.includes("items/dispose")) {
+                const { sessionId } = res.data as CookItemsData.dispose;
+
+                for(let i = 0; i < this.items.length; i++) {
+                    if(this.items[i].sessionId == sessionId) {
+                        if(this.items[i].status == "ordered") {
+                            this.items.splice(+i, 1);
+                            i--;
+                        } else {
+                            this.items[i].status = "cooking:disposing";
+                        }
+                    }
+                }
+            } else if(res.types.includes("items/remove")) {
+                const { sessionId, sessionItemId } = res.data as CookItemsData.remove;
+
+                if(sessionItemId) {
+
+                    for(const i in this.items) {
+                        if(this.items[i]._id == sessionItemId) {
+                            this.items.splice(+i, 1);
+                            break;
+                        }
+                    }
+
+                    return;
+                }
+
+                for(const i in this.items) {
+                    if(this.items[i].sessionId == sessionId) {
+                        this.items.splice(+i, 1);
+                    }
+                }
             }
         });
         

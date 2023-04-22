@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { Locals } from "../models/general.js";
 import { WorkerSettings } from "../models/worker.js";
-import { logged } from "../utils/middleware/auth.js";
-import { restaurantWorker } from "../utils/middleware/restaurant.js";
+import { logged } from "../middleware/auth.js";
+import { restaurantWorker } from "../middleware/restaurant.js";
 import { AnalyticsRouter } from "./restaurants/analytics.js";
 import { CustomersRouter } from "./restaurants/customers.js";
 import { IngredientsRouter } from "./restaurants/ingredients.js";

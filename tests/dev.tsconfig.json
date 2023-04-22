@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "outDir": "./builds/dev-tests"
+    },
+    "files": ["dev-tests/index.ts"],
+    "extends": "./tsconfig.json"
+}

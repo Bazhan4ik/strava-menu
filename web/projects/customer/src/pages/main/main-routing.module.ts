@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
-import { CustomRouteReuseStrategy } from '../../other/custom-route-reuse-strategy';
+import { RouterModule, Routes } from '@angular/router';
 import { MainPage } from './main.page';
 
 const routes: Routes = [
@@ -25,6 +24,7 @@ const routes: Routes = [
             {
                 path: "order/checkout",
                 loadComponent: () => import("./pages/checkout/checkout.page").then(c => c.CheckoutPage),
+                data: { routeReuse: false, }
             },
             {
                 path: "order/tracking",

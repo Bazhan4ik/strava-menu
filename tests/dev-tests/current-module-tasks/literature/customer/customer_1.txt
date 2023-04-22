@@ -1,0 +1,11 @@
+CUSTOMER_1
+
+unauthorized browser
+
+creating delivery order
+with some dishes
+confirm payment
+
+
+no
+cleaning: remove last created session

@@ -3,13 +3,13 @@ import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { Time } from "../../models/other/time.js";
 import { SessionPayment } from "../../models/session.js";
-import { id } from "../../utils/id.js";
-import { getItems } from "../../utils/items.js";
-import { logged } from "../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../utils/middleware/restaurant.js";
-import { getOrder, getOrders } from "../../utils/orders.js";
-import { convertTime, getDelay, getRelativeDelay } from "../../utils/time.js";
-import { getUser, getUsers } from "../../utils/users.js";
+import { id } from "../../utils/other/id.js";
+import { getItems } from "../../utils/data/items.js";
+import { logged } from "../../middleware/auth.js";
+import { restaurantWorker } from "../../middleware/restaurant.js";
+import { getOrder, getOrders } from "../../utils/data/orders.js";
+import { convertTime, getDelay, getRelativeDelay } from "../../utils/other/time.js";
+import { getUser, getUsers } from "../../utils/data/users.js";
 
 
 

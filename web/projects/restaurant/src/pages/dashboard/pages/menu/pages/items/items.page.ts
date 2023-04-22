@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { env } from 'environment/environment';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 
@@ -9,9 +10,8 @@ interface Item {
     name: string;
     id: string;
     price: number;
-    image: any;
-    imageConverted: string;
     status: string;
+    imageUrl: string;
 }
 
 
@@ -44,12 +44,12 @@ export class ItemsPage implements OnInit {
     }
 
     async ngOnInit() {
-        const result: Item[] = await this.service.get("menu/items");
+        const result: { items: Item[], restaurantId: string; } = await this.service.get("menu/items");
 
-        this.items = result;
+        this.items = result.items;
 
         for(let item of this.items) {
-            item.imageConverted = getImage(item.image) || "./../../../../../../../../../../global-resources/images/no-image.svg";
+            item.imageUrl = `${env.apiUrl}/restaurants/${result.restaurantId}/menu/items/${item.id}/image`;
         }
 
         console.log(result);

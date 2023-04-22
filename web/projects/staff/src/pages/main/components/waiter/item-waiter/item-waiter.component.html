@@ -1,4 +1,4 @@
-<button class="app">
+<button class="app" [class.red]="sessionItem.status == 'cooked:disposing'">
     <div class="image">
         <img [src]="image" alt="">
     </div>
@@ -14,20 +14,44 @@
             </span>
         </div>
     </div>
-    <div class="customer-delay">
+    <div class="order" *ngIf="showOrderInfo">
+        <div class="type">
+            <div class="icon" [class.orange]="sessionItem.order.type == 'dinein'" [class.red]="sessionItem.order.type == 'delivery'" [class.purple]="sessionItem.order.type == 'takeout'">
+                <mat-icon *ngIf="sessionItem.order.type == 'delivery'">delivery_dining</mat-icon>
+                <mat-icon *ngIf="sessionItem.order.type == 'takeout'">takeout_dining</mat-icon>
+                <mat-icon *ngIf="sessionItem.order.type == 'dinein'">restaurant</mat-icon>
+            </div>
+            <span *ngIf="sessionItem.order.type == 'delivery'" class="global-text normal">
+                Delivery
+            </span>
+            <span *ngIf="sessionItem.order.type == 'takeout'" class="global-text normal">
+                Take out
+            </span>
+            <span *ngIf="sessionItem.order.type == 'dinein'" class="global-text normal">
+                Dine in
+            </span>
+        </div>
+        <div class="id">
+            <span class="global-text">
+                #{{ sessionItem.id }}
+            </span>
+        </div>
+    </div>
+    <div class="customer-delay" *ngIf="sessionItem.people?.customer">
         <div class="customer">
             <span class="global-text">
-                For {{ sessionItem.people.customer.name }}
+                {{ sessionItem.people?.customer?.name }}
             </span>
         </div>
         <div class="delay">
             <span class="global-text">
                 <span class="hours" *ngIf="sessionItem.time.ordered.hours">
-                    {{ sessionItem.time.ordered.hours }} hrs
+                    {{ sessionItem.time.ordered.hours }}h
                 </span>
                 <span class="minutes">
-                    {{ sessionItem.time.ordered.minutes }} min
+                    {{ sessionItem.time.ordered.minutes }}m
                 </span>
+                ago
             </span>
         </div>
     </div>
@@ -40,10 +64,10 @@
         <div class="delay">
             <span class="global-text">
                 <span class="hours" *ngIf="sessionItem.time.cooked.hours">
-                    {{ sessionItem.time.cooked.hours }} hrs
+                    {{ sessionItem.time.cooked.hours }}h
                 </span>
                 <span class="minutes">
-                    {{ sessionItem.time.cooked.minutes }} min
+                    {{ sessionItem.time.cooked.minutes }}m
                 </span>
                 ago
             </span>

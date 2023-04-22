@@ -1,0 +1,7 @@
+clearly payments - $50,000-$250,000/month if  $189/month + 6¢ transaction
+                   $50,000/month-             $99/month  + 8¢ transaction
+
+stripe - any business - %2.9 + $0.30 per transaction + dashboard
+
+elavon - ?????????????
+

@@ -4,6 +4,10 @@
     background-color: var(--default-background);
     box-shadow: var(--default-box-shadow);
 
+    &.red {
+        outline: 2px solid var(--red);
+    }
+
     .image {
         width: 100%;
         height: 128px;
@@ -16,7 +20,7 @@
             border-top-right-radius: var(--default-border-radius);
         }
     }
-
+    
     .name-id {
         padding: 8px;
         display: flex;
@@ -24,7 +28,53 @@
         justify-content: space-between;
     }
 
-    .customer-delay, .cooking-delay {
+    .order {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        border-top: 1px solid var(--default-border-color);
+
+        .type {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            .icon {
+                border-radius: 100%;
+                padding: 3px;
+                
+                
+                &.red {
+                    background-color: var(--red-lighter);
+
+                    mat-icon {
+                        color: var(--red-dark);   
+                    }
+                }
+                &.orange {
+                    background-color: var(--orange-lighter);
+
+                    mat-icon {
+                        color: var(--orange-dark);
+                    }
+                }
+                &.purple {
+                    background-color: var(--purple-lighter);
+
+                    mat-icon {
+                        color: var(--purple-dark);
+                    }
+                }
+            }
+        }
+    }
+
+    .customer-delay {
+        display: none;
+    }
+    
+    .customer-delay, .cooking-delay, .ordered {
         border-top: 1px solid var(--default-border-color);
         display: flex;
         align-items: center;

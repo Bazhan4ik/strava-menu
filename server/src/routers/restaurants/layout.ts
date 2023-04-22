@@ -2,11 +2,11 @@ import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { LayoutElement } from "../../models/restaurant.js";
-import { id } from "../../utils/id.js";
-import { getItem, getItems } from "../../utils/items.js";
-import { logged } from "../../utils/middleware/auth.js";
-import { restaurantWorker } from "../../utils/middleware/restaurant.js";
-import { bulkRestaurant, updateRestaurant } from "../../utils/restaurant.js";
+import { id } from "../../utils/other/id.js";
+import { getItem, getItems } from "../../utils/data/items.js";
+import { logged } from "../../middleware/auth.js";
+import { restaurantWorker } from "../../middleware/restaurant.js";
+import { bulkRestaurant, updateRestaurant } from "../../utils/data/restaurant.js";
 
 
 

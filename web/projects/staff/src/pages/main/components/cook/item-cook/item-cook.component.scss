@@ -17,14 +17,73 @@
         }
     }
 
-    .name-id {
+    .name {
         padding: 8px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
     }
 
-    .customer-delay, .cooking-delay {
+    .info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        border-top: 1px solid var(--default-border-color);
+
+        .type {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            .icon {
+                border-radius: 100%;
+                padding: 3px;
+                
+                
+                &.red {
+                    background-color: var(--red-lighter);
+
+                    mat-icon {
+                        color: var(--red-dark);   
+                    }
+                }
+                &.orange {
+                    background-color: var(--orange-lighter);
+
+                    mat-icon {
+                        color: var(--orange-dark);
+                    }
+                }
+                &.purple {
+                    background-color: var(--purple-lighter);
+
+                    mat-icon {
+                        color: var(--purple-dark);
+                    }
+                }
+            }
+        }
+    }
+
+    .be-ready {
+        .time {
+            .orange {
+                padding: 4px;
+                background-color: var(--orange-lighter);
+                color: var(--orange-dark);
+            }
+            .red {
+                padding: 4px;
+                background-color: var(--red-lighter);
+                color: var(--red-dark);
+            }
+            .global-text {
+                border-radius: 4px;
+            }
+        }
+    }
+
+    .customer-delay, .cooking-delay, .ordered, .be-ready, .average {
         border-top: 1px solid var(--default-border-color);
         display: flex;
         align-items: center;
@@ -32,7 +91,14 @@
         padding: 8px;
     }
 
+    .customer-delay {
+        display: none;
+    }
+
     &.orange {
         outline: 2px solid var(--orange);
+    }
+    &.red {
+        outline: 2px solid var(--red);
     }
 }

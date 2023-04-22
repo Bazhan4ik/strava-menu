@@ -1,0 +1,111 @@
+<div class="app-payment">
+    <div *ngIf="paymentData?.payWithCash" class="payment-cash">
+        <button class="orange-button button" (click)="cash()">
+            PAY WITH CASH
+        </button>
+    </div>
+
+    <div class="payment-card" *ngIf="paymentData.payWithCard && paymentData.useStripe" [class.loading]="elementsOptions.clientSecret || loading">
+        <div class="payment-header">
+            <span class="global-subtitle">
+                Pay now
+            </span>
+        </div>
+        <div class="payment-box">
+            <div class="email-input" *ngIf="showEmailInput">
+                <div class="label">
+                    <span class="text">
+                        Email address
+                    </span>
+                </div>
+                <input inputmode="email" placeholder="example@mail.com" name="email" type="email"
+                    [(ngModel)]="email" id="input_email">
+            </div>
+            <div *ngIf="paymentData.paymentMethods && paymentData.paymentMethods.length > 0 && elementsOptions.clientSecret"
+                class="payment-methods">
+                <div class="list">
+                    <button (click)="selectPaymentMethod(method)"
+                        [class.selected]="method.id == selectedPaymentMethod?.id"
+                        *ngFor="let method of paymentData.paymentMethods" class="method">
+                        <div class="last4">
+                            <span class="circles global-text.big.bold">
+                                &#9679;&#9679;&#9679;&#9679;
+                            </span>
+                            <span class="global-text big bold black">
+                                {{ method.last4 }}
+                            </span>
+                        </div>
+                        <div class="brand">
+                            <img
+                                src="./../../../../../../../global-resources/icons/brands/{{ method.brand }}.png">
+                        </div>
+                    </button>
+                </div>
+                <div class="confirm-button">
+                    <button (click)="payStripe()" class="button orange-button"
+                        [disabled]="!selectedPaymentMethod">
+                        PAY <span *ngIf="selectedPaymentMethod">WITH {{ selectedPaymentMethod.last4 }}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="manual" *ngIf="elementsOptions.clientSecret">
+
+                <ngx-stripe-payment [options]="options" [elementsOptions]="elementsOptions"
+                    [clientSecret]="elementsOptions.clientSecret">
+                </ngx-stripe-payment>
+
+                <div class="buttons">
+                    <button (click)="payStripe()" id="confirm-payment" class="button orange-button">
+                        <span *ngIf="paymentData.payment">
+                            PAY
+                        </span>
+                        <span *ngIf="paymentData.setup">
+                            CONFIRM
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!elementsOptions.clientSecret || loading" class="global-loading full-page">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div class="payment-card-elavon" *ngIf="paymentData.payWithCard && paymentData.useElavon">
+        <div class="payment-header">
+            <span class="global-subtitle">
+                Pay now
+            </span>
+        </div>
+
+        <div class="payment-box">
+
+            <div *ngIf="paymentError" class="payment-error">
+                <span class="global-text red big">
+                    Payment failed
+                </span>
+            </div>
+
+            <app-payment-card [error]="paymentError"></app-payment-card>
+    
+            <div class="buttons">
+                <button (click)="pay()" id="confirm-payment" class="button orange-button">
+                    <span *ngIf="paymentData.payment">
+                        PAY
+                    </span>
+                </button>
+            </div>
+
+            <div class="global-loading full-page" *ngIf="loading">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</div>

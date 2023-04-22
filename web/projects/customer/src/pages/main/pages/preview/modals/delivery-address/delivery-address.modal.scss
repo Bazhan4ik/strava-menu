@@ -1,0 +1,58 @@
+.delivery-address-app {
+    .box {
+        border-radius: var(--default-border-radius);
+        background-color: var(--default-background);
+        max-width: 512px;
+        width: 100vw;
+        padding-bottom: 52px;
+
+        .header {
+            display: grid;
+            grid-template-columns: 36px 1fr min-content;
+            padding: 12px;
+
+            .title {
+                display: flex;
+                align-items: center;
+
+                .red {
+                    color: var(--red);
+                }
+            }
+            .buttons {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .body {
+            padding: 0 12px;
+
+            .search {
+                input {
+
+                }
+            }
+            
+            .full-address {
+                display: flex;
+                flex-direction: column;
+                margin-top: 12px;
+                gap: 8px;
+
+                .address {
+                    display: flex;
+                    flex-direction: column;
+
+                    .double {
+                        margin-top: 8px;
+                        padding-right: 12px;
+                        gap: 8px;
+                        display: grid;
+                        grid-template-columns: 63% 37%;
+                    }
+                }
+            }
+        }
+    }
+}

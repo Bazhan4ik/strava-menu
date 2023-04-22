@@ -54,6 +54,15 @@ export class AddCollectionsModal implements OnInit {
                 this.ids = [collection._id];
                 return;
             }
+
+            console.log("ON CHANGE FUN");
+
+            for(const id of this.ids) {
+                if(collection._id == id) {
+                    return;
+                }
+            }
+            
             this.newSelected.push(collection);
             this.ids.push(collection._id);
         } else {
@@ -75,6 +84,7 @@ export class AddCollectionsModal implements OnInit {
         if(this.one && this.newSelected.length == 0) {
             return;
         }
+        console.log(this.newSelected);
         this.leave.emit(this.newSelected);
     }
 
@@ -97,7 +107,17 @@ export class AddCollectionsModal implements OnInit {
 
                 for(const id of this.ids) {
                     if(collection._id == id) {
-                        this.newSelected.push(c)
+                        let add = true;
+                        for(const c of this.newSelected) {
+                            if(c._id == id) {
+                                add = false;
+                                break;
+                            }
+                        }
+                        if(add) {
+                            this.newSelected.push(c);
+                        }
+                        break;
                     }
                 }
             }

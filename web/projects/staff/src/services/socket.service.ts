@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from "rxjs";
 import { CookItemsEvent } from '../models/socket-cook-items';
+import { DeliveryEvent } from '../models/socket-delivery';
 import { WaiterItemsEvent } from '../models/socket-waiter-items';
 import { WaiterRequestEvent } from '../models/waiter-request-socket';
 import { StaffService } from './staff.service';
@@ -16,6 +17,7 @@ export class SocketService {
     private waiterRequests: Observable<WaiterRequestEvent>;
     private cookItems: Observable<CookItemsEvent>;
     private waiterItems: Observable<WaiterItemsEvent>;
+    private delivery: Observable<DeliveryEvent>
 
 
     constructor(
@@ -51,6 +53,20 @@ export class SocketService {
 
 
         return this.waiterItems;
+    }
+    public get $delivery(): Observable<DeliveryEvent> {
+        if(!this.delivery) {
+            this.delivery = new Observable(sub => {
+                this.socket.on("waiter", (data: DeliveryEvent) => {
+                    if(data.types.includes("delivery")) {
+                        sub.next(data);
+                    }
+                });
+            });
+        }
+
+
+        return this.delivery;
     }
     public get $waiterRequests(): Observable<WaiterRequestEvent> {
         if(!this.waiterRequests) {

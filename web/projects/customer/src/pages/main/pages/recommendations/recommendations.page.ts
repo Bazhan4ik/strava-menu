@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewContainerRef, } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef, HostListener } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
@@ -9,6 +9,9 @@ import { ItemLayoutElementComponent } from '../../components/item-layout-element
 import { MiniTrackingComponent } from '../../components/mini-tracking/mini-tracking.component';
 import { Collection } from '../../models/collection';
 import { Item } from '../../models/item';
+import { IonicModule, NavController } from '@ionic/angular';
+import { Observable, Subject } from 'rxjs';
+
 
 interface Response {
     tracking?: any[];
@@ -33,22 +36,51 @@ interface Response {
     templateUrl: './recommendations.page.html',
     styleUrls: ['./recommendations.page.scss'],
     standalone: true,
-    imports: [CommonModule, CollectionComponent, MatIconModule, MiniTrackingComponent, RouterModule],
+    imports: [CommonModule, CollectionComponent, MatIconModule, IonicModule, MiniTrackingComponent, RouterModule],
 })
 export class RecommendationsPage implements OnInit {
-    tracking: any;
-    elements: Response["elements"];
-    restaurant: any;
-
-    position: number;
-
     constructor(
         private service: CustomerService,
         private itemsService: ItemsService,
     ) { };
 
 
+    tracking: any;
+    elements: Response["elements"];
+    restaurant: any;
+    position: number;
+
+    previewShown = false;
+
     @ViewChild("body", { read: ViewContainerRef }) body: ViewContainerRef;
+    @ViewChild("previewContainer", { read: ViewContainerRef }) previewContainer: ViewContainerRef;
+
+    @HostListener('window:resize', ['$event']) onResize() {
+        if(window.innerWidth > 1200) {
+            if(!this.previewShown) {
+                this.showPreview();
+            }
+        } else {
+            this.hidePreview();
+        }
+    }
+
+
+    async ngOnInit() {
+        const result: Response = await this.service.get({ }, "recommendations");
+
+        this.elements = result.elements;
+        this.itemsService.items = result.items;
+        this.tracking = result.tracking;
+
+        this.restaurant = this.service.restaurant;
+
+        this.updateLayout();
+
+        if(window.innerWidth > 1200) {
+            this.showPreview();
+        }
+    }
 
 
     async updateLayout() {
@@ -72,19 +104,20 @@ export class RecommendationsPage implements OnInit {
             }
         }
     }
+    openPreview() {
 
+    }
+    async showPreview() {
+        const { PreviewPage } = await import("./../preview/preview.page");
 
-    async ngOnInit() {
-        const result: Response = await this.service.get({ }, "recommendations");
+        const component = this.previewContainer.createComponent(PreviewPage);
 
-        console.log(result);
+        this.previewShown = true;
 
-        this.elements = result.elements;
-        this.itemsService.items = result.items;
-        this.tracking = result.tracking;
-
-        this.restaurant = this.service.restaurant;
-
-        this.updateLayout();
+        component.instance.mini = true;
+    }
+    async hidePreview() {
+        this.previewShown = false;
+        this.previewContainer.clear();
     }
 }

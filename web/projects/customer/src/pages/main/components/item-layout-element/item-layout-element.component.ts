@@ -24,6 +24,7 @@ export class ItemLayoutElementComponent implements OnInit {
 
 
     async ngOnInit() {
+        console.log(this.item);
         this.imageUrl = `${env.apiUrl}/customer/${this.service.restaurant._id}/items/${this.item._id}/image`;
     }
 }

@@ -2,16 +2,16 @@ import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Restaurant } from "../models/restaurant.js";
 import { User } from "../models/user.js";
-import { createJWT, logged } from "../utils/middleware/auth.js";
-import { isValidEmail, sendEmail } from "../utils/email.js";
-import { id } from "../utils/id.js";
-import { comparePasswords, encryptPassword } from "../utils/password.js";
-import { createRestaurant, getRestaurants } from "../utils/restaurant.js";
-import { addUser, getUser, updateUser } from "../utils/users.js";
+import { createJWT, logged } from "../middleware/auth.js";
+import { isValidEmail, sendEmail } from "../utils/other/email.js";
+import { id } from "../utils/other/id.js";
+import { comparePasswords, encryptPassword } from "../utils/other/password.js";
+import { createRestaurant, getRestaurants } from "../utils/data/restaurant.js";
+import { addUser, getUser, updateUser } from "../utils/data/users.js";
 import { Locals } from "../models/general.js";
 import { getDefaultCollections } from "../../resources/data/collections.js";
 import { stripe } from "../setup/stripe.js";
-import { getEmptyIngredients } from "../utils/ingredients.js";
+import { getEmptyIngredients } from "../utils/data/ingredients.js";
 
 
 const router = Router();

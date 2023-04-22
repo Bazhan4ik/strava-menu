@@ -3,11 +3,11 @@ import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
 import { Collection } from "../../models/restaurant.js";
 import { Session, TimelineComponent } from "../../models/session.js";
-import { getItem, getItems } from "../../utils/items.js";
-import { id } from "../../utils/id.js";
-import { customerSession } from "../../utils/middleware/customerSession.js";
-import { customerRestaurant } from "../../utils/middleware/customerRestaurant.js";
-import { getSession, getSessions, updateSession } from "../../utils/sessions.js";
+import { getItem, getItems } from "../../utils/data/items.js";
+import { id } from "../../utils/other/id.js";
+import { customerSession } from "../../middleware/customerSession.js";
+import { customerRestaurant } from "../../middleware/customerRestaurant.js";
+import { getSession, getSessions, updateSession } from "../../utils/data/sessions.js";
 import { SessionRouter } from "./session.js";
 
 
@@ -39,6 +39,7 @@ const projections = {
             info: {
                 name: 1,
                 price: 1,
+                description: 1,
             },
             library: { modified: 1 },
         }

@@ -1,0 +1,22 @@
+{
+    "name": "tests",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "build:dev": "npx tsc -p dev.tsconfig.json -w",
+        "build:scripts": "npx tsc -p scripts.tsconfig.json -w",
+        "build:prod": "",
+        "testing": "npx nodemon builds/dev-tests/index.js",
+        "script": "node builds/scripts/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/mongodb": "^4.0.7",
+        "@types/puppeteer": "^7.0.4",
+        "mongodb": "^5.1.0",
+        "puppeteer": "^19.8.2"
+    }
+}
