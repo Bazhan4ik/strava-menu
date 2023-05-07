@@ -135,7 +135,7 @@
             <div class="list">
                 <div *ngFor="let item of order.items" class="item">
                     <div class="image">
-                        <img [src]="item.image" alt="">
+                        <img [ngSrc]="item.image" height="64" width="64" alt="">
                     </div>
                     <div class="name-price">
                         <div class="name">

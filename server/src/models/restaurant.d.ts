@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Binary, ObjectId } from "mongodb";
 import { Worker } from "./worker.js";
 
 
@@ -63,7 +63,6 @@ interface Restaurant {
     blacklist?: (ObjectId | string)[];
     collections: Collection[];
     locations?: Location[];
-    folders: Folder[];
     customers?: Customer[];
     staff?: Worker[];
     layout: LayoutElement[];
@@ -86,8 +85,8 @@ declare namespace Sorting {
 interface LayoutElement {
     _id: ObjectId;
     position: number;
-    type: "collection" | "folder" | "item";
-    data?: { id: ObjectId };
+    type: "collection" | "collections" | "item";
+    data?: { id: ObjectId; ids: ObjectId[]; };
 }
 
 interface LocationSettings {
@@ -134,7 +133,7 @@ interface Collection {
     id: string;
     name: string;
     image?: {
-        buffer: Buffer;
+        buffer: Binary;
         userId: ObjectId;
     };
     items: ObjectId[];

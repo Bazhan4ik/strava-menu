@@ -12,23 +12,19 @@ interface LayoutElement {
     position: number;
     data: {
         id: string;
+        ids?: string[];
         collection?: {
             id: string;
             name: string;
             _id: string;
             items: { name: string; price: number; id: string; _id: string; }[];
-        }
-        folder?: {
-            name: string;
+        };
+        collections?: {
             id: string;
+            name: string;
             _id: string;
-            collections: {
-                name: string;
-                id: string;
-                _id: string;
-                items: string[];
-            }[];
-        }
+            items: string[];
+        }[];
         item?: {
             name: string;
             price: number;
@@ -45,20 +41,33 @@ interface LayoutElement {
     styleUrls: ['./customer-layout.page.scss']
 })
 export class CustomerLayoutPage implements OnInit {
-
-    elements: LayoutElement[];
-    loading = false;
-
-    components: any[] = [];
-
     constructor(
         private service: RestaurantService,
         private changeDetector: ChangeDetectorRef,
-    ) {}
+    ) {};
+
+
+
+    elements: LayoutElement[];
+    loading = false;
+    components: any[] = [];
+
 
 
     @ViewChild("phone", { read: ViewContainerRef }) phone: ViewContainerRef;
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
+
+
+
+    async ngOnInit() {
+        const result: { layout: LayoutElement[]; } = await this.service.get("layout");
+
+        this.elements = result.layout;
+        console.log(result);
+
+        this.updateLayout();
+    }
+
 
 
     async updateLayout() {
@@ -74,7 +83,7 @@ export class CustomerLayoutPage implements OnInit {
 
         for(const [index, element] of this.elements.entries()) {
 
-            if(!element.data?.folder && !element.data?.collection && !element.data?.item) {
+            if(!element.data?.collections && !element.data?.collection && !element.data?.item) {
                 continue;
             }
 
@@ -84,8 +93,8 @@ export class CustomerLayoutPage implements OnInit {
 
             if(element.type == "collection") {
                 ((component.instance as unknown) as CollectionComponent).collection = element.data.collection!;
-            } else if(element.type == "folder") {
-                (component.instance as FolderComponent).folder = element.data.folder!;
+            } else if(element.type == "collections") {
+                (component.instance as FolderComponent).collections = element.data.collections!;
             } else if(element.type == "item") {
                 (component.instance as ItemComponent).item = element.data.item!;
             }
@@ -94,7 +103,6 @@ export class CustomerLayoutPage implements OnInit {
         }
 
     }
-
     async selectCollection(element: LayoutElement) {
         const { AddCollectionsModal } = await import("./../../components/add-collections/add-collections.modal");
 
@@ -118,37 +126,6 @@ export class CustomerLayoutPage implements OnInit {
                         element.data.collection = update.collection;
                     } else {
                         element.data = { id: update.collection._id, collection: update.collection};
-                    }
-                    this.updateLayout();
-                }
-            }
-
-            this.loading = false;
-            component.destroy();
-        });
-    }
-    async selectFolder(element: LayoutElement) {
-        const { AddFolderModal } = await import("./../../components/add-folder/add-folder.modal");
-
-        const component = this.modalContainer.createComponent(AddFolderModal);
-
-        component.instance.selected = [{ _id: element.data?.id, name: null!, collections: null!, }];
-        component.instance.one = true;
-
-
-        component.instance.leave.subscribe(async (folders: any) => {
-            if(folders) {
-                const folder = folders[0];
-
-                this.loading = true;
-
-                const update: any = await this.service.put({ folderId: folder._id, elementId: element._id }, "layout", "folder");
-
-                if(update.updated) {
-                    if(element.data) {
-                        element.data.folder = update.folder;
-                    } else {
-                        element.data = { id: update.folder._id, folder: update.folder};
                     }
                     this.updateLayout();
                 }
@@ -188,13 +165,11 @@ export class CustomerLayoutPage implements OnInit {
             }
         });
     }
-
-
     editElement(element: LayoutElement) {
         if(element.type == "collection") {
             this.selectCollection(element);
-        } else if(element.type == "folder") {
-            this.selectFolder(element);
+        } else if(element.type == "collections") {
+            this.selectCollections(element);
         } else if(element.type == "item") {
             this.selectItem(element);
         }
@@ -217,7 +192,6 @@ export class CustomerLayoutPage implements OnInit {
 
         this.loading = false;
     }
-
     async moveUp(index: number) {
         if(index == 0) {
             return;
@@ -258,8 +232,6 @@ export class CustomerLayoutPage implements OnInit {
 
         const update: any = await this.service.put({ elementId: element._id, index: index + 1, move: -1 }, "layout/position");
     }
-
-
     async addElement() {
         const { AddElementModal } = await import("./components/add-element/add-element.modal");
 
@@ -282,16 +254,33 @@ export class CustomerLayoutPage implements OnInit {
         });
 
     }
+    async selectCollections(element: LayoutElement) {
+        const { AddCollectionsModal } = await import("./../../components/add-collections/add-collections.modal");
+
+        const component = this.modalContainer.createComponent(AddCollectionsModal);
+
+        // component.instance.selected = [{ _id: element.data?.id, name: null!, image: null! }];
+        component.instance.ids = element.data?.ids! || [];
 
 
-    async ngOnInit() {
+        component.instance.leave.subscribe(async (collections: any) => {
+            if(collections) {
+                this.loading = true;
 
-        const result: { layout: LayoutElement[]; } = await this.service.get("layout");
+                const update: any = await this.service.put({ collections: collections.map((c: any) => c._id), elementId: element._id }, "layout", "collections");
 
-        this.elements = result.layout;
-        console.log(result);
+                if(update.updated) {
+                    if(element.data) {
+                        element.data.collections = update.collections;
+                    } else {
+                        element.data = { id: collections.map((c: any) => c._id), collections: update.collections };
+                    }
+                    this.updateLayout();
+                }
+            }
 
-        this.updateLayout();
-
+            this.loading = false;
+            component.destroy();
+        });
     }
 }

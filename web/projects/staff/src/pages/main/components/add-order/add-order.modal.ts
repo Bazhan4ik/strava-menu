@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef, } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
@@ -14,6 +14,7 @@ interface Item {
     amount: number;
     _id: string;
     hasModifiers: boolean;
+    hasImage: boolean;
     info: {
         name: string;
         price: number;
@@ -43,36 +44,61 @@ interface Folder {
     templateUrl: './add-order.modal.html',
     styleUrls: ['./add-order.modal.scss'],
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [CommonModule, MatIconModule, NgOptimizedImage],
 })
 export class AddOrderModal implements OnInit {
-    
-    itemsSelected: number;
-    folders: Folder[];
-    loading = false;
-    items: { [itemId: string]: Item };
-
     constructor(
         private service: StaffService,
         private socket: SocketService,
     ) { };
+
+    
+    itemsSelected: number;
+    dayCollection: Folder;
+    typeCollection: Folder;
+    folders: Folder[] = [];
+    collections: Collection[] = [];
+    loading = false;
+    items: { [itemId: string]: Item };
 
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
     @Output() leave = new EventEmitter();
 
 
+
+    async ngOnInit() {
+        const result: { collections: Collection[]; items: any; itemsSelected: number; } = await this.service.initManualOrdering(await firstValueFrom(this.socket.socketId()));
+
+        this.items = result.items;
+        this.itemsSelected = result.itemsSelected;
+
+        for(const collection of result.collections) {
+            this.collections.push({ ...collection, open: false, image: getImage(collection.image) || "./../../../../../../../global-resources/images/no-image.svg" });
+        }
+
+
+        console.log(this.items);
+
+
+        for(const id of Object.keys(this.items)) {
+            console.log(`https://api.mydomain.com:3000/staff/${this.service.restaurant._id}/item/${id}/image`);
+            this.items[id].image = this.items[id].hasImage ? `https://api.mydomain.com:3000/staff/${this.service.restaurant._id}/item/${id}/image?type=preview` : "./../../../../../../../global-resources/images/no-image.svg";
+        }
+    }
+
+
+
     close() {
         this.leave.emit();
     }
-
     openFolder(fi: number) {
         this.folders[fi].open = !!!this.folders[fi].open;
     }
-    openCollection(fi: number, ci: number) {
-        this.folders[fi].collections[ci].open = !!!this.folders[fi].collections[ci].open;
+    openCollection(ci: number) {
+        // this.folders[fi].collections[ci].open = !!!this.folders[fi].collections[ci].open;
+        this.collections[ci].open = !!!this.collections[ci].open;
     }
-
     getModifiers(itemId: string) {
         return new Promise(async resolve => {
             this.loading = true;
@@ -95,7 +121,6 @@ export class AddOrderModal implements OnInit {
             });
         });
     }
-
     async addItem(itemId: string, comment?: string) {
 
         const item = this.items[itemId];
@@ -132,8 +157,6 @@ export class AddOrderModal implements OnInit {
             component.destroy();
         });
     }
-
-
     async goCheckout() {
         const { CheckoutModal } = await import("./checkout/checkout.modal");
 
@@ -149,18 +172,5 @@ export class AddOrderModal implements OnInit {
             }
             component.destroy();
         });
-    }
-
-
-    async ngOnInit() {
-        const result: { folders: Folder[]; items: any; itemsSelected: number; } = await this.service.initManualOrdering(await firstValueFrom(this.socket.socketId()));
-
-        this.folders = result.folders;
-        this.items = result.items;
-        this.itemsSelected = result.itemsSelected;
-
-        for(const id of Object.keys(this.items)) {
-            this.items[id].image = getImage(this.items[id].image) || "./../../../../../../../global-resources/images/no-image.svg";
-        }
     }
 }

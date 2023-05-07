@@ -18,7 +18,7 @@ export class WorkerSettingsComponent {
             cook: false,
             waiter: false,
         },
-        dishes: {
+        items: {
             removing: false,
             adding: false,
         },
@@ -44,6 +44,12 @@ export class WorkerSettingsComponent {
             payments: false,
             info: false,
         },
+        cook: {
+            refunding: false,
+        },
+        waiter: {
+            refunding: false,
+        }
     };
     @Output() change = new EventEmitter();
 

@@ -8,7 +8,7 @@ import { getItems } from "../../../utils/data/items.js";
 import { id } from "../../../utils/other/id.js";
 import { logged } from "../../../middleware/auth.js";
 import { restaurantWorker } from "../../../middleware/restaurant.js";
-import { updateRestaurant } from "../../../utils/data/restaurant.js";
+import { aggregateRestaurant, getRestaurant, updateRestaurant } from "../../../utils/data/restaurant.js";
 
 
 
@@ -18,35 +18,17 @@ const router = Router({ mergeParams: true });
 router.get("/", logged(), restaurantWorker({ collections: 1, folders: 1, }, { items: { available: true } }), async (req, res) => {
     const { restaurant } = res.locals as Locals;
 
-    const result = [];
-
-    for(const folder of restaurant.folders) {
-
-        const getCollections = () => {
-            const result = [];
-            for(const fc of folder.collections) {
-                for(const c of restaurant.collections) {
-                    if(fc.equals(c._id)) {
-                        result.push({...c, image: c.image?.buffer});
-                        break;
-                    }
-                }
-            }
-            return result;
+    const getCollections = () => {
+        const result = [];
+        for(const collection of restaurant.collections) {
+            result.push({...collection, hasImage: !!collection.image?.userId });
         }
-
-        const collections = getCollections();
-    
-        
-
-        result.push({
-            ...folder,
-            collections,
-        });
+        return result;
     }
 
-    
-    res.send(result);
+    const collections = getCollections();
+
+    res.send(collections);
 });
 router.post("/", logged(), restaurantWorker({ collections: 1, sorting: 1, }, { collections: { adding: true } }), async (req, res) => {
     const { name, description, items, image } = req.body;
@@ -87,7 +69,7 @@ router.post("/", logged(), restaurantWorker({ collections: 1, sorting: 1, }, { c
         const convertedImage = await sharp(bufferFromString(image)).resize(1000, 1000, { fit: "cover" }).jpeg().toBuffer();
 
         newCollection.image = {
-            buffer: convertedImage,
+            buffer: convertedImage as any,
             userId: user._id,
         }
 
@@ -242,8 +224,38 @@ router.get("/:collectionId", logged(), restaurantWorker({ collections: 1 }, { co
 
     res.send(result);
 });
+router.get("/:collectionId/image", async (req, res) => {
+    const { collectionId, restaurantId } = req.params as any;
 
+    const result = await aggregateRestaurant([
+        { $match: { _id: id(restaurantId) } },
+        { $unwind: "$collections" },
+        { $match: { "collections.id": collectionId } },
+        { $project: { "collectionImage": "$collections.image.buffer" } },
+    ]).toArray();
+    
+    const restaurant = result[0];
 
+    if(!restaurant) {
+        return res.status(404).send({ reason: "RestaurantNotFound" });
+    }
+
+    if(!restaurant.collectionImage) {
+        return res.send(null);
+    }
+
+    
+    const image = restaurant.collectionImage;
+
+    if(!image) {
+        res.send(null);
+    }
+
+    res.set("Content-Type", "image/png");
+    res.set("Content-Length", image?.buffer.length.toString());
+    res.set("Cache-Control", "public, max-age=31536000");
+    res.send(image?.buffer);
+});
 
 
 

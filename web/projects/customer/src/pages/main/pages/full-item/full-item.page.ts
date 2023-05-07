@@ -1,11 +1,11 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, Injector, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewContainerRef, AfterViewInit, ComponentRef, Input, EventEmitter, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
 import { ItemsService } from 'projects/customer/src/services/items.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { CollectionComponent } from '../../components/collection/collection.component';
 import { ModifiersComponent } from '../../components/modifiers/modifiers.component';
 import { Item } from '../../models/item';
@@ -60,7 +60,16 @@ export class FullItemPage implements OnInit, OnDestroy, AfterViewInit {
         const backUrl = this.route.snapshot.queryParamMap.get("back");
         const collectionId = this.route.snapshot.queryParamMap.get("c"); // collection id where the item was redirected from. used to show more items from that collection
 
-        this.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/items/" + itemId + "/image";
+        
+        for(const [id, item] of Object.entries(this.itemsService.items)) {
+            if(item.id == itemId) {
+                this.item = item;
+
+                this.imageUrl = item.hasImage ? `${env.apiUrl}/customer/${this.service.restaurant._id}/items/${itemId}/image` : "./../../../../../../../global-resources/images/no-image.svg";
+                break;
+            }
+        }
+
 
         if(backUrl) {
             this.backUrl = backUrl!;

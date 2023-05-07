@@ -8,6 +8,10 @@ import { StaffService } from '../../services/staff.service';
     styleUrls: ['./main.page.scss']
 })
 export class MainPage implements OnInit {
+    constructor(
+        private service: StaffService,
+    ) { };
+
 
     restaurant: any;
     redirectUrl: string;
@@ -43,7 +47,7 @@ export class MainPage implements OnInit {
                     this.waiter.showDefault();
                 }
             }
-        }
+    }
 
     cook: {
         body: ComponentRef<any>;
@@ -75,28 +79,14 @@ export class MainPage implements OnInit {
                     this.cook.showDefault();
                 }
             }
-        }
+    }
 
-    constructor(
-        private service: StaffService,
-    ) { };
 
     @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
     @ViewChild("cookBodyContainer", { read: ViewContainerRef }) cookBodyContainer: ViewContainerRef;
     @ViewChild("waiterBodyContainer", { read: ViewContainerRef }) waiterBodyContainer: ViewContainerRef;
 
-    async addOrder() {
-        const { AddOrderModal } = await import("./components/add-order/add-order.modal");
-
-        const component = this.modalContainer.createComponent(AddOrderModal);
-
-        component.instance.leave.subscribe(() => {
-            component.destroy();
-        });
-    }
-
-
-
+    
 
     ngOnInit(): void {
         this.restaurant = this.service.restaurant;
@@ -115,5 +105,19 @@ export class MainPage implements OnInit {
         if (this.restaurant.pages.waiter) {
             this.waiter.showDefault();
         }
+    }
+
+
+    async addOrder() {
+        const { AddOrderModal } = await import("./components/add-order/add-order.modal");
+
+        const component = this.modalContainer.createComponent(AddOrderModal);
+
+        component.instance.leave.subscribe(() => {
+            component.destroy();
+        });
+    }
+    checkIn() {
+
     }
 }

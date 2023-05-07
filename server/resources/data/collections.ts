@@ -156,41 +156,6 @@ export function getDefaultCollections() {
         collection._id = id();
         collections.push(collection);
     }
-    const folders = [];
-    for(let folder of DEFAULT_FOLDERS) {
-        folder._id = id();
-        folder.collections = [];
 
-        if(folder.id == "meal-times") {
-            for(const collection of collections) {
-                if([
-                    "breakfast",
-                    "brunch",
-                    "late-night",
-                    "lunch",
-                    "dinner",
-                ].includes(collection.id)) {
-                    folder.collections.push(collection._id);
-                }
-            }
-        } else if(folder.id == "default") {
-            for(const collection of collections) {
-                if([
-                    "appetizers",
-                    "entrees",
-                    "beverages",
-                    "desserts",
-                    "sides",
-                    "soups",
-                    "salads"
-                ].includes(collection.id)) {
-                    folder.collections.push(collection._id);
-                }
-            }
-        }
-
-        folders.push(folder);
-    }
-
-    return { collections, folders };
+    return collections;
 }

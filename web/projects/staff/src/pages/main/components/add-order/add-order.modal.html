@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="body">
-            <div class="folders">
+            <!-- <div class="folders">
                 <div *ngFor="let folder of folders; index as folderIndex" [class.open]="folder.open" class="folder">
                     <button class="folder-header" (click)="openFolder(folderIndex)">
                         <div class="name">
@@ -91,6 +91,61 @@
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="collections">
+                <div *ngFor="let collection of collections; index as collectionIndex" class="collection">
+                    <button (click)="openCollection(collectionIndex)" class="collection-header">
+                        <div class="name">
+                            <span class="global-text big black bold">
+                                {{ collection.name }}
+                            </span>
+                        </div>
+                        <div class="buttons">
+                            <button class="icon-button">
+                                <mat-icon *ngIf="!collection.open">expand_more</mat-icon>
+                                <mat-icon *ngIf="collection.open">expand_less</mat-icon>
+                            </button>
+                        </div>
+                    </button>
+                    <div class="items" *ngIf="collection.open">
+                        <div *ngFor="let itemId of collection.items" class="item">
+                            <div class="item-info">
+                                <div class="image">
+                                    <img [ngSrc]="items[itemId].image" height="64" width="64" alt="">
+                                </div>
+                                <div class="name-price">
+                                    <div class="name">
+                                        <span class="global-text big black">
+                                           {{ items[itemId].info.name }}
+                                        </span>
+                                    </div>
+                                    <div class="price">
+                                        <span class="global-text">
+                                            {{ items[itemId].info.price / 100 }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <div class="amount">
+                                    <span class="global-text big bold">
+                                        {{ items[itemId].amount }}
+                                    </span>
+                                </div>
+                                <button (click)="addComment(itemId)" class="icon-button">
+                                    <mat-icon>
+                                        message
+                                    </mat-icon>
+                                </button>
+                                <button (click)="addItem(itemId)" class="icon-button">
+                                    <mat-icon>
+                                        add
+                                    </mat-icon>
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,14 @@
+.app {
+    .box {
+        background-color: var(--default-background);
+        border-radius: var(--default-border-radius);
+
+        .header {
+            padding: 24px;
+        }
+        .body {
+            padding: 0 24px;
+            padding-bottom: 24px;
+        }
+    }
+}

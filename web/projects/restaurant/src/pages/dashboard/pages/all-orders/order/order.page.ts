@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { env } from 'environment/environment';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
 
@@ -19,6 +20,8 @@ interface Order {
         name: string;
         price: number;
         modifiers: number;
+        hasImage: boolean;
+        id: string;
         staff: {
             waiter: { name: string; };
             cook: { name: string; };
@@ -54,12 +57,13 @@ export class OrderPage implements OnInit {
         const result: { order: Order } = await this.service.get("orders", orderId);
 
         for(const item of result.order.items) {
-            item.image = getImage(item.image);
+            if(item.hasImage) {
+                item.image = `${env.apiUrl}/restaurants/${this.service.restaurant._id}/menu/items/${item.id}/image`;
+            } else {
+                item.image = "./../../../../../../../../global-resources/images/no-image.svg";
+            }
         }
 
         this.order = result.order;
-
-        console.log(result);
-
     }
 }

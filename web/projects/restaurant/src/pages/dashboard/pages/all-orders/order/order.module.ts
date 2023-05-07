@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { OrderRoutingModule } from './order-routing.module';
 import { OrderPage } from './order.page';
@@ -13,6 +13,7 @@ import { TimelineComponent } from './timeline/timeline.component';
         CommonModule,
         OrderRoutingModule,
         MatIconModule,
+        NgOptimizedImage,
     ]
 })
 export class OrderModule { }

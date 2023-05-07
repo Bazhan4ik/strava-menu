@@ -62,6 +62,15 @@ interface WorkerSettings {
     isOwner?: boolean;
 }
 
+interface Shift {
+    startHours: number;
+    startMinutes: number;
+    endHours: number;
+    endMinutes: number;
+    days: number[];
+    _id: ObjectId;
+}
+
 interface Worker {
     userId: ObjectId;
     settings: WorkerSettings;
@@ -69,6 +78,7 @@ interface Worker {
     joined?: number;
 
     locations: ObjectId[];
+    shifts: Shift[];
 
     lastUpdate?: {
         time: number;
@@ -79,5 +89,6 @@ interface Worker {
 
 export {
     Worker,
-    WorkerSettings
+    WorkerSettings,
+    Shift,
 }

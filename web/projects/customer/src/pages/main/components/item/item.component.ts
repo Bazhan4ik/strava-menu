@@ -5,7 +5,6 @@ import { env } from 'environment/environment';
 import { CustomerService } from 'projects/customer/src/services/customer.service';
 import { ItemsService } from 'projects/customer/src/services/items.service';
 import { Item } from '../../models/item';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-item',
@@ -41,7 +40,12 @@ export class DishComponent implements OnInit {
         this.item = this.itemsService.items[this.itemObjectId];
         this.url = `/${this.service.restaurant.id}/${this.service.locationId}/item/${this.item.id}`;
         this.backUrl = this.router.url;
-        this.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/items/" + this.item._id + "/image";
+
+        if(this.item.hasImage) {
+            this.imageUrl = `${env.apiUrl}/customer/${this.service.restaurant._id}/items/${this.item._id}/image`;
+        } else {
+            this.imageUrl = "./../../../../../../../global-resources/images/no-image.svg"
+        }
     }
 
 

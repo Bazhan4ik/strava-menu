@@ -32,6 +32,39 @@
                 </div>
             </div>
         </div>
+        <div class="shifts">
+            <div class="title">
+                <span class="global-subtitle">
+                    Shifts
+                </span>
+            </div>
+            <div class="list">
+                <div class="shift" *ngFor="let shift of shifts">
+                    <div class="days">
+                        <span *ngFor="let day of shift.days" class="global-text">
+                            {{ day | dayOfWeek }}, 
+                        </span>
+                    </div>
+                    <div class="time">
+                        <span class="global-text">
+                            {{ shift.startHours }}:{{ shift.startMinutes }} - {{ shift.endHours }}:{{ shift.endMinutes }}
+                        </span>
+                    </div>
+                    <div class="buttons">
+                        <button (click)="deleteShift(shift)" class="icon-button">
+                            <mat-icon>
+                                delete
+                            </mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="add-shift">
+                    <button (click)="addShift()" id="add-shift">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
         <div *ngIf="!account" class="global-loading height-124">
             <div></div>
             <div></div>
@@ -41,6 +74,8 @@
     </div>
 </div>
 
+
+<ng-container #modalContainer></ng-container>
 
 
 <div class="modal-app padding-20" *ngIf="showSettings">

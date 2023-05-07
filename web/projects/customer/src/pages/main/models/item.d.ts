@@ -4,6 +4,7 @@ interface Item {
         description: string;
         price: number;
     }
+    hasImage: boolean;
     _id: string;
     id: string;
     updateImage: boolean;

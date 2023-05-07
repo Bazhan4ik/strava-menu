@@ -11,7 +11,7 @@ export class StaffService {
 
     baseUrl = env.apiUrl + "/staff/";
 
-    restaurant: { id: string; redirectTo: string; name: string; pages: {
+    restaurant: { id: string; _id: string; redirectTo: string; name: string; pages: {
         cook: boolean;
         waiter: boolean;
         requests: boolean;

@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { env } from 'environment/environment';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
-import { getImage } from 'projects/restaurant/src/utils/getImage';
 
 interface Collection {
     name: string;
     image: any;
     _id: string;
+    hasImage: boolean;
+    id: string;
 }
 
 interface Folder {
@@ -27,26 +29,76 @@ interface Folder {
     imports: [CommonModule, MatIconModule]
 })
 export class AddCollectionsModal implements OnInit {
-
-    loading = false;
-
-    folders: Folder[];
-    
-    newSelected: Collection[] = [];
-    
     constructor(
         private service: RestaurantService,
     ) {};
+
+
+    loading = false;
+    dayTimes: Folder = { collections: [], id: "", name: "Times of day", open: false, image: "" };
+    itemTypes: Folder = { collections: [], id: "", name: "Types of items", open: false, image: "" };
+    collections: Collection[] = [];
+    folders = [this.dayTimes, this.itemTypes];
+    newSelected: Collection[] = [];
+    
         
     @Input() ids: string[] = [];
     @Input() one: boolean = false;
     @Output() leave = new EventEmitter();
 
 
+    async ngOnInit() {
+        const result: Collection[] = await this.service.get("menu/collections");
+
+        for(let c of result) {
+            const collection = {
+                ...c,
+                image: c.hasImage ? `${env.apiUrl}/restaurants/${this.service.restaurant._id}/menu/collections/${c.id}/image` : "./../../../../../../../../../../global-resources/images/no-image.svg"
+            };
+            if([
+                "appetizers",
+                "entrees",
+                "beverages",
+                "desserts",
+                "sides",
+                "soups",
+                "salads",
+            ].includes(collection.id)) {
+                this.itemTypes.collections.push(collection);
+            } else if([
+                "breakfast",
+                "brunch",
+                "late-night",
+                "lunch",
+                "dinner",
+            ].includes(collection.id)) {
+                this.dayTimes.collections.push(collection);
+            } else {
+                this.collections.push(collection);
+            }
+
+            for(const id of this.ids) {
+                if(collection._id == id) {
+                    let add = true;
+                    for(const c of this.newSelected) {
+                        if(c._id == id) {
+                            add = false;
+                            break;
+                        }
+                    }
+                    if(add) {
+                        this.newSelected.push(c);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+
     close() {
         this.leave.emit();
     }
-
     onChange(ev: any, collection: Collection) {
         if(ev.target.checked) {
             if(this.one) {
@@ -54,8 +106,6 @@ export class AddCollectionsModal implements OnInit {
                 this.ids = [collection._id];
                 return;
             }
-
-            console.log("ON CHANGE FUN");
 
             for(const id of this.ids) {
                 if(collection._id == id) {
@@ -79,49 +129,10 @@ export class AddCollectionsModal implements OnInit {
             }
         }
     }
-
     async save() {
         if(this.one && this.newSelected.length == 0) {
             return;
         }
-        console.log(this.newSelected);
         this.leave.emit(this.newSelected);
     }
-
-
-    async ngOnInit() {
-        const result: Folder[] = await this.service.get("menu/collections");
-
-        this.folders = [];
-
-        for(let folder of result) {
-            const index = this.folders.push({
-                ...folder,
-                collections: [],
-                image: getImage(folder.image) || "./../../../../../../../../../global-resources/images/no-image.svg",
-            });
-            for(const collection of folder.collections) {
-                const c = { ...collection, open: false, image: getImage(collection.image) || "./../../../../../../../../../global-resources/images/no-image.svg" };
-
-                this.folders[index - 1].collections.push(c);
-
-                for(const id of this.ids) {
-                    if(collection._id == id) {
-                        let add = true;
-                        for(const c of this.newSelected) {
-                            if(c._id == id) {
-                                add = false;
-                                break;
-                            }
-                        }
-                        if(add) {
-                            this.newSelected.push(c);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
 }

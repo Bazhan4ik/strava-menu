@@ -4,6 +4,10 @@
 
     i.circle {
         color: var(--orange);
+
+        &.white {
+            color: var(--white);
+        }
     }
 
     .img-fluid {

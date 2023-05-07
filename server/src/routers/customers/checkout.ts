@@ -414,18 +414,8 @@ router.post("/elvn/pay", customerRestaurant({}), customerSession({ payment: { en
     const userId = 'apiuser';
     const pin = 'RNKZ6V4NMA4LX4AXUM381FT7POL4LRX3AJLMY6XVKF6BJGIYK4LWX6QGB63RM2QW';
 
-    // const cardNumber = '4000000000000002';
-    // const expiryDate = '04/25';
-    // const cvv = '123';
-
-    console.log("NUMBER: ", cardNumber);
-    console.log("EXPIRY: ", expiryDate);
-    console.log("CVV: ", cvv);
-
 
     const transactionAmount = (session.payment.money.total / 100).toFixed(2);
-
-    console.log(transactionAmount);
 
 
     try {
@@ -450,8 +440,6 @@ router.post("/elvn/pay", customerRestaurant({}), customerSession({ payment: { en
         });
 
         const result = qs.parse(response.data, '\n', '=');
-
-        console.log(result);
 
         if (!result.ssl_result || typeof result.ssl_result != "string") {
             return res.status(400).send({ reason: "InvalidError", message: "ssl_result doesn't exist or not a string" });

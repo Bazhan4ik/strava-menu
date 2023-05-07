@@ -9,17 +9,12 @@ export class FolderComponent implements OnInit {
 
 
 
-    @Input() folder: {
+    @Input() collections: {
         name: string;
         id: string;
         _id: string;
-        collections: {
-            name: string;
-            id: string;
-            _id: string;
-            items: string[];
-        }[]
-    };
+        items: string[];
+    }[];
 
 
     ngOnInit() {

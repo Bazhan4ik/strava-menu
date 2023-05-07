@@ -45,8 +45,10 @@
                         <span *ngIf="element.data && element.type == 'collection'" class="global-text small">
                             {{ element.data.collection?.name }}
                         </span>
-                        <span *ngIf="element.data && element.type == 'folder'" class="global-text small">
-                            {{ element.data.folder?.name }}
+                        <span *ngIf="element.data && element.type == 'collections'" class="global-text small">
+                            <span *ngFor="let c of element.data.collections">
+                                {{ c.name }},
+                            </span>
                         </span>
                         <span *ngIf="element.data && element.type == 'item'" class="global-text small">
                             {{ element.data.item?.name }}
@@ -55,8 +57,8 @@
                             <button (click)="selectCollection(element)" *ngIf="element.type == 'collection'" class="button">
                                 <mat-icon>add</mat-icon> Select collection
                             </button>
-                            <button (click)="selectFolder(element)" *ngIf="element.type == 'folder'" class="button">
-                                <mat-icon>add</mat-icon> Select folder
+                            <button (click)="selectCollections(element)" *ngIf="element.type == 'collections'" class="button">
+                                <mat-icon>add</mat-icon> Select collections
                             </button>
                             <button (click)="selectItem(element)" *ngIf="element.type == 'item'" class="button">
                                 <mat-icon>add</mat-icon> Select item

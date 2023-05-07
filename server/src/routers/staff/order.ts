@@ -12,7 +12,7 @@ import { confirmSession, createSession, getSession, getSessions, updateSession }
 const router = Router({ mergeParams: true });
 
 
-router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (req, res) => {
+router.get("/", waiterManualOrder({}, { collections: { name: 1, _id: 1, id: 1, items: 1, } }), async (req, res) => {
     const { restaurant, user, location } = res.locals as Locals;
     const { socketId } = req.query;
 
@@ -20,7 +20,7 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
         return res.status(400).send({ reason: "SocketId" });
     }
 
-    if(!restaurant.collections || !restaurant.folders) {
+    if(!restaurant.collections) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
@@ -61,44 +61,22 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
     }
 
 
-    const getCollection = (id: ObjectId) => {
-        for(const collection of restaurant.collections) {
-            if(collection._id.equals(id)) {
-                itemsIds.push(...collection.items);
-                return collection;
-            }
-        }
-        return null!;
-    }
-
-    const itemsIds: ObjectId[] = [];
-    const result = [];
-
-    
-
-    for(const folder of restaurant.folders) {
-
-        if(folder.id == "other") {
-            continue;
-        }
-
+    const filterCollections = () => {
         const collections = [];
-
-        for(const c of folder.collections) {
-            const collection = getCollection(c);
-
-            if(!collection || collection.items.length == 0) {
+        for(const collection of restaurant.collections) {
+            if(collection.items.length == 0) {
                 continue;
             }
-
+            itemsIds.push(...collection.items);
             collections.push(collection);
         }
-
-        result.push({ ...folder, collections });
+        return collections;
     }
 
-
-    const items = await getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { info: { name: 1, price: 1, }, modifiers: { _id: 1 }, id: 1, _id: 1, } }).toArray();
+    
+    const itemsIds: ObjectId[] = [];
+    const collections = filterCollections();
+    const items = await getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { library: { modified: 1, }, info: { name: 1, price: 1, }, modifiers: { _id: 1 }, id: 1, _id: 1, } }).toArray();
     const itemsMap = new Map<string, any>();
     for(const item of items) {
         (item as any).amount = 0;
@@ -108,10 +86,10 @@ router.get("/", waiterManualOrder({}, { folders: 1, collections: 1 }), async (re
                 (item as any).amount++;
             }
         }
-        itemsMap.set(item._id.toString(), {...item, hasModifiers: !!item.modifiers && item.modifiers.length! > 0 });
+        itemsMap.set(item._id.toString(), {...item, hasImage: !!item.library?.modified, hasModifiers: !!item.modifiers && item.modifiers.length! > 0 });
     }
 
-    res.send({ folders: result, items: Object.fromEntries(itemsMap.entries()), itemsSelected, });
+    res.send({ collections, items: Object.fromEntries(itemsMap.entries()), itemsSelected, });
 });
 
 router.post("/item", waiterManualOrder({}, { }), waiterSession({ info: { type: 1 } }), async (req, res) => {

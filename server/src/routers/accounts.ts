@@ -263,7 +263,7 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
     const parsedName = name.replace(/[^\w\s]/gi, "").replace(/\s/g, "-").toLowerCase();
 
 
-    const { folders, collections } = getDefaultCollections();
+    const collections = getDefaultCollections();
     const collectionIds = [];
     for(const collection of collections) {
         collectionIds.push(collection._id);
@@ -302,14 +302,13 @@ router.post("/add-restaurant", logged({ _id: 1, status: 1, info: { email: 1, } }
         customers: [],
         tables: {},
         collections,
-        folders,
         stripe: {
             card: "pending",
             payouts: "pending",
             account: "unverified",
         },
         layout: [],
-        staff: [{ userId: user._id, locations: [], settings: { isOwner: true }, joined: Date.now(), }]
+        staff: [{ userId: user._id, locations: [], shifts: [], settings: { isOwner: true }, joined: Date.now(), }]
     }
 
 

@@ -11,8 +11,8 @@ function isValidEmail(email: string) {
 const Email = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'ctraba.business@gmail.com',
-        pass: 'tgphcddicttmsstf'
+        user: 'strava.menu@gmail.com',
+        pass: 'cuytzjtwcingrrtm'
     }
 });
 

@@ -1,7 +1,7 @@
 .app {
     .folders {
         .folder {
-            margin-top: 24px;
+            margin-top: 12px;
 
             .header {
                 display: flex;
@@ -9,6 +9,12 @@
                 justify-content: space-between;
                 height: 52px;
                 width: 100%;
+                background: none;
+                border-radius: var(--default-border-radius);
+
+                &:hover {
+                    background-color: var(--default-on-background);
+                }
                 
                 .title {
                     padding: 12px;
@@ -16,40 +22,38 @@
                     border-radius: var(--default-border-radius);
                 }
 
-                &:hover {
-                    .title {
-                        background-color: var(--default-on-background);
-                    }
-                }
-
             }
+        }
 
-            .collections {
-                padding-left: 24px;
+    }
 
-                .collection {
-                    display: flex;
-                    text-decoration: none;
-                    border-radius: var(--default-small-radius);
-                    padding: 6px;
-        
-                    .image {
-                        img {
-                            width: 64px;
-                            height: 64px;
-                            border-radius: var(--default-small-radius);
-                        }
-                    }
-        
-                    .name {
-                        padding: 4px;
-                    }
-        
-                    &:hover {
-                        background-color: var(--default-on-background);
-                    }
-                }
+    .collections {
+        padding-top: 12px;
+    }
+    .folder-collections {
+        padding-left: 24px;
+    }
+
+    .collection {
+        display: flex;
+        text-decoration: none;
+        border-radius: var(--default-small-radius);
+        padding: 6px;
+
+        .image {
+            img {
+                width: 64px;
+                height: 64px;
+                border-radius: var(--default-small-radius);
             }
+        }
+
+        .name {
+            padding: 4px;
+        }
+
+        &:hover {
+            background-color: var(--default-on-background);
         }
     }
 }

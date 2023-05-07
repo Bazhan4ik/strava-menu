@@ -9,15 +9,14 @@ import { ItemLayoutElementComponent } from '../../components/item-layout-element
 import { MiniTrackingComponent } from '../../components/mini-tracking/mini-tracking.component';
 import { Collection } from '../../models/collection';
 import { Item } from '../../models/item';
-import { IonicModule, NavController } from '@ionic/angular';
-import { Observable, Subject } from 'rxjs';
+import { IonicModule } from '@ionic/angular';
 
 
 interface Response {
     tracking?: any[];
     items: { [itemObjectId: string]: Item };
     elements: {
-        type: "collection" | "folder" | "item";
+        type: "collection" | "collections" | "item";
         data: Item | Collection | {
             name: string;
             collections: {
@@ -72,7 +71,6 @@ export class RecommendationsPage implements OnInit {
         this.elements = result.elements;
         this.itemsService.items = result.items;
         this.tracking = result.tracking;
-
         this.restaurant = this.service.restaurant;
 
         this.updateLayout();
@@ -88,15 +86,16 @@ export class RecommendationsPage implements OnInit {
         const { FolderComponent } = await import("./../../components/folder/folder.component");
         
         for(const element of this.elements) {
+            console.log(element);
             if(element.type == "collection") {
 
                 const component = this.body.createComponent(CollectionComponent);
 
                 component.instance.collection = element.data as Collection;
-            } else if(element.type == "folder") {
+            } else if(element.type == "collections") {
                 const component = this.body.createComponent(FolderComponent);
 
-                component.instance.folder = element.data as any;
+                component.instance.collections = element.data as any;
             } else if(element.type == "item") {
                 const component = this.body.createComponent(ItemLayoutElementComponent);
 

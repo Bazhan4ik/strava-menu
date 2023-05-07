@@ -6,6 +6,7 @@ import { firstValueFrom } from "rxjs";
 interface Restaurant {
     name: string;
     id: string;
+    _id: string;
     pages: any;
 }
 

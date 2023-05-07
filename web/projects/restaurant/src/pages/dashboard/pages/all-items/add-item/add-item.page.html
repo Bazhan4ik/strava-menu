@@ -50,54 +50,6 @@
             </div>
             <textarea formControlName="description" class="global-input vertical"></textarea>
         </div>
-        <div class="ingredients">
-            <div class="selected" *ngIf="ingredients && ingredients.length > 0">
-                <div class="ingredient" (click)="removeIngredient(ingredient.id)" *ngFor="let ingredient of ingredients">
-                    <div class="title">
-                        <span class="global-text normal">
-                            {{ ingredient.title }}
-                        </span>
-                    </div>
-                    <div class="amount">
-                        <span class="global-text normal">
-                            {{ ingredient.amount }} grams
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="search">
-                <div class="label">
-                    <span class="global-text">
-                        Search ingredients
-                    </span>
-                </div>
-                <div class="input">
-                    <input type="text" class="global-input" [(ngModel)]="ingredientsSearchText" [ngModelOptions]="{ standalone: true }">
-                    <button (click)="searchIngredients()" class="icon-button orange-button square">
-                        <mat-icon>
-                            search
-                        </mat-icon>
-                    </button>
-                </div>
-            </div>
-            <div class="search-results">
-                <div *ngFor="let ingredient of ingredientsFound" class="ingredient">
-                    <div class="title">
-                        <span class="global-text big">
-                            {{ ingredient.title }}
-                        </span>
-                    </div>
-                    <button (click)="addIngredient(ingredient)" class="square icon-button orange-button">
-                        <mat-icon>add</mat-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="missing">
-            <span class="global-text small">
-                Missing an ingredient? Have a suggestion? Contact us at support@stravamenu.com
-            </span>
-        </div>
     </form>
     <div *ngIf="loading" class="global-loading full-page">
         <div></div>

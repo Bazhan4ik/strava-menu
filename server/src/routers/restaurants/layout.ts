@@ -24,7 +24,7 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
     if(!restaurant.layout) {
         return res.status(500).send({ reason: "InvalidError" });
     }
-    if(!restaurant.collections || !restaurant.folders) {
+    if(!restaurant.collections) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
@@ -49,24 +49,6 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
         }
         return null;
     }
-    const getFolder = (id: ObjectId) => {
-        for(const folder of restaurant.folders) {
-            if(folder._id.equals(id)) {
-                
-                const collections = [];
-
-                for(const cid of folder.collections) {
-                    for(const collection of restaurant.collections) {
-                        if(collection._id.equals(cid)) {
-                            collections.push(collection);
-                        }
-                    }
-                }
-
-                return { ...folder, collections };
-            }
-        }
-    }
     const getItemForElement = async (id: ObjectId) => {
         const item = await getItem(restaurant._id, { _id: id }, { projection: { info: { name: 1, price: 1, description: 1 } } });
 
@@ -80,7 +62,7 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
     const result = [];
     for(const element of restaurant.layout) {
         const el: any = {
-            name: element.type == "collection" ? "Collection" : element.type == "item" ? "Item" : "Folder",
+            name: element.type == "collection" ? "Collection" : element.type == "item" ? "Item" : "Collections",
             _id: element._id,
             type: element.type,
             position: element.position,
@@ -91,14 +73,21 @@ router.get("/", logged(), restaurantWorker({ layout: 1, folders: 1, collections:
         }
 
         if(element.type == "collection") {
-            el.data = { collection: await getCollection(element.data.id) };
-        } else if(element.type == "folder") {
-            el.data = { folder: getFolder(element.data.id) };
+            el.data = { id: element.data?.id, collection: await getCollection(element.data.id) };
         } else if(element.type == "item") {
-            el.data = { item: await getItemForElement(element.data.id) };
+            el.data = { id: element.data?.id, item: await getItemForElement(element.data.id) };
+        } else if(element.type == "collections") {
+            const collections = [];
+            for(const id of element.data.ids) {
+                const collection = await getCollection(id);
+                if(collection) {
+                    collections.push(collection);
+                }
+            }
+            el.data = { collections, ids: element.data.ids };
         }
 
-        if(!el.data.collection && !el.data.folder && !el.data.item) {
+        if(!el.data.collection && !el.data.collections && !el.data.item) {
             delete el.data;
 
             updateRestaurant(
@@ -119,7 +108,7 @@ router.post("/", logged(), restaurantWorker({ layout: 1 }), async (req, res) => 
     const { restaurant } = res.locals as Locals;
 
 
-    if(!type || typeof type != "string" || !["collection", "folder", "item"].includes(type)) {
+    if(!type || typeof type != "string" || !["collection", "collections", "item"].includes(type)) {
         return res.status(400).send({ reason: "InvalidInput" });
     }
     if(!restaurant.layout) {
@@ -141,7 +130,7 @@ router.post("/", logged(), restaurantWorker({ layout: 1 }), async (req, res) => 
         { projection: { _id: 1 } },
     );
 
-    res.send({ updated: update.ok == 1, element: {...newElement, name: type == "collection" ? "Collection" : type == "item" ? "Item" : "Folder" } });
+    res.send({ updated: update.ok == 1, element: {...newElement, name: type == "collection" ? "Collection" : type == "item" ? "Item" : "Collections" } });
 });
 router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1 }), async (req, res) => {
     const { collectionId, elementId } = req.body;
@@ -220,6 +209,79 @@ router.put("/collection", logged(), restaurantWorker({ layout: 1, collections: 1
 
     res.send({ updated: false });
 });
+router.put("/collections", logged(), restaurantWorker({ layout: 1, collections: 1 }), async (req, res) => {
+    const { collections, elementId } = req.body;
+    const { restaurant } = res.locals as Locals;
+    
+    if(!collections || !elementId) {
+        return res.status(400).send({ reason: "InvalidInput" });
+    }
+    if(!Array.isArray(collections) || typeof elementId != "string" || elementId.length != 24) {
+        return res.status(422).send({ reason: "InvalidInput" });
+    }
+    if(!restaurant.collections || !restaurant.layout) {
+        return res.status(500).send({ reason: "InvalidError" });
+    }
+
+
+    const getCollection = (collectionId: string) => {
+        for(const collection of restaurant.collections) {
+            if(collection._id.equals(collectionId)) {
+                return {
+                    name: collection.name,
+                    id: collection.id,
+                    _id: collection._id,
+                };
+            }
+        }
+        return null;
+    }
+    const getElement = () => {
+        for(const element of restaurant.layout) {
+            if(element._id.equals(elementId)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    const layout = getElement();
+    if(!layout) {
+        return res.status(404).send({ reason: "ElementNotFound" });
+    }
+
+    if(layout.type != "collections") {
+        return res.status(403).send({ reason: "WrongType" });
+    }
+
+    const result = [];
+    for(const collectionId of collections) {
+        if(typeof collectionId != "string" || collectionId.length != 24) {
+            return res.status(422).send({ reason: "InvalidInput" });
+        }
+
+        const collection = getCollection(collectionId);
+        if(!collection) {
+            return res.status(404).send({ reason: "CollectionNotFound" });
+        }
+
+        result.push(collection);
+    }
+
+
+
+    const update = await updateRestaurant(
+        { _id: restaurant._id },
+        { $set: { "layout.$[element].data": { ids: collections } } },
+        { arrayFilters: [ { "element._id": layout._id } ] }
+    );
+
+    if(update.ok == 1) {
+        return res.send({ updated: true, collections: result });
+    }
+
+    res.send({ updated: false });
+});
 router.put("/item", logged(), restaurantWorker({ layout: 1 }), async (req, res) => {
     const { itemId, elementId } = req.body;
     const { restaurant } = res.locals as Locals;
@@ -280,81 +342,6 @@ router.put("/item", logged(), restaurantWorker({ layout: 1 }), async (req, res) 
 
     if(update.ok == 1) {
         return res.send({ updated: true, item });
-    }
-
-    res.send({ updated: false });
-});
-router.put("/folder", logged(), restaurantWorker({ layout: 1, folders: 1, collections: 1 }), async (req, res) => {
-    const { folderId, elementId } = req.body;
-    const { restaurant } = res.locals as Locals;
-    
-    if(!folderId || !elementId) {
-        return res.status(400).send({ reason: "InvalidInput" });
-    }
-    if(typeof folderId != "string" || typeof elementId != "string" || folderId.length != 24 || elementId.length != 24) {
-        return res.status(422).send({ reason: "InvalidInput" });
-    }
-    if(!restaurant.folders || !restaurant.layout || !restaurant.collections) {
-        return res.status(500).send({ reason: "InvalidError" });
-    }
-
-
-    const convertCollections = () => {
-        const result = [];
-        for(const cid of folder!.collections) {
-            for(const collection of restaurant.collections) {
-                if(cid.equals(collection._id)) {
-                    result.push({ ...collection, image: collection.image?.buffer });
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-    const getFolder = () => {
-        for(const folder of restaurant.folders) {
-            if(folder._id.equals(folderId)) {
-                return folder;
-            }
-        }
-        return null;
-    }
-    const getElement = () => {
-        for(const element of restaurant.layout) {
-            if(element._id.equals(elementId)) {
-                return element;
-            }
-        }
-        return null;
-    }
-
-    const folder = getFolder();
-    if(!folder) {
-        return res.status(404).send({ reason: "FolderNotFound" });
-    }
-
-    const layout = getElement();
-    if(!layout) {
-        return res.status(404).send({ reason: "ElementNotFound" });
-    }
-
-    if(layout.type != "folder") {
-        return res.status(403).send({ reason: "WrongType" });
-    }
-
-    if(layout.data?.id.equals(folder._id)) {
-        return res.send({ updated: true, folder: { ...folder, collections: convertCollections() } });
-    }
-
-
-    const update = await updateRestaurant(
-        { _id: restaurant._id },
-        { $set: { "layout.$[element].data": { id: folder._id } } },
-        { arrayFilters: [ { "element._id": layout._id } ] }
-    );
-
-    if(update.ok == 1) {
-        return res.send({ updated: true, folder: { ...folder, collections: convertCollections() } });
     }
 
     res.send({ updated: false });

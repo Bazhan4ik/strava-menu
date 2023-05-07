@@ -7,6 +7,9 @@ import { joinStaff } from "../../utils/socket/socket.js";
 import { CookRouter } from "./cook.js";
 import { OrderRouter } from "./order.js";
 import { WaiterRouter } from "./waiter.js";
+import { getItem } from "../../utils/data/items.js";
+import { Binary } from "mongodb";
+import { id } from "../../utils/other/id.js";
 
 
 
@@ -49,10 +52,10 @@ router.get("/", logged(), restaurantWorker({ _id: 1, locations: { city: 1, line1
         restaurant: {
             name: restaurant.info.name,
             id: restaurant.info.id,
+            _id: restaurant._id,
         },
     });
 });
-
 router.get("/:locationId/init", logged(), restaurantWorker({ staff: { settings: 1, userId: 1, }, }, { work: { cook: true } }, { work: { waiter: true } }), async (req, res) => {
     const { restaurant, location, user } = res.locals as Locals;
     const { socketId } = req.query;
@@ -91,6 +94,35 @@ router.get("/:locationId/init", logged(), restaurantWorker({ staff: { settings: 
             requests: settings.work?.waiter || settings.isOwner!,
         }
     });
+});
+router.get("/item/:itemId/image", async (req, res) => {
+    const { itemId, restaurantId } = req.params as any;
+    const { type } = req.query;
+
+    if(typeof type != "string") {
+        return res.status(400).send({ reason: "InvalidType" });
+    }
+    if(!["preview", "original"].includes(type)) {
+        return res.status(400).send({ reason: "InvalidType" });
+    }
+
+    const projection: any = { library: {} };
+    projection.library[type] = 1;
+
+    const item = await getItem(restaurantId, { _id: id(itemId), }, { projection });
+
+
+    if(!item) {
+        return res.status(404).send({ reason: "NotFound" });
+    }
+
+    if(!item.library || !item.library[type as "original"]) {
+        return res.status(404).send({ reason: "NotFound" });
+    }
+
+    res.contentType("image/png");
+    res.setHeader("Content-Length", (item.library[type as "original"] as Binary).buffer.length);
+    res.send((item.library[type as "original"] as Binary).buffer);
 });
 
 

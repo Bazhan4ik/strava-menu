@@ -2,12 +2,13 @@
     <div class="header">
         <div class="name">
             <span class="global-subtitle">
-                {{ folder.name }}
+                <!-- {{ folder.name }} -->
+                Collection
             </span>
         </div>
     </div>
     <div class="collections">
-        <div *ngFor="let collection of folder.collections" class="collection">
+        <div *ngFor="let collection of collections" class="collection">
             <div class="image">
                 <img src="./../../../../../../../../../global-resources/images/no-image.svg" alt="">
             </div>

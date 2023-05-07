@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
+import { env } from 'environment/environment';
 import { BaseChartDirective } from 'ng2-charts';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
 import { getImage } from 'projects/restaurant/src/utils/getImage';
@@ -34,7 +35,8 @@ interface Item {
 
 interface Collection {
     name: string;
-    image: any;
+    image: string;
+    hasImage: boolean;
     id: string;
     _id: string;
 }
@@ -75,7 +77,7 @@ export class ItemPage implements OnInit {
         },
         scales: {
             y: {
-                position: 'left',
+                position: 'right',
                 grid: {
                     display: false,
                 }
@@ -125,7 +127,7 @@ export class ItemPage implements OnInit {
         if(result.collections) {
             this.collections = [];
             for(let collection of result.collections) {
-                this.collections.push({ ...collection, image: getImage(collection.image) || "./../../../../../../../../global-resources/images/no-image.svg" })
+                this.collections.push({ ...collection, image: collection.hasImage ? `${env.apiUrl}/restaurants/${this.service.restaurant._id}/menu/collections/${collection.id}/image` : "./../../../../../../../../global-resources/images/no-image.svg" })
             }
         }
 

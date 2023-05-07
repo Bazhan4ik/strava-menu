@@ -79,6 +79,7 @@ router.get("/", logged(), restaurantWorker({ info: { name: 1, id: 1, }, staff: {
     res.send({
         name: restaurant.info.name,
         id: restaurant.info.id,
+        _id: restaurant._id,
         pages,
     });
 });

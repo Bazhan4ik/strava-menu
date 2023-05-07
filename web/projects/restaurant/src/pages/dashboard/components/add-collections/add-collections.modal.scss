@@ -22,6 +22,9 @@
         }
 
         .body {
+            padding: 0 8px;
+            padding-bottom: 8px;
+            
             .list {
                 padding: 12px;
                 display: flex;
@@ -39,43 +42,41 @@
                             border-radius: var(--default-border-radius);
                         }
                     }
+                }
+            }
+            .collections {
+                .collection {
+                    padding: 4px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    border-radius: var(--default-small-radius);
 
-                    .collections {
-                        .collection {
-                            padding: 4px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            border-radius: var(--default-small-radius);
-        
-                            .info {
-                                display: flex;
-                                
-                                .image {
-                                    img {
-                                        border-radius: var(--default-small-radius);
-                                        height: 42px;
-                                        width: 42px;
-                                    }
-                                }
-        
-                                .name {
-                                    padding: 4px;
-                                }
-                            }
-        
-                            .buttons {
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                            }
-        
-                            &:hover {
-                                background-color: var(--default-on-background);
+                    .info {
+                        display: flex;
+                        
+                        .image {
+                            img {
+                                border-radius: var(--default-small-radius);
+                                height: 42px;
+                                width: 42px;
                             }
                         }
+
+                        .name {
+                            padding: 4px;
+                        }
                     }
-                    
+
+                    .buttons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    &:hover {
+                        background-color: var(--default-on-background);
+                    }
                 }
             }
         }

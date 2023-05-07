@@ -75,6 +75,18 @@ async function bulkRestaurant(operations: AnyBulkWriteOperation<Restaurant>[]) {
     }
 }
 
+function aggregateRestaurant(pipeline: object[]) {
+    try {
+        
+        return client.db(mainDBName).collection<Restaurant>("restaurants").aggregate(pipeline);
+
+    } catch (e) {
+        console.error("at aggregateRestaurant()");
+        throw e;
+    }
+}
+
+
 function compareWorkerSettings(
     workerSettings: WorkerSettings,
     compareTo: WorkerSettings[]
@@ -105,6 +117,7 @@ export {
     getRestaurants,
     compareWorkerSettings,
     getRestaurant,
+    aggregateRestaurant,
     updateRestaurant,
     bulkRestaurant,
 }

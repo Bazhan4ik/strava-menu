@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { Locals } from "../../models/general.js";
-import { Worker, WorkerSettings } from "../../models/worker.js";
+import { Shift, Worker, WorkerSettings } from "../../models/worker.js";
 import { id } from "../../utils/other/id.js";
 import { logged } from "../../middleware/auth.js";
 import { restaurantWorker } from "../../middleware/restaurant.js";
@@ -181,8 +181,6 @@ router.post("/add/:userId", logged(), restaurantWorker({ staff: { userId: 1, set
     }
     
 
-
-
     const settings = updateOtherProperties(updateSettings);
 
     if(!settings) {
@@ -213,6 +211,7 @@ router.post("/add/:userId", logged(), restaurantWorker({ staff: { userId: 1, set
         userId: id(userId),
         locations: [id(location)],
         joined: Date.now(),
+        shifts: [],
     };
 
     const update = await updateRestaurant(
@@ -298,6 +297,7 @@ router.get("/:userId", logged(), restaurantWorker({ staff: 1, locations: { _id: 
         },
         locations: getLocations(),
         settings: worker.settings,
+        shifts: worker.shifts,
     };
 
 
@@ -382,7 +382,157 @@ router.put("/:userId/settings", logged(), restaurantWorker({ }, { staff: { avail
     );
 });
 
+router.put("/:userId/shifts", logged(), restaurantWorker({ staff: 1 }, { staff: { settings: true } }), async (req, res) => {
+    const { userId } = req.params;
+    const { shift } = req.body as { shift: Shift };
+    const { restaurant, user } = res.locals as Locals;
 
+    const checkForError = () => {
+        if(!restaurant.staff) {
+            return { status: 500, reason: "InvalidError" };
+        }
+        if(!userId || userId.length != 24) {
+            return { status: 400, reason: "InvalidUserId" };
+        }
+        if(user._id.equals(userId)) {
+            return { status: 403, reason: "InvalidUserId" };
+        }
+        if(!shift) {
+            return { status: 400, reason: "ShiftNotProvided" };
+        }
+        if(typeof shift.startHours != "number" || typeof shift.startMinutes != "number" || typeof shift.endHours != "number" || typeof shift.endMinutes != "number" || !Array.isArray(shift.days)) {
+            return { status: 400, reason: "InvalidShift" };
+        }
+        for(const day of shift.days) {
+            if(typeof day != "number") {
+                return { status: 400, reason: "InvalidShift" };
+            }
+        }
+        if(shift.startHours < 1 || shift.startHours > 24 || shift.startMinutes < 0 || shift.startMinutes > 59 || shift.endHours < 1 || shift.endHours > 24 || shift.endMinutes < 0 || shift.endMinutes > 59) {
+            return { status: 400, reason: "InvalidShift" };
+        }
+        if(shift.startHours > shift.endHours || (shift.startHours == shift.endHours && shift.startMinutes >= shift.endMinutes)) {
+            return { status: 400, reason: "InvalidShift" };
+        }
+    }
+
+    const error = checkForError();
+    if(error) {
+        return res.status(error.status).send({ reason: error.reason });
+    }
+
+
+    let worker: Worker = null!;
+    for(let w of restaurant.staff!) {
+        if(w.userId.equals(userId)) {
+            worker = w;
+            break;
+        }
+    }
+
+    if(!worker) {
+        return res.status(404).send({ reason: "NotWorker" });
+    }
+
+    const newShift = {
+        ...shift,
+        _id: id(),
+    }
+
+    if(!worker.shifts || worker.shifts.length == 0) {
+
+        const update = await updateRestaurant(
+            { _id: restaurant._id, },
+            { $push: { "staff.$[worker].shifts": newShift } },
+            { arrayFilters: [ { "worker.userId": id(userId) } ] }
+        );
+
+        return res.send({ updated: update.ok == 1 });
+    }
+
+    // check if shifts overlap
+    for(const wShift of worker.shifts) {
+        if(wShift.days.some(day => shift.days.includes(day))) {
+            // if starting time is less than ending time or if starting time is equal to ending time and starting minutes is less than ending minutes
+            if(wShift.startHours < shift.endHours || (wShift.startHours == shift.endHours && wShift.startMinutes < shift.endMinutes)) {
+                return res.status(400).send({ reason: "ShiftsOverlap" });
+            }
+            // if ending time is greater than starting time or if ending time is equal to starting time and ending minutes is greater than starting minutes
+            if(wShift.endHours > shift.startHours || (wShift.endHours == shift.startHours && wShift.endMinutes > shift.startMinutes)) {
+                return res.status(400).send({ reason: "ShiftsOverlap" });
+            }
+        }
+    }
+
+    const update = await updateRestaurant(
+        { _id: restaurant._id, },
+        { $push: { "staff.$[worker].shifts": newShift } },
+        { arrayFilters: [ { "worker.userId": id(userId) } ] }
+    );
+
+    res.send({ updated: update.ok == 1 });
+});
+router.delete("/:userId/shifts/:shiftId", logged(), restaurantWorker({ staff: 1 }, { staff: { settings: true } }), async (req, res) => {
+    const { userId, shiftId } = req.params;
+    const { restaurant, user } = res.locals as Locals;
+
+    const checkForError = () => {
+        if(!restaurant.staff) {
+            return { status: 500, reason: "InvalidError" };
+        }
+        if(!userId || userId.length != 24) {
+            return { status: 400, reason: "InvalidUserId" };
+        }
+        if(user._id.equals(userId)) {
+            return { status: 403, reason: "InvalidUserId" };
+        }
+        if(!shiftId || shiftId.length != 24) {
+            return { status: 400, reason: "InvalidShiftId" };
+        }
+    }
+
+    const error = checkForError();
+    if(error) {
+        return res.status(error.status).send({ reason: error.reason });
+    }
+
+
+    let worker: Worker = null!;
+    for(let w of restaurant.staff!) {
+        if(w.userId.equals(userId)) {
+            worker = w;
+            break;
+        }
+    }
+
+    if(!worker) {
+        return res.status(404).send({ reason: "NotWorker" });
+    }
+
+    if(!worker.shifts || worker.shifts.length == 0) {
+        return res.status(404).send({ reason: "ShiftNotFound" });
+    }
+
+    let shift: Shift = null!;
+    for(let s of worker.shifts) {
+        if(s._id.equals(shiftId)) {
+            shift = s;
+            break;
+        }
+    }
+
+    if(!shift) {
+        return res.status(404).send({ reason: "ShiftNotFound" });
+    }
+
+    const update = await updateRestaurant(
+        { _id: restaurant._id, },
+        { $pull: { "staff.$[worker].shifts": { _id: id(shiftId) } } },
+        { arrayFilters: [ { "worker.userId": id(userId) } ] }
+    );
+
+    res.send({ updated: update.ok == 1 });
+});
 
 
 export {

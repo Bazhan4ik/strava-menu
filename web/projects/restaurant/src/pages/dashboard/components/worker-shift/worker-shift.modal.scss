@@ -1,0 +1,66 @@
+.app {
+    .box {
+        width: 100vw;
+        max-width: 512px;
+        border-radius: var(--default-border-radius);
+        background-color: var(--default-background);
+        
+        .header {
+            padding: 12px;
+            display: grid;
+            grid-template-columns: max-content 1fr max-content;
+
+            .title {
+                display: flex;
+                align-items: center;
+
+                .red {
+                    color: var(--red);
+                }
+            }
+        }
+        .body {
+            padding: 0 12px;
+            padding-bottom: 12px;
+
+            .days {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                gap: 8px;
+                border-bottom: 1px solid var(--default-border-color);
+                padding-bottom: 12px;
+
+                button {
+                    background: none;
+                    border: 1px solid var(--default-border-color);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: var(--default-small-radius);
+
+                    &.selected {
+                        border: 2px solid var(--orange);
+                    }
+                }
+            }
+
+            .time {
+                .time-element {
+                    margin-top: 12px;
+                    
+                    .inputs {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        
+                        input {
+                            height: 32px;
+                            width: 52px;
+                            border-radius: var(--default-border-radius);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,100 @@
+<div class="app modal-app padding-20">
+    <div class="box">
+        <div class="header">
+            <button (click)="close()" class="icon-button" id="close">
+                <mat-icon>close</mat-icon>
+            </button>
+            <div class="title">
+                <span class="global-subtitle" [class.red]="error">
+                    {{ title }}
+                </span>
+            </div>
+            <div class="buttons">
+                <button (click)="save()" class="button orange-button">
+                    Save
+                </button>
+            </div>
+        </div>
+        <div class="body">
+            <div class="days">
+                <button (click)="selectDay(0)" [class.selected]="days.includes(0)">
+                    <span class="global-text">
+                        Mon
+                    </span>
+                </button>
+                <button (click)="selectDay(1)" [class.selected]="days.includes(1)">
+                    <span class="global-text">
+                        Tue
+                    </span>
+                </button>
+                <button (click)="selectDay(2)" [class.selected]="days.includes(2)">
+                    <span class="global-text">
+                        Wed
+                    </span>
+                </button>
+                <button (click)="selectDay(3)" [class.selected]="days.includes(3)">
+                    <span class="global-text">
+                        Thu
+                    </span>
+                </button>
+                <button (click)="selectDay(4)" [class.selected]="days.includes(4)">
+                    <span class="global-text">
+                        Fri
+                    </span>
+                </button>
+                <button (click)="selectDay(5)" [class.selected]="days.includes(5)">
+                    <span class="global-text">
+                        Sat
+                    </span>
+                </button>
+                <button (click)="selectDay(6)" [class.selected]="days.includes(6)">
+                    <span class="global-text">
+                        Sun
+                    </span>
+                </button>
+            </div>
+            <div class="time">
+                <div class="start time-element">
+                    <div class="label">
+                        <span class="global-subtitle">
+                            Start
+                        </span>
+                    </div>
+                    <div class="inputs">
+                        <div class="input">
+                            <input type="text" [(ngModel)]="startHours" (input)="hourInput($event, 'startHours')" class="global-input" placeholder="HH">
+                        </div>
+                        <div class="double-dot">
+                            <span class="global-text">
+                                :
+                            </span>
+                        </div>
+                        <div class="input">
+                            <input type="text" [(ngModel)]="startMinutes" (input)="minuteInput($event, 'startMinutes')" class="global-input" placeholder="MM">
+                        </div>
+                    </div>
+                </div>
+                <div class="end time-element">
+                    <div class="label">
+                        <span class="global-subtitle">
+                            End
+                        </span>
+                    </div>
+                    <div class="inputs">
+                        <div class="input">
+                            <input type="text" [(ngModel)]="endHours" (input)="hourInput($event, 'endHours')" class="global-input" placeholder="HH">
+                        </div>
+                        <div class="double-dot">
+                            <span class="global-text">
+                                :
+                            </span>
+                        </div>
+                        <div class="input">
+                            <input type="text" [(ngModel)]="endMinutes" (input)="minuteInput($event, 'endMinutes')" class="global-input" placeholder="MM">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

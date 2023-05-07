@@ -9,6 +9,7 @@ import { customerSession } from "../../middleware/customerSession.js";
 import { customerRestaurant } from "../../middleware/customerRestaurant.js";
 import { getSession, getSessions, updateSession } from "../../utils/data/sessions.js";
 import { SessionRouter } from "./session.js";
+import { aggregateRestaurant } from "../../utils/data/restaurant.js";
 
 
 
@@ -32,17 +33,6 @@ const projections = {
             },
             library: { blur: 1 },
         },
-        noImage: {
-            id: 1,
-            _id: 1,
-            status: 1,
-            info: {
-                name: 1,
-                price: 1,
-                description: 1,
-            },
-            library: { modified: 1 },
-        }
     },
     customerItem: {
         id: 1,
@@ -95,11 +85,11 @@ router.get("/locations", customerRestaurant({ locations: 1, info: { name: 1, id:
     });
 });
 
-router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sorting: 1, folders: 1, layout: 1, }), customerSession({}, {}), async (req, res) => {
+router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sorting: 1, layout: 1, }), customerSession({}, {}), async (req, res) => {
     const { restaurant, user } = res.locals as Locals;
 
 
-    if(!restaurant.collections || !restaurant.sorting || !restaurant.layout || !restaurant.folders) {
+    if(!restaurant.collections || !restaurant.sorting || !restaurant.layout) {
         return res.status(500).send({ reason: "InvalidError" });
     }
 
@@ -128,8 +118,8 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
     })();
     
     const collectionAvailable = (id: ObjectId) => {
-        let timeAvailable = false;
         let dayAvailable = false;
+        let timeAvailable = false;
 
         for(const collection of restaurant.sorting!.days[day as 0].collections) {
             if(collection.equals(id)) {
@@ -144,26 +134,27 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
             }
         }
         
-        return timeAvailable && dayAvailable;
+        return dayAvailable && timeAvailable;
     }
     const itemAvailable = (id: ObjectId) => {
-        let timeAvailable = false;
         let dayAvailable = false;
-
-        for(const collection of restaurant.sorting!.days[day as 0].items) {
-            if(collection.equals(id)) {
+        let timeAvailable = false;
+        
+        // check if the item is available for the day and time
+        for(const item of restaurant.sorting!.days[day as 0].items) {
+            if(item.equals(id)) {
                 dayAvailable = true;
                 break;
             }
         }
-        for(const collection of restaurant.sorting!.times[time].items) {
-            if(collection.equals(id)) {
+        for(const item of restaurant.sorting!.times[time].items) {
+            if(item.equals(id)) {
                 timeAvailable = true;
                 break;
             }
         }
         
-        return timeAvailable && dayAvailable;
+        return dayAvailable && timeAvailable;
     }
 
     const getCollection = (id: ObjectId) => {
@@ -191,21 +182,13 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
         }
         return null!;
     }
-    const getFolder = (id: ObjectId) => {
-        for(const folder of restaurant.folders) {
-            if(folder._id.equals(id)) {
-                return folder;
-            }
-        }
-        return null;
-    }
-    const filterItemes = () => {
+    const filterItems = () => {
         for(let e = 0; e < result.elements.length; e++) {
             const element = result.elements[e];
 
-            if(element.type == "folder") {
+            if(element.type == "collections") {
 
-                const collections = (element.data as { collections: { name: string; _id: ObjectId; id: string; items: ObjectId[]; }[]; }).collections;
+                const collections = (element.data as any as { name: string; _id: ObjectId; id: string; items: ObjectId[]; }[]);
 
                 for(let c = 0; c < collections.length; c++) {
                     for(let d in collections[c].items) {
@@ -249,6 +232,27 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
 
         return result.elements;
     }
+    const getCollections = (ids: ObjectId[]) => {
+        const collections: { name: string; _id: ObjectId; id: string; hasImage: boolean; items: ObjectId[]; }[] = [];
+
+        for(const id of ids) {
+            const collection = getCollection(id);
+
+            if(!collection) {
+                continue;
+            }
+
+            collections.push({
+                name: collection.name,
+                _id: collection._id,
+                id: collection.id,
+                items: collection.items,
+                hasImage: !!collection.image?.userId,
+            });
+        }
+
+        return collections;
+    }
 
     const itemsIds: ObjectId[] = [];
 
@@ -256,20 +260,17 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
     const result: {
         tracking?: any[],
         elements: {
-            type: "collection" | "folder" | "item";
+            type: "collection" | "collections" | "item";
             data: {
                 name: string;
                 items: ObjectId[];
             } | {
-                name: string;
-                collections: {
                     name: string;
                     id: string;
                     _id: ObjectId;
-                    image: string;
+                    hasImage: boolean;
                     items: ObjectId[];
-                }[];
-            } | {
+            }[]| {
                 _id: string;
                 id: string;
                 info: {
@@ -285,13 +286,16 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
     }
     
     for(const element of restaurant.layout) {
-        if(!element.data?.id) {
+        if(!element.data?.id && !element.data?.ids) {
             continue;
         }
 
         if(element.type == "collection") {
+            console.log(element.data);
+
             const collection = getCollection(element.data.id);
 
+            console.log(collection);
             
             if(!collection) {
                 continue;
@@ -310,39 +314,22 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
                     items: collection.items,
                 },
             });
-        } else if(element.type == "folder") {
-            const folder = getFolder(element.data.id);
+        } else if(element.type == "collections") {
+            const collections = getCollections(element.data.ids);
 
-            if(!folder) {
+            if(!collections) {
                 continue;
             }
 
-            if(folder.collections.length == 0) {
+            if(collections.length == 0) {
                 continue;
             }
 
-            const collections = [];
-            for(const c of folder.collections) {
-                const collection = getCollection(c);
-
-                if(collection) {
-                    collections.push({
-                        name: collection.name,
-                        image: collection.image?.buffer as any,
-                        _id: collection._id,
-                        id: collection.id,
-                        items: collection.items,
-                    }); 
-                }
-            }
 
             result.elements.push({
-                type: "folder",
-                data: {
-                    name: folder.name,
-                    collections,
-                }
-            })
+                type: "collections",
+                data: collections,
+            });
 
         } else if(element.type == "item") {
             result.elements.push({
@@ -376,7 +363,17 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
     const items = await getItems(
         restaurant._id,
         { _id: { $in: itemsIds }, status: "visible" },
-        { projection: projections.collections.noImage }
+        { projection: {
+            id: 1,
+            _id: 1,
+            status: 1,
+            info: {
+                name: 1,
+                price: 1,
+                description: 1,
+            },
+            library: { userId: 1 },
+        } }
     ).toArray();
 
     if(sessions) {
@@ -388,6 +385,7 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
                     name: d?.info?.name,
                     _id: item._id,
                     itemId: item.itemId,
+                    hasImage: !!d.library?.userId
                 });
             }
         }
@@ -395,12 +393,12 @@ router.get("/recommendations", customerRestaurant({ _id: 1, collections: 1, sort
 
     const itemMap = new Map();
     for(const item of items) {
-        itemMap.set(item._id.toString(), item);
+        itemMap.set(item._id.toString(), { ...item, hasImage: !!item.library?.userId });
     }
 
     result.items = Object.fromEntries(itemMap.entries());
 
-    result.elements = filterItemes();
+    result.elements = filterItems();
 
     res.send(result);
 });
@@ -738,7 +736,17 @@ router.get("/collections/:collectionId", customerRestaurant({ collections: 1, so
     const items = await getItems(
         restaurant._id,
         { _id: { $in: collection.items }, status: "visible", },
-        { projection: projections.collections.noImage }
+        { projection: {
+            id: 1,
+            _id: 1,
+            status: 1,
+            info: {
+                name: 1,
+                price: 1,
+                description: 1,
+            },
+            library: { modified: 1 },
+        } }
     ).toArray();
 
     const itemsMap = new Map();
@@ -774,6 +782,30 @@ router.get("/collections/:collectionId", customerRestaurant({ collections: 1, so
     };
 
     updateSession(restaurant._id, { _id: session._id, }, { $push: { timeline } }, { noResponse: true, });
+});
+router.get("/collections/:collectionId/image", async (req, res) => {
+    const { collectionId, restaurantId, } = req.params as any;
+
+    const result = await aggregateRestaurant([
+        { $match: { _id: id(restaurantId), } },
+        { $unwind: "$collections" },
+        { $match: { "collections.id": collectionId } },
+        { $project: { "collectionImage": "$collections.image.buffer" } },
+    ]).toArray();
+
+    if(!result || result.length == 0) {
+        return res.status(404).send({ reason: "CollectionNotFound" });
+    }
+
+    const collection = result[0];
+
+    if(!collection.collectionImage) {
+        return res.status(404).send({ reason: "ImageNotFound" });
+    }
+
+    res.set("Content-Type", "image/png");
+    res.set("Content-Length", collection.collectionImage.buffer.length);
+    res.send(collection.collectionImage.buffer);
 });
 
 

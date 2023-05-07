@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { env } from 'environment/environment';
 import { RestaurantService } from 'projects/restaurant/src/services/restaurant.service';
-import { getImage } from 'projects/restaurant/src/utils/getImage';
 
 
 
@@ -12,6 +11,7 @@ interface Item {
     price: number;
     status: string;
     imageUrl: string;
+    hasImage: boolean;
 }
 
 
@@ -49,7 +49,11 @@ export class ItemsPage implements OnInit {
         this.items = result.items;
 
         for(let item of this.items) {
-            item.imageUrl = `${env.apiUrl}/restaurants/${result.restaurantId}/menu/items/${item.id}/image`;
+            if(item.hasImage) {
+                item.imageUrl = `${env.apiUrl}/restaurants/${result.restaurantId}/menu/items/${item.id}/image`;
+            } else {
+                item.imageUrl = "./../../../../../../../../../global-resources/images/no-image.svg";
+            }
         }
 
         console.log(result);

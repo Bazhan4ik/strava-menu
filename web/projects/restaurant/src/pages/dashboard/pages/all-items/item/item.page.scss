@@ -63,6 +63,11 @@
         .collections {
             margin-top: 24px;
 
+            .header {
+                padding: 8px 0;
+                height: 54px;
+            }
+
             .list {
                 .collection {
                     height: 64px;
@@ -84,22 +89,14 @@
             }
         }
 
-        .sales {
-            margin-top: 24px;
-            display: grid;
-            grid-template-columns: 70% 30%;
-
-            .chart {
-
-            }
-        }
-
         .modifiers {
-            margin-top: 24px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--default-border-color);
 
             .header {
-                padding: 8px 0;
-                border-bottom: 1px solid var(--default-border-color);
+                padding-bottom: 8px;
+                height: 54px;
             }
 
             .body {
@@ -139,6 +136,16 @@
                         }
                     }
                 }
+            }
+        }
+
+        .sales {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: 30% 70%;
+
+            .chart {
+
             }
         }
     }

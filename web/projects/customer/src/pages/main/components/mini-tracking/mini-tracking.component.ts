@@ -14,6 +14,7 @@ interface Item {
     imageUrl: any;
     _id: string;
     itemId: string;
+    hasImage: boolean;
 }
 
 
@@ -52,7 +53,11 @@ export class MiniTrackingComponent implements OnInit, OnDestroy {
         });
 
         for(let item of this.items) {
-            item.imageUrl = env.apiUrl + "/customer/" + this.service.restaurant._id + "/items/" + item.itemId + "/image";
+            if(item.hasImage) {
+                item.imageUrl = `${env.apiUrl}/customer/${this.service.restaurant._id}/items/${item.itemId}/image`;
+            } else {
+                item.imageUrl = "./../../../../../../../global-resources/images/no-image.svg";
+            }
         }
     }
     ngOnDestroy() {

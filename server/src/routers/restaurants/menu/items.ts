@@ -12,8 +12,6 @@ import { getIngredients } from "../../../utils/data/ingredients.js";
 import { getTags } from "../../../utils/other/tags.js";
 import { updateRestaurant } from "../../../utils/data/restaurant.js";
 import { getOrders, updateOrders } from "../../../utils/data/orders.js";
-import { NewLineKind } from "typescript";
-import { getSessions } from "../../../utils/data/sessions.js";
 
 
 
@@ -23,7 +21,7 @@ const router = Router({ mergeParams: true });
 
 
 router.post("/", logged(), restaurantWorker({ sorting: 1, }, { items: { adding: true } }), async (req, res) => {
-    const { name, price, description, tags, ingredients, image } = req.body;
+    const { name, price, description, tags, image } = req.body;
     const { restaurant, user } = res.locals as Locals;
 
     if(!restaurant.sorting || !restaurant.sorting.days || !restaurant.sorting.times) {
@@ -69,19 +67,6 @@ router.post("/", logged(), restaurantWorker({ sorting: 1, }, { items: { adding: 
         }
     }
 
-
-    if(ingredients) {
-        newItem.ingredients = [];
-        for(let ing of ingredients) {
-            if(ing.id && ing.amount && ing.amount > 0) {
-                newItem.ingredients.push({
-                    id: ing.id,
-                    amount: ing.amount,
-                });
-            }
-        }
-    }
-
     
     if(image) {
         if(image.resolution && image.base64 && typeof image.resolution == "number" && typeof image.base64 == "string") {
@@ -123,11 +108,11 @@ router.post("/", logged(), restaurantWorker({ sorting: 1, }, { items: { adding: 
         { noResponse: true }
     );
 });
-router.get("/", logged(), restaurantWorker({}, { items: { available: true } }), async (req, res) => {
+router.get("/", logged(), restaurantWorker({}, { items: { available: true } }), async (req, res) => {   
     const { restaurant, user } = res.locals as Locals;
 
 
-    const items = await getItems(restaurant._id, { }, { projection: { status: 1, info: { name: 1, price: 1 }, id: 1 } }).toArray();
+    const items = await getItems(restaurant._id, { }, { projection: { status: 1, library: { preview: 1 }, info: { name: 1, price: 1 }, id: 1 } }).toArray();
 
     const result: {
         name: string;
@@ -135,6 +120,7 @@ router.get("/", logged(), restaurantWorker({}, { items: { available: true } }), 
         id: string;
         _id: ObjectId;
         status: string;
+        hasImage: boolean;
     }[] = [];
 
     for(let item of items) {
@@ -144,6 +130,7 @@ router.get("/", logged(), restaurantWorker({}, { items: { available: true } }), 
             id: item.id,
             _id: item._id,
             status: item.status,
+            hasImage: !!item.library?.preview
         });
     }
 
@@ -259,7 +246,7 @@ router.get("/:itemId", logged(), restaurantWorker({ collections: { name: 1, imag
             if(id.equals(item._id)) {
                 collections.push({
                     ...c,
-                    image: c.image?.buffer as any,
+                    hasImage: !!c.image?.userId as any,
                 });
                 break;
             }
@@ -411,11 +398,20 @@ router.put("/:itemId", logged(), restaurantWorker({}, { items: { adding: true } 
 
     
     if(image && image.base64 && image.resolution && typeof image.resolution == "number") {
+
+        const buffer = bufferFromString(image.base64);
+        const resolution = image.resolution;
+
+        const preview = await sharp(buffer).resize(164, 164).jpeg({ quality: 60 }).toBuffer();
+        const blur = await sharp(buffer).resize(164, 164).jpeg({ quality: 20 }).blur(40).toBuffer();
+        const original = await sharp(buffer).resize(1000, 1000).jpeg().toBuffer();
+
+        update["library.preview"] = preview;
+        update["library.blur"] = blur;
+        update["library.original"] = original;
+
         update["library.userId"] = user._id;
-        push["library.list"] = {
-            buffer: bufferFromString(image.base64),
-            resolution: image.resolution,
-        }
+        update["library.modified"] = Date.now();
     }
 
     

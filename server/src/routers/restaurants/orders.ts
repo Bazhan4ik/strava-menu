@@ -109,10 +109,11 @@ interface ConvertedOrder {
     date: string;
     status: string;
     items: {
-        image: string;
+        hasImage: boolean;
         name: string;
         price: number;
         modifiers: number;
+        id: string;
         staff: {
             waiter: { name: string; };
             cook: { name: string; };
@@ -154,7 +155,7 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
 
         return Promise.all([
             getUsers({ _id: { $in: userIds } }, { projection: { info: { name: 1, }, avatar: { buffer: 1 } } }).toArray(),
-            getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { info: { name: 1, }, library: { preview: 1 } } }).toArray(),
+            getItems(restaurant._id, { _id: { $in: itemsIds } }, { projection: { id: 1, info: { name: 1, }, library: { userId: 1, } } }).toArray(),
         ]);
     }
     //    \/
@@ -165,9 +166,9 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
         for (const user of users) {
             usersMap.set(user._id.toString(), { name: `${user.info?.name?.first} ${user.info?.name?.last}` });
         }
-        const itemsMap = new Map<string, { name: string; price: number; image: any; }>();
+        const itemsMap = new Map<string, { name: string; id: string; hasImage: boolean; price: number; }>();
         for (const item of items) {
-            itemsMap.set(item._id.toString(), { name: item.info.name, price: item.info.price, image: item.library?.preview! });
+            itemsMap.set(item._id.toString(), { name: item.info.name, id: item.id, price: item.info.price, hasImage: !!item.library?.userId! });
         }
 
         return { usersMap, itemsMap };
@@ -185,12 +186,13 @@ router.get("/:orderId", logged(), restaurantWorker({ locations: { _id: 1, name: 
     const convertItems = () => {
         const result: ConvertedOrder["items"] = [];
         for (const item of order.items) {
-            const d = itemsMap.get(item.itemId.toString()) || { name: item.info.name!, price: item.info.price!, image: null!, };
+            const d = itemsMap.get(item.itemId.toString()) || { name: item.info.name!, id: null!, price: item.info.price!, hasImage: false, };
 
             result.push({
                 name: d.name,
                 price: item.info.price!,
-                image: d.image!,
+                hasImage: d.hasImage,
+                id: d.id,
                 modifiers: item.modifiers?.length!,
                 staff: {
                     waiter: usersMap.get(item.staff?.waiter?.toString()!)!,
