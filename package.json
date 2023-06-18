@@ -9,17 +9,14 @@
     "scripts": {
         "server:dev:start": "npx nodemon server/dist/src/index.js",
         "server:dev:build": "npx tsc -p server/tsconfig.dev.json -w",
-
         "server:prod:build": "cd server && npm run build:prod",
         "server:prod:start": "node server/dist/src/index.js",
-
         "web:dev:build:account": "cd ./web && npm run build:dev:account",
         "web:dev:build:public": "cd ./web && npm run build:dev:public",
         "web:dev:build:restaurant": "cd ./web && npm run build:dev:restaurant",
         "web:dev:build:customer": "cd ./web && npm run build:dev:customer",
         "web:dev:build:staff": "cd ./web && npm run build:dev:staff",
         "web:prod:build": "cd ./web && npm run build:prod",
-        
         "start": "npm run server:prod:start",
         "build": "npm run web:prod:build && npm run server:prod:build"
     },
@@ -29,6 +26,5 @@
         "@ionic/angular": "^6.4.1",
         "@ionic/cli": "^6.20.6"
     },
-    "devDependencies": {
-    }
+    "devDependencies": {}
 }
