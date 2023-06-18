@@ -1,10 +1,15 @@
 {
     "version": 2,
-    "name": "my-app",
-    "routes": [
+    "name": "strava-menu",
+    "rewrites": [
         {
-            "src": "/(.*)",
-            "dest": "server/dist/src/index.js"
+            "source": "/(.*)",
+            "destination": "/api"
         }
-    ]
+    ],
+    "functions": {
+        "api/index.js": {
+            "includeFiles": "web/dist/**"
+        }
+    }
 }
